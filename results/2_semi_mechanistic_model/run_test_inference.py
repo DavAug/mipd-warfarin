@@ -22,13 +22,13 @@ def define_log_posterior():
         pints.LogNormalLogPrior(0.1, 0.3),   # Sigma log volume
         pints.GaussianLogPrior(-1, 0.5),     # Mean log clearance
         pints.LogNormalLogPrior(0.1, 0.3),   # Sigma log clearance
-        pints.LogNormalLogPrior(-1.6, 0.8),  # Rel. shift clearance CYP29P *2
-        pints.LogNormalLogPrior(-1.6, 0.8),  # Rel. shift clearance CYP29P *3
+        pints.LogNormalLogPrior(-1.6, 0.7),  # Rel. shift clearance CYP29P *2
+        pints.LogNormalLogPrior(-1.6, 0.7),  # Rel. shift clearance CYP29P *3
         pints.GaussianLogPrior(0, 0.01),     # Rel. shift clearance Age
         pints.GaussianLogPrior(1.41, 0.5),   # Mean log EC50
         pints.LogNormalLogPrior(0.1, 0.3),   # Sigma log EC50
-        pints.LogNormalLogPrior(-1.6, 0.8),  # Rel. shift EC50 VKORC1 A
-        pints.LogNormalLogPrior(-2.3, 0.8),  # Pooled rate chain 1
+        pints.LogNormalLogPrior(-1.6, 0.7),  # Rel. shift EC50 VKORC1 A
+        pints.LogNormalLogPrior(-2.3, 0.7),  # Pooled rate chain 1
         pints.LogNormalLogPrior(-3.7, 1.5),  # Pooled rate chain 2
         pints.LogNormalLogPrior(0.1, 0.3),   # Sigma log drug conc.
         pints.LogNormalLogPrior(0.1, 0.3)    # Sigma log INR
@@ -42,7 +42,7 @@ def define_log_posterior():
 
 
 def run_inference(log_posterior):
-    seed = 2
+    seed = 3
     controller = chi.SamplingController(log_posterior, seed=seed)
     controller.set_n_runs(1)
     controller.set_parallel_evaluation(True)
