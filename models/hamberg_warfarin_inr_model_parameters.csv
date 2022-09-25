@@ -15,15 +15,17 @@ central.size,14.3,L
 myokit.clearance,0.348,L/h
 myokit.gamma,1.15,dimensionless
 myokit.half_maximal_effect_concentration,4.1,mg/L
-myokit.transition_rate_chain_1,0.1048951048951049,1/h
-myokit.transition_rate_chain_2,0.0253592561284869,1/h
-Std. log myokit.clearance,0.1,dimensionless
-Shift per *1 allele myokit.clearance,0.174,L/h
-Shift per *2 allele myokit.clearance,0.0879,L/h
-Shift per *3 allele myokit.clearance,0.0422,L/h
-Rel. change per year myokit.clearance,0.00571,dimensionless
-Mean log central.size,2.6602595372658615,dimensionless
-Std. log central.size,0.1,dimensionless
-Std. log myokit.half_maximal_effect_concentration,0.1,dimensionless
-Shift per G allele myokit.half_maximal_effect_concentration,2.05,dimensionless
-Shift per A allele myokit.half_maximal_effect_concentration,0.96,dimensionless
+Pooled Transition rate chain 1,0.1048951048951049,1/h
+Pooled Transition rate chain 2,0.0253592561284869,1/h
+Log std. Clearance,0.1,dimensionless
+Log mean Clearance,-1.0555527992076628,dimensionless
+Rel. clearance shift per *2 allele,0.247,dimensionless
+Rel. clearance shift per *3 allele,0.379,dimensionless
+Rel. clearance shift with age,0.00571,dimensionless
+Log mean Volume of distribution,2.6602595372658615,dimensionless
+Log std. Volume of distribution,0.1,dimensionless
+Log std. EC50,0.1,dimensionless
+Log mean EC50,4.1,dimensionless
+Rel. EC50 shift per A allele,0.269,dimensionless
+Pooled Drug conc. Sigma log, 0.1, dimensionless
+Pooled INR Sigma log, 0.1, dimensionless
