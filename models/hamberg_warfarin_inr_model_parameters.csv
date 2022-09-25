@@ -25,7 +25,7 @@ Rel. clearance shift with age,0.00571,dimensionless
 Log mean Volume of distribution,2.6602595372658615,dimensionless
 Log std. Volume of distribution,0.1,dimensionless
 Log std. EC50,0.1,dimensionless
-Log mean EC50,4.1,dimensionless
+Log mean EC50,1.41,dimensionless
 Rel. EC50 shift per A allele,0.269,dimensionless
 Pooled Drug conc. Sigma log, 0.1, dimensionless
 Pooled INR Sigma log, 0.1, dimensionless

@@ -31,14 +31,15 @@ def define_hamberg_model():
         compartment='central', amount_var='s_warfarin_amount', direct=False)
     model = chi.ReducedMechanisticModel(model)
     model.fix_parameters({
-        'central.s_warfarin_amount': 0,
-        'dose.drug_amount': 0,
+        'central.s_warfarin_amount': 0.001,
+        'dose.drug_amount': 0.001,
         'myokit.delay_compartment_1_chain_1': 1,
         'myokit.delay_compartment_2_chain_1': 1,
         'myokit.delay_compartment_1_chain_2': 1,
         'myokit.delay_compartment_2_chain_2': 1,
         'myokit.relative_change_cf1': 1,
         'myokit.relative_change_cf2': 1,
+        'myokit.gamma': 1.15,
         'dose.absorption_rate': 2,
         'myokit.baseline_inr': 1,
         'myokit.maximal_effect': 1,
@@ -181,26 +182,27 @@ class HambergClearanceCovariateModel(chi.CovariateModel):
 
         # CYP2C9 variant *1/*2
         mask = cyp2c9 == 1
-        vartheta[mask] += np.log(1 - relative_shift_v2)
+        vartheta[mask, 0] += np.log(1 - relative_shift_v2)
 
         # CYP2C9 variant *1/*3
         mask = cyp2c9 == 2
-        vartheta[mask] += np.log(1 - relative_shift_v3)
+        vartheta[mask, 0] += np.log(1 - relative_shift_v3)
 
         # CYP2C9 variant *2/*2
         mask = cyp2c9 == 3
-        vartheta[mask] += np.log(1 - 2 * relative_shift_v2)
+        vartheta[mask, 0] += np.log(1 - 2 * relative_shift_v2)
 
         # CYP2C9 variant *2/*3
         mask = cyp2c9 == 4
-        vartheta[mask] += np.log(1 - relative_shift_v2 * relative_shift_v3)
+        vartheta[mask, 0] += np.log(1 - relative_shift_v2 - relative_shift_v3)
 
         # CYP2C9 variant *3/*3
         mask = cyp2c9 == 5
-        vartheta[mask] += np.log(1 - 2 * relative_shift_v3)
+        vartheta[mask, 0] += np.log(1 - 2 * relative_shift_v3)
 
         # Age
-        vartheta += np.log(1 - age * age_change)
+        vartheta[:, 0] += \
+            np.log(1 - age[:, np.newaxis] * age_change)
 
         return vartheta
 
@@ -239,7 +241,7 @@ class HambergClearanceCovariateModel(chi.CovariateModel):
         n_ids = len(covariates)
         cyp2c9 = covariates[:, 0]
         age = covariates[:, 1] - 71
-        dmu = np.zeros(n_ids, self._n_parameters)
+        dmu = np.zeros(shape=(n_ids, self._n_parameters))
 
         # CYP2C9 variant *1/*1
         # Implemented as baseline
@@ -385,11 +387,11 @@ class HambergEC50CovariateModel(chi.CovariateModel):
 
         # VKORC1 variant G/A
         mask = vkorc1 == 1
-        vartheta[mask] += np.log(1 - relative_shift)
+        vartheta[mask, 0] += np.log(1 - relative_shift)
 
         # VKORC1 variant A/A
         mask = vkorc1 == 2
-        vartheta[mask] += np.log(1 - 2 * relative_shift)
+        vartheta[mask, 0] += np.log(1 - 2 * relative_shift)
 
         return vartheta
 
@@ -427,7 +429,7 @@ class HambergEC50CovariateModel(chi.CovariateModel):
         # Compute derivates of mu
         n_ids = len(covariates)
         vkorc1 = covariates[:, 0]
-        dmu = np.zeros(n_ids, self._n_parameters)
+        dmu = np.zeros(shape=(n_ids, self._n_parameters))
 
         # VKORC1 variant G/G
         # Implemented as baseline
