@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">
+  <model id="hamberg_warfarin_inr_model" timeUnits="h">
+
+    <listOfUnitDefinitions>
+      <unitDefinition id="h">
+        <listOfUnits>
+          <unit kind="second" exponent="1" scale="0" multiplier="3600"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="per_h">
+        <listOfUnits>
+          <unit kind="second" exponent="-1" scale="0" multiplier="3600"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="l_per_h">
+        <listOfUnits>
+          <unit kind="liter" exponent="1" scale="0" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="0" multiplier="3600"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="mg">
+        <listOfUnits>
+          <unit kind="gram" exponent="1" scale="-3" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="mg_per_l">
+        <listOfUnits>
+          <unit kind="gram" exponent="1" scale="-3" multiplier="1"/>
+          <unit kind="liter" exponent="-1" scale="0" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+    </listOfUnitDefinitions>
+
+    <listOfCompartments>
+      <compartment id="central" name="central" size="1" units="liter"/>
+    </listOfCompartments>
+
+    <listOfSpecies>
+      <!-- Warfarin: Warfarin is composed 1:1 of S-warfarin and R-warfarin -->
+      <species id="s_warfarin" name="s_warfarin" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="mg"/>
+    </listOfSpecies>
+
+    <listOfParameters>
+      <!-- INR-related parameters -->
+      <parameter id="baseline_inr" value="1" constant="true" units="dimensionless"/>
+      <parameter id="inr" value="1" constant="false" units="dimensionless"/>
+
+      <!-- Warfarin PD-related states -->
+      <parameter id="delay_compartment_1_chain_1" value="1" constant="false" units="dimensionless"/>
+      <parameter id="delay_compartment_1_chain_2" value="1" constant="false" units="dimensionless"/>
+      <parameter id="delay_compartment_2_chain_1" value="1" constant="false" units="dimensionless"/>
+      <parameter id="delay_compartment_2_chain_2" value="1" constant="false" units="dimensionless"/>
+      <parameter id="relative_change_cf1" value="1" constant="false" units="dimensionless"/>
+      <parameter id="relative_change_cf2" value="1" constant="false" units="dimensionless"/>
+
+      <!-- Warfarin PD-related parameters -->
+      <parameter id="gamma" value="1" constant="true" units="dimensionless"/>
+      <parameter id="half_maximal_effect_concentration" value="1" constant="true" units="mg_per_l"/>
+      <parameter id="inhibitory_effect" value="1" constant="false" units="dimensionless"/>
+      <parameter id="maximal_inr_shift" value="1" constant="true" units="dimensionless"/>
+      <parameter id="maximal_effect" value="1" constant="true" units="dimensionless"/>
+      <parameter id="transition_rate_chain_1" value="1" constant="true" units="per_h"/>
+      <parameter id="transition_rate_chain_2" value="1" constant="true" units="per_h"/>
+
+      <!-- Warfarin PK-related parameters -->
+      <parameter id="clearance" value="1" constant="true" units="l_per_h"/>
+
+    </listOfParameters>
+
+    <listOfRules>
+      <!-- Production and transition of first intermediate factor for coagulation factor 1 -->
+      <rateRule variable="delay_compartment_1_chain_1">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_1 </ci>
+              <apply>
+                <minus/>
+                <cn> 1 </cn>
+                <ci> inhibitory_effect </ci>
+              </apply>
+            </apply>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_1 </ci>
+              <ci> delay_compartment_1_chain_1 </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Transition of second intermediate factor for coagulation factor 1 -->
+      <rateRule variable="delay_compartment_2_chain_1">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_1 </ci>
+              <ci> delay_compartment_1_chain_1 </ci>
+            </apply>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_1 </ci>
+              <ci> delay_compartment_2_chain_1 </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Production and degradation of coagulation factor 1 -->
+      <rateRule variable="relative_change_cf1">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_1 </ci>
+              <ci> delay_compartment_2_chain_1 </ci>
+            </apply>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_1 </ci>
+              <ci> relative_change_cf1 </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Production and transition of first intermediate factor for coagulation factor 2 -->
+      <rateRule variable="delay_compartment_1_chain_2">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_2 </ci>
+              <apply>
+                <minus/>
+                <cn> 1 </cn>
+                <ci> inhibitory_effect </ci>
+              </apply>
+            </apply>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_2 </ci>
+              <ci> delay_compartment_1_chain_2 </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Transition of second intermediate factor for coagulation factor 2 -->
+      <rateRule variable="delay_compartment_2_chain_2">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_2 </ci>
+              <ci> delay_compartment_1_chain_2 </ci>
+            </apply>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_2 </ci>
+              <ci> delay_compartment_2_chain_2 </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Production and degradation of coagulation factor 2 -->
+      <rateRule variable="relative_change_cf2">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_2 </ci>
+              <ci> delay_compartment_2_chain_2 </ci>
+            </apply>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_2 </ci>
+              <ci> relative_change_cf2 </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Define inhibitory effect of S-warfarin -->
+      <assignmentRule variable="inhibitory_effect">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <divide/>
+            <apply>
+              <times/>
+              <ci> maximal_effect </ci>
+              <apply>
+                <power/>
+                <ci> s_warfarin </ci>
+                <ci> gamma </ci>
+              </apply>
+            </apply>
+            <apply>
+              <plus/>
+              <apply>
+                <power/>
+                <ci> half_maximal_effect_concentration </ci>
+                <ci> gamma </ci>
+              </apply>
+              <apply>
+                <power/>
+                <ci> s_warfarin </ci>
+                <ci> gamma </ci>
+              </apply>
+            </apply>
+          </apply>
+        </math>
+      </assignmentRule>
+
+      <!-- Define INR as a function of the fast response factor and the slow response factor -->
+      <assignmentRule variable="inr">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <plus/>
+            <ci> baseline_inr </ci>
+            <apply>
+              <times/>
+              <ci> maximal_inr_shift </ci>
+              <apply>
+                <minus/>
+                <cn> 1 </cn>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <plus/>
+                    <ci> relative_change_cf1 </ci>
+                    <ci> relative_change_cf2 </ci>
+                  </apply>
+                  <cn> 2 </cn>
+                </apply>
+              </apply>
+            </apply>
+          </apply>
+        </math>
+      </assignmentRule>
+
+    </listOfRules>
+
+    <listOfReactions>
+      <!-- S-Warfarin elimination -->
+      <reaction id="s_warfarin_elimination" name="s_warfarin_elimination" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="s_warfarin"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> clearance </ci>
+              <ci> s_warfarin </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+    </listOfReactions>
+  </model>
+</sbml>

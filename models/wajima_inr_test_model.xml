@@ -1,0 +1,1998 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">
+  <model id="wajima_inr_test_model" timeUnits="second">
+
+    <listOfUnitDefinitions>
+      <unitDefinition id="per_s">
+        <listOfUnits>
+          <unit kind="second" exponent="-1" scale="0" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="mg">
+        <listOfUnits>
+          <unit kind="gram" exponent="1" scale="-3" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="mg_per_l">
+        <listOfUnits>
+          <unit kind="gram" exponent="1" scale="-3" multiplier="1"/>
+          <unit kind="liter" exponent="-1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="nmol">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-9" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="nmols">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-9" multiplier="1"/>
+        </listOfUnits>
+        <listOfUnits>
+          <unit kind="second" exponent="1" scale="0" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="nmol_per_l">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-9" multiplier="1"/>
+          <unit kind="liter" exponent="-1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="nmol_per_l_per_s">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-9" multiplier="1"/>
+          <unit kind="liter" exponent="-1" scale="1" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="0" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="l_per_nmol_per_s">
+        <listOfUnits>
+          <unit kind="liter" exponent="1" scale="1" multiplier="1"/>
+          <unit kind="mole" exponent="-1" scale="-9" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="0" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+    </listOfUnitDefinitions>
+
+    <listOfCompartments>
+      <!-- Central compartment which contains all coagulation factors, Vitamin K and other proteins (can be interpreted as the blood compartmnet) -->
+      <compartment id="central" name="central" size="1" units="liter"/>
+
+      <!-- Central warfarin compartment - equivalent to central compartment, but may have different effective volumne for warfarin -->
+      <compartment id="central_warfarin" name="central_warfarin" size="1" units="liter"/>
+    </listOfCompartments>
+
+    <listOfSpecies>
+      <!-- Coagulation factor II (prothrombin and thrombin) -->
+      <species id="coagulation_factor_ii" name="coagulation_factor_ii" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+      <species id="activated_coagulation_factor_ii" name="activated_coagulation_factor_ii" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+
+      <!-- Coagulation factor V -->
+      <species id="coagulation_factor_v" name="coagulation_factor_v" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+      <species id="activated_coagulation_factor_v" name="activated_coagulation_factor_v" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+
+      <!-- Coagulation factor VII -->
+      <species id="coagulation_factor_vii" name="coagulation_factor_vii" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+      <species id="activated_coagulation_factor_vii" name="activated_coagulation_factor_vii" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+
+      <!-- Coagulation factor VIII -->
+      <species id="coagulation_factor_viii" name="coagulation_factor_viii" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+      <species id="activated_coagulation_factor_viii" name="activated_coagulation_factor_viii" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+
+      <!-- Coagulation factor IX -->
+      <species id="coagulation_factor_ix" name="coagulation_factor_ix" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+      <species id="activated_coagulation_factor_ix" name="activated_coagulation_factor_ix" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+
+      <!-- Coagulation factor X -->
+      <species id="coagulation_factor_x" name="coagulation_factor_x" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+      <species id="activated_coagulation_factor_x" name="activated_coagulation_factor_x" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+
+      <!-- Coagulation factor XI -->
+      <species id="coagulation_factor_xi" name="coagulation_factor_xi" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+      <species id="activated_coagulation_factor_xi" name="activated_coagulation_factor_xi" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+
+      <!-- Coagulation factor XIII -->
+      <species id="coagulation_factor_xiii" name="coagulation_factor_xiii" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+      <species id="activated_coagulation_factor_xiii" name="activated_coagulation_factor_xiii" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+
+      <!-- Fibrin -->
+      <species id="fibrin" name="fibrin" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+
+      <!-- Fibrin integral -->
+      <species id="fibrin_integral" name="fibrin_integral" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmols"/>
+
+      <!-- Fibrinogen -->
+      <species id="fibrinogen" name="fibrinogen" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+
+      <!-- Plasmin -->
+      <species id="plasmin" name="plasmin" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+
+      <!-- Plasminogen -->
+      <species id="plasminogen" name="plasminogen" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+
+      <!-- Tissue factor -->
+      <species id="tissue_factor" name="tissue_factor" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+
+      <!-- Tissue factor pathway inhibitor -->
+      <species id="tissue_factor_pathway_inhibitor" name="tissue_factor_pathway_inhibitor" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+
+      <!-- Warfarin -->
+      <species id="warfarin" name="warfarin" compartment="central_warfarin" initialAmount="0" hasSubstanceUnits="false" substanceUnits="mg"/>
+
+      <!-- Vitamin K -->
+      <species id="vitamin_k" name="vitamin_k" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+      <species id="vitamin_k_epoxide" name="vitamin_k_epoxide" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+      <species id="vitamin_k_hydroquinone" name="vitamin_k_hydroquinone" compartment="central" initialAmount="1" hasSubstanceUnits="false" substanceUnits="nmol"/>
+
+      <!-- Activated coagulation factor II - (antithrombin III - heparin complex) complex -->
+      <species id="aii_atiii_heparin_complex" name="aii_atiii_heparin_complex" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+
+      <!-- Activated coagulation factor II (thrombin) - antithrombin complex (TAT) -->
+      <species id="aii_at_complex" name="aii_at_complex" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+
+      <!-- Activated coagulation factor V - activated coagulation factor X complex -->
+      <species id="av_ax_complex" name="av_ax_complex" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+
+      <!-- Coagulation factor VII - tissue factor complex -->
+      <species id="vii_tf_complex" name="vii_tf_complex" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+
+      <!-- Activated coagulation factor VII - tissue factor complex -->
+      <species id="avii_tf_complex" name="avii_tf_complex" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+
+      <!-- (Activated coagulation factor VII - tissue factor complex) - (activated coagulation factor X - tissue factor pathway inhibitor complex) complex -->
+      <species id="avii_tf_ax_tfpi_complex" name="avii_tf_ax_tfpi_complex" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+
+      <!-- Activated coagulation factor IX - activated coagulation factor VIII complex -->
+      <species id="aix_aviii_complex" name="aix_aviii_complex" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+
+      <!-- Activated coagulation factor IX - (antithrombin III - heparin complex) complex -->
+      <species id="aix_atiii_heparin_complex" name="aix_atiii_heparin_complex" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+
+      <!-- Activated coagulation factor X - (antithrombin III - heparin complex) complex -->
+      <species id="ax_atiii_heparin_complex_complex" name="ax_atiii_heparin_complex_complex" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+
+      <!-- Activated coagulation factor X - tissue factor pathway inhibitor complex -->
+      <species id="ax_tfpi_complex" name="ax_tfpi_complex" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+
+      <!-- Antithrombin III - heparin complex -->
+      <species id="atiii_heparin_complex" name="atiii_heparin_complex" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="nmol"/>
+    </listOfSpecies>
+
+    <listOfParameters>
+      <!-- Coagulation factor II production, activation and degradation -->
+      <parameter id="degradation_rate_ii" value="1" constant="true" units="per_s"/>
+      <parameter id="degradation_rate_ii_activated" value="1" constant="true" units="per_s"/>
+      <parameter id="half_maximal_effect_concentration_av_ax_complex_ii" value="10" constant="true" units="nmol_per_l"/>
+      <parameter id="half_maximal_effect_concentration_ax_ii" value="10" constant="true" units="nmol_per_l"/>
+      <parameter id="maximal_activation_rate_av_ax_complex_ii" value="70" constant="true" units="per_s"/>
+      <parameter id="maximal_activation_rate_ax_ii" value="0.00007" constant="true" units="per_s"/>
+      <parameter id="production_rate_ii" value="1" constant="true" units="per_s"/>
+
+      <!-- Coagulation factor V production, activation and degradation -->
+      <parameter id="degradation_rate_v" value="1" constant="true" units="per_s"/>
+      <parameter id="degradation_rate_v_activated" value="1" constant="true" units="per_s"/>
+      <parameter id="half_maximal_effect_concentration_thrombin_v" value="10" constant="true" units="nmol_per_l"/>
+      <parameter id="maximal_activation_rate_thrombin_v" value="70" constant="true" units="per_s"/>
+
+      <!-- Coagulation factor VII production, activation and degradation -->
+      <parameter id="degradation_rate_vii" value="1" constant="true" units="per_s"/>
+      <parameter id="degradation_rate_vii_activated" value="1" constant="true" units="per_s"/>
+      <parameter id="half_maximal_effect_concentration_thrombin_vii" value="10" constant="true" units="nmol_per_l"/>
+      <parameter id="half_maximal_effect_concentration_aix_vii" value="10" constant="true" units="nmol_per_l"/>
+      <parameter id="half_maximal_effect_concentration_ax_vii" value="10" constant="true" units="nmol_per_l"/>
+      <parameter id="half_maximal_effect_concentration_avii_tf_complex_vii" value="10" constant="true" units="nmol_per_l"/>
+      <parameter id="maximal_activation_rate_thrombin_vii" value="0.1" constant="true" units="per_s"/>
+      <parameter id="maximal_activation_rate_aix_vii" value="0.2" constant="true" units="per_s"/>
+      <parameter id="maximal_activation_rate_ax_vii" value="1" constant="true" units="per_s"/>
+      <parameter id="maximal_activation_rate_avii_tf_complex_vii" value="1" constant="true" units="per_s"/>
+      <parameter id="production_rate_vii" value="1" constant="true" units="per_s"/>
+
+      <!-- Coagulation factor VIII production, activation and degradation -->
+      <parameter id="degradation_rate_viii" value="1" constant="true" units="per_s"/>
+      <parameter id="degradation_rate_viii_activated" value="1" constant="true" units="per_s"/>
+      <parameter id="half_maximal_effect_concentration_thrombin_viii" value="10" constant="true" units="nmol_per_l"/>
+      <parameter id="maximal_activation_rate_thrombin_viii" value="70" constant="true" units="per_s"/>
+
+      <!-- Coagulation factor IX production, activation and degradation -->
+      <parameter id="degradation_rate_ix" value="1" constant="true" units="per_s"/>
+      <parameter id="degradation_rate_ix_activated" value="1" constant="true" units="per_s"/>
+      <parameter id="half_maximal_effect_concentration_avii_tf_complex_ix" value="1" constant="true" units="nmol_per_l"/>
+      <parameter id="half_maximal_effect_concentration_axi_ix" value="10" constant="true" units="nmol_per_l"/>
+      <parameter id="maximal_activation_rate_avii_tf_complex_ix" value="70" constant="true" units="per_s"/>
+      <parameter id="maximal_activation_rate_axi_ix" value="7" constant="true" units="per_s"/>
+      <parameter id="production_rate_ix" value="1" constant="true" units="per_s"/>
+
+      <!-- Coagulation factor X production, activation and degradation -->
+      <parameter id="degradation_rate_x" value="1" constant="true" units="per_s"/>
+      <parameter id="degradation_rate_x_activated" value="1" constant="true" units="per_s"/>
+      <parameter id="half_maximal_effect_concentration_avii_x" value="10" constant="true" units="nmol_per_l"/>
+      <parameter id="half_maximal_effect_concentration_avii_tf_complex_x" value="1" constant="true" units="nmol_per_l"/>
+      <parameter id="half_maximal_effect_concentration_aix_x" value="890" constant="true" units="nmol_per_l"/>
+      <parameter id="half_maximal_effect_concentration_aix_aviii_complex_x" value="10" constant="true" units="nmol_per_l"/>
+      <parameter id="maximal_activation_rate_avii_x" value="0.001" constant="true" units="per_s"/>
+      <parameter id="maximal_activation_rate_avii_tf_complex_x" value="70" constant="true" units="per_s"/>
+      <parameter id="maximal_activation_rate_aix_x" value="3" constant="true" units="per_s"/>
+      <parameter id="maximal_activation_rate_aix_aviii_complex_x" value="74" constant="true" units="per_s"/>
+      <parameter id="production_rate_x" value="1" constant="true" units="per_s"/>
+
+      <!-- Coagulation factor XI production, activation and degradation -->
+      <parameter id="degradation_rate_xi" value="1" constant="true" units="per_s"/>
+      <parameter id="degradation_rate_xi_activated" value="1" constant="true" units="per_s"/>
+      <parameter id="half_maximal_effect_concentration_thrombin_xi" value="10" constant="true" units="nmol_per_l"/>
+      <parameter id="maximal_activation_rate_thrombin_xi" value="10" constant="true" units="per_s"/>
+
+      <!-- Coagulation factor XIII production, activation and degradation -->
+      <parameter id="degradation_rate_xiii" value="1" constant="true" units="per_s"/>
+      <parameter id="degradation_rate_xiii_activated" value="1" constant="true" units="per_s"/>
+      <parameter id="half_maximal_effect_concentration_thrombin_xiii" value="1" constant="true" units="nmol_per_l"/>
+      <parameter id="maximal_activation_rate_thrombin_xiii" value="7" constant="true" units="per_s"/>
+
+      <!-- Fibrinogen, fibrin and cross-linked fibrin production, conversion and degradation -->
+      <parameter id="degradation_rate_fibrinogen" value="1" constant="true" units="per_s"/>
+      <parameter id="degradation_rate_fibrin" value="1" constant="true" units="per_s"/>
+      <parameter id="half_maximal_effect_concentration_axiii_fibrin" value="10" constant="true" units="nmol_per_l"/>
+      <parameter id="half_maximal_effect_concentration_thrombin_fibrinogen" value="10" constant="true" units="nmol_per_l"/>
+      <parameter id="half_maximal_effect_concentration_plasmin_fibrinogen" value="100" constant="true" units="nmol_per_l"/>
+      <parameter id="half_maximal_effect_concentration_plasmin_fibrin" value="10" constant="true" units="nmol_per_l"/>
+      <parameter id="maximal_conversion_rate_axiii_fibrin" value="7" constant="true" units="per_s"/>
+      <parameter id="maximal_conversion_rate_thrombin_fibrinogen" value="7" constant="true" units="per_s"/>
+      <parameter id="maximal_degradation_rate_plasmin_fibrinogen" value="7" constant="true" units="per_s"/>
+      <parameter id="maximal_degradation_rate_plasmin_fibrin" value="7" constant="true" units="per_s"/>
+
+      <!-- Plasminogen and plasmin production, conversion and degradation -->
+      <parameter id="degradation_rate_plasminogen" value="1" constant="true" units="per_s"/>
+      <parameter id="degradation_rate_plasmin" value="1" constant="true" units="per_s"/>
+      <parameter id="half_maximal_effect_concentration_fibrin_plasminogen" value="1" constant="true" units="nmol_per_l"/>
+      <parameter id="half_maximal_effect_concentration_thrombin_plasminogen" value="1" constant="true" units="nmol_per_l"/>
+      <parameter id="maximal_conversion_rate_fibrin_plasminogen" value="70" constant="true" units="per_s"/>
+      <parameter id="maximal_conversion_rate_thrombin_plasminogen" value="7" constant="true" units="per_s"/>
+
+      <!-- Tissue factor degradation -->
+      <parameter id="degradation_rate_tissue_factor" value="1" constant="true" units="per_s"/>
+
+      <!-- Vitamin K conversion, inhibition and degradation -->
+      <parameter id="conversion_rate_vk_vkh2" value="1" constant="true" units="per_s"/>
+      <parameter id="conversion_rate_vkh2_vko" value="1" constant="true" units="per_s"/>
+      <parameter id="conversion_rate_vko_vk" value="1" constant="true" units="per_s"/>
+      <parameter id="elimination_rate_vk" value="1" constant="true" units="per_s"/>
+      <parameter id="half_maximal_effect_concentration_warfarin" value="0.34" constant="true" units="mg_per_l"/>
+      <parameter id="maximal_inhibitory_effect_warfarin" value="1" constant="true" units="dimensionless"/>
+
+      <!-- Tissue factor pathway inhibitor production and degradation -->
+      <parameter id="degradation_rate_tfpi" value="1" constant="true" units="per_s"/>
+
+      <!-- Activated coagulation factor II - antithrombin complex (TAT) degradation -->
+      <parameter id="degradation_rate_tat" value="1" constant="true" units="per_s"/>
+
+      <!-- Activated coagulation factor II - (antithrombin III - heparin complex) complex production and degradation -->
+      <parameter id="complex_formation_rate_aii_atiii_heparin_complex" value="0.1" constant="true" units="l_per_nmol_per_s"/>
+
+      <!-- Activated coagulation factor V - activated coagulation factor X complex production and degradation -->
+      <parameter id="complex_formation_rate_av_ax" value="2" constant="true" units="l_per_nmol_per_s"/>
+      <parameter id="degradation_rate_av_ax_complex" value="1" constant="true" units="per_s"/>
+
+      <!-- Coagulation factor VII - tissue factor complex production, activation and degradation -->
+      <parameter id="complex_formation_rate_vii_tf" value="2" constant="true" units="l_per_nmol_per_s"/>
+      <parameter id="degradation_rate_vii_tf_complex" value="1" constant="true" units="per_s"/>
+      <parameter id="half_maximal_effect_concentration_ax_vii_tf_complex" value="1" constant="true" units="nmol_per_l"/>
+      <parameter id="half_maximal_effect_concentration_tf_vii_tf_complex" value="1" constant="true" units="nmol_per_l"/>
+      <parameter id="maximal_activation_rate_ax_vii_tf_complex" value="70" constant="true" units="per_s"/>
+      <parameter id="maximal_activation_rate_tf_vii_tf_complex" value="70" constant="true" units="per_s"/>
+
+      <!-- Activated coagulation factor VII - tissue factor complex production and degradation -->
+      <parameter id="complex_formation_rate_avii_tf" value="2" constant="true" units="l_per_nmol_per_s"/>
+      <parameter id="degradation_rate_avii_tf_complex" value="1" constant="true" units="per_s"/>
+
+      <!-- Activated coagulation factor IX - (antithrombin - heparin complex) complex production and degradation -->
+      <parameter id="complex_formation_rate_aix_atiii_heparin_complex" value="1" constant="true" units="l_per_nmol_per_s"/>
+
+      <!-- Activated coagulation factor IX - activated coagulation factor VIII complex production and degradation -->
+      <parameter id="complex_formation_rate_aix_aviii" value="2" constant="true" units="l_per_nmol_per_s"/>
+      <parameter id="degradation_rate_aix_aviii_complex" value="1" constant="true" units="per_s"/>
+
+      <!-- Activated coagulation factor IX - (antithrombin - heparin complex) complex production and degradation -->
+      <parameter id="complex_formation_rate_ax_atiii_heparin_complex" value="1" constant="true" units="l_per_nmol_per_s"/>
+
+      <!-- Activated coagulation factor X - tissue factor pathway inhibitor complex production and degradation -->
+      <parameter id="complex_formation_rate_ax_tfpi" value="2" constant="true" units="l_per_nmol_per_s"/>
+      <parameter id="degradation_rate_ax_tfpi_complex" value="1" constant="true" units="per_s"/>
+
+      <!-- (Activated VII - TF complex) - (activated X - TFPI complex) complex production and degradation -->
+      <parameter id="complex_formation_rate_avii_tf_ax_tfpi" value="2" constant="true" units="l_per_nmol_per_s"/>
+      <parameter id="degradation_rate_avii_tf_ax_tfpi_complex" value="1" constant="true" units="per_s"/>
+
+      <!-- Antithrombin III - heparin complex elimination -->
+      <parameter id="elimination_rate_atiii_heparin_complex" value="1" constant="true" units="per_s"/>
+    </listOfParameters>
+
+    <listOfReactions>
+      <!-- Antithrombin III - heparin complex elimination -->
+      <reaction id="atiii_heparin_complex_elimination" name="atiii_heparin_complex_elimination" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="atiii_heparin_complex"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> elimination_rate_atiii_heparin_complex </ci>
+              <ci> atiii_heparin_complex </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor II (prothrombin) production -->
+      <reaction id="prothrombin_production" name="prothrombin_production" reversible="false" fast="false">
+        <listOfProducts>
+          <speciesReference species="coagulation_factor_ii"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="vitamin_k_hydroquinone"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> production_rate_ii </ci>
+              <ci> vitamin_k_hydroquinone </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor II (prothrombin) degredation -->
+      <reaction id="prothrombin_degradation" name="prothrombin_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="coagulation_factor_ii"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate_ii </ci>
+              <ci> coagulation_factor_ii </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor II activation through activated coagulation factor V - activated coagulation factor X complex -->
+      <reaction id="av_ax_complex_prothrombin_activation" name="av_ax_complex_prothrombin_activation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="coagulation_factor_ii"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="activated_coagulation_factor_ii"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="av_ax_complex"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> central </ci>
+                <ci> maximal_activation_rate_av_ax_complex_ii </ci>
+                <ci> av_ax_complex </ci>
+                <ci> coagulation_factor_ii </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> half_maximal_effect_concentration_av_ax_complex_ii </ci>
+                <ci> av_ax_complex </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor II activation through activated coagulation factor X -->
+      <reaction id="ax_prothrombin_activation" name="ax_prothrombin_activation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="coagulation_factor_ii"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="activated_coagulation_factor_ii"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="activated_coagulation_factor_x"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> central </ci>
+                <ci> maximal_activation_rate_ax_ii </ci>
+                <ci> activated_coagulation_factor_x </ci>
+                <ci> coagulation_factor_ii </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> half_maximal_effect_concentration_ax_ii </ci>
+                <ci> activated_coagulation_factor_x </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Activated coagulation factor II (thrombin) degradation -->
+      <reaction id="thrombin_degradation" name="thrombin_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="activated_coagulation_factor_ii"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="aii_at_complex"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate_ii_activated </ci>
+              <ci> activated_coagulation_factor_ii </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Thrombin - (antithrombin - heparin complex) complex formation -->
+      <reaction id="aii_atiii_heparin_complex_formation" name="aii_atiii_heparin_complex_formation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="activated_coagulation_factor_ii"/>
+          <speciesReference species="atiii_heparin_complex"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="aii_atiii_heparin_complex"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> complex_formation_rate_aii_atiii_heparin_complex </ci>
+              <ci> activated_coagulation_factor_ii </ci>
+              <ci> atiii_heparin_complex </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Thrombin - antithrombin complex (TAT) degradation -->
+      <reaction id="tat_degradation" name="tat_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="aii_at_complex"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate_tat </ci>
+              <ci> aii_at_complex </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor V degredation -->
+      <reaction id="v_degradation" name="v_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="coagulation_factor_v"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate_v </ci>
+              <ci> coagulation_factor_v </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor V activation through thrombin -->
+      <reaction id="thrombin_v_activation" name="thrombin_v_activation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="coagulation_factor_v"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="activated_coagulation_factor_v"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="activated_coagulation_factor_ii"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> central </ci>
+                <ci> maximal_activation_rate_thrombin_v </ci>
+                <ci> activated_coagulation_factor_ii </ci>
+                <ci> coagulation_factor_v </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> half_maximal_effect_concentration_thrombin_v </ci>
+                <ci> activated_coagulation_factor_ii </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Activated coagulation factor V degredation -->
+      <reaction id="av_degradation" name="av_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="activated_coagulation_factor_v"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate_v_activated </ci>
+              <ci> activated_coagulation_factor_v </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Activated coagulation factor V - activated coagulation factor X complex formation -->
+      <reaction id="av_ax_complex_formation" name="av_ax_complex_formation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="activated_coagulation_factor_v"/>
+          <speciesReference species="activated_coagulation_factor_x"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="av_ax_complex"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> complex_formation_rate_av_ax </ci>
+              <ci> activated_coagulation_factor_v </ci>
+              <ci> activated_coagulation_factor_x </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Activated coagulation factor V - activated coagulation factor X complex degradation -->
+      <reaction id="av_ax_complex_degradation" name="av_ax_complex_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="av_ax_complex"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate_av_ax_complex </ci>
+              <ci> av_ax_complex </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor VII production -->
+      <reaction id="vii_production" name="vii_production" reversible="false" fast="false">
+        <listOfProducts>
+          <speciesReference species="coagulation_factor_vii"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="vitamin_k_hydroquinone"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> production_rate_vii </ci>
+              <ci> vitamin_k_hydroquinone </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor VII degredation -->
+      <reaction id="vii_degradation" name="vii_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="coagulation_factor_vii"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate_vii </ci>
+              <ci> coagulation_factor_vii </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor VII activation through thrombin -->
+      <reaction id="thrombin_vii_activation" name="thrombin_vii_activation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="coagulation_factor_vii"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="activated_coagulation_factor_vii"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="activated_coagulation_factor_ii"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> central </ci>
+                <ci> maximal_activation_rate_thrombin_vii </ci>
+                <ci> activated_coagulation_factor_ii </ci>
+                <ci> coagulation_factor_vii </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> half_maximal_effect_concentration_thrombin_vii </ci>
+                <ci> activated_coagulation_factor_ii </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor VII activation through activated coagulation factor IX -->
+      <reaction id="aix_vii_activation" name="aix_vii_activation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="coagulation_factor_vii"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="activated_coagulation_factor_vii"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="activated_coagulation_factor_ix"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> central </ci>
+                <ci> maximal_activation_rate_aix_vii </ci>
+                <ci> activated_coagulation_factor_ix </ci>
+                <ci> coagulation_factor_vii </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> half_maximal_effect_concentration_aix_vii </ci>
+                <ci> activated_coagulation_factor_ix </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor VII activation through activated coagulation factor X -->
+      <reaction id="ax_vii_activation" name="ax_vii_activation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="coagulation_factor_vii"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="activated_coagulation_factor_vii"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="activated_coagulation_factor_x"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> central </ci>
+                <ci> maximal_activation_rate_ax_vii </ci>
+                <ci> activated_coagulation_factor_x </ci>
+                <ci> coagulation_factor_vii </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> half_maximal_effect_concentration_ax_vii </ci>
+                <ci> activated_coagulation_factor_x </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor VII activation through activated coagulation factor VII - tissue factor complex -->
+      <reaction id="avii_tf_complex_vii_activation" name="avii_tf_complex_vii_activation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="coagulation_factor_vii"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="activated_coagulation_factor_vii"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="avii_tf_complex"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> central </ci>
+                <ci> maximal_activation_rate_avii_tf_complex_vii </ci>
+                <ci> avii_tf_complex </ci>
+                <ci> coagulation_factor_vii </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> half_maximal_effect_concentration_avii_tf_complex_vii </ci>
+                <ci> avii_tf_complex </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor VII - tissue factor complex formation -->
+      <reaction id="vii_tf_complex_formation" name="vii_tf_complex_formation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="coagulation_factor_vii"/>
+          <speciesReference species="tissue_factor"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="vii_tf_complex"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> complex_formation_rate_vii_tf </ci>
+              <ci> coagulation_factor_vii </ci>
+              <ci> tissue_factor </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor VII - tissue factor complex degredation -->
+      <reaction id="vii_tf_complex_degradation" name="vii_tf_complex_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="vii_tf_complex"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate_vii_tf_complex </ci>
+              <ci> vii_tf_complex </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor VII - tissue factor complex activation through activated coagulation factor X -->
+      <reaction id="ax_vii_tf_complex_activation" name="ax_vii_tf_complex_activation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="vii_tf_complex"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="avii_tf_complex"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="activated_coagulation_factor_x"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> central </ci>
+                <ci> maximal_activation_rate_ax_vii_tf_complex </ci>
+                <ci> activated_coagulation_factor_x </ci>
+                <ci> vii_tf_complex </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> half_maximal_effect_concentration_ax_vii_tf_complex </ci>
+                <ci> activated_coagulation_factor_x </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor VII - tissue factor complex activation through tissue factor -->
+      <reaction id="tf_vii_tf_complex_activation" name="tf_vii_tf_complex_activation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="vii_tf_complex"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="avii_tf_complex"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="tissue_factor"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> central </ci>
+                <ci> maximal_activation_rate_tf_vii_tf_complex </ci>
+                <ci> tissue_factor </ci>
+                <ci> vii_tf_complex </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> half_maximal_effect_concentration_tf_vii_tf_complex </ci>
+                <ci> tissue_factor </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Activated coagulation factor VII degredation -->
+      <reaction id="activated_vii_degradation" name="activated_vii_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="activated_coagulation_factor_vii"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate_vii_activated </ci>
+              <ci> activated_coagulation_factor_vii </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Activated coagulation factor VII - tissue factor complex formation -->
+      <reaction id="avii_tf_complex_formation" name="avii_tf_complex_formation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="activated_coagulation_factor_vii"/>
+          <speciesReference species="tissue_factor"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="avii_tf_complex"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> complex_formation_rate_avii_tf </ci>
+              <ci> activated_coagulation_factor_vii </ci>
+              <ci> tissue_factor </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Activated coagulation factor VII - tissue factor complex degredation -->
+      <reaction id="avii_tf_complex_degradation" name="avii_tf_complex_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="avii_tf_complex"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate_avii_tf_complex </ci>
+              <ci> avii_tf_complex </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- (Activated VII - TF complex) - (activated X - TFPI complex) complex formation -->
+      <reaction id="avii_tf_ax_tfpi_complex_formation" name="avii_tf_ax_tfpi_complex_formation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="avii_tf_complex"/>
+          <speciesReference species="ax_tfpi_complex"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="avii_tf_ax_tfpi_complex"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> complex_formation_rate_avii_tf_ax_tfpi </ci>
+              <ci> avii_tf_complex </ci>
+              <ci> ax_tfpi_complex </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- (Activated VII - TF complex) - (activated X - TFPI complex) complex degredation -->
+      <reaction id="avii_tf_ax_tfpi_complex_degradation" name="avii_tf_ax_tfpi_complex_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="avii_tf_ax_tfpi_complex"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate_avii_tf_ax_tfpi_complex </ci>
+              <ci> avii_tf_ax_tfpi_complex </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor VIII degredation -->
+      <reaction id="viii_degradation" name="viii_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="coagulation_factor_viii"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate_viii </ci>
+              <ci> coagulation_factor_viii </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor VIII activation through thrombin -->
+      <reaction id="thrombin_viii_activation" name="thrombin_viii_activation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="coagulation_factor_viii"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="activated_coagulation_factor_viii"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="activated_coagulation_factor_ii"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> central </ci>
+                <ci> maximal_activation_rate_thrombin_viii </ci>
+                <ci> activated_coagulation_factor_ii </ci>
+                <ci> coagulation_factor_viii </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> half_maximal_effect_concentration_thrombin_viii </ci>
+                <ci> activated_coagulation_factor_ii </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Activated coagulation factor VIII degredation -->
+      <reaction id="activated_viii_degradation" name="activated_viii_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="activated_coagulation_factor_viii"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate_viii_activated </ci>
+              <ci> activated_coagulation_factor_viii </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor IX production -->
+      <reaction id="ix_production" name="ix_production" reversible="false" fast="false">
+        <listOfProducts>
+          <speciesReference species="coagulation_factor_ix"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="vitamin_k_hydroquinone"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> production_rate_ix </ci>
+              <ci> vitamin_k_hydroquinone </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor IX degredation -->
+      <reaction id="ix_degradation" name="ix_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="coagulation_factor_ix"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate_ix </ci>
+              <ci> coagulation_factor_ix </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor IX activation through activated coagulation factor XI -->
+      <reaction id="axi_ix_activation" name="axi_ix_activation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="coagulation_factor_ix"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="activated_coagulation_factor_ix"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="activated_coagulation_factor_xi"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> central </ci>
+                <ci> maximal_activation_rate_axi_ix </ci>
+                <ci> activated_coagulation_factor_xi </ci>
+                <ci> coagulation_factor_ix </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> half_maximal_effect_concentration_axi_ix </ci>
+                <ci> activated_coagulation_factor_xi </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor IX activation through activated coagulation factor VII - tissue factor complex -->
+      <reaction id="avii_tf_complex_ix_activation" name="avii_tf_complex_ix_activation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="coagulation_factor_ix"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="activated_coagulation_factor_ix"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="avii_tf_complex"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> central </ci>
+                <ci> maximal_activation_rate_avii_tf_complex_ix </ci>
+                <ci> avii_tf_complex </ci>
+                <ci> coagulation_factor_ix </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> half_maximal_effect_concentration_avii_tf_complex_ix </ci>
+                <ci> avii_tf_complex </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Activated coagulation factor IX degredation -->
+      <reaction id="activated_ix_degradation" name="activated_ix_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="activated_coagulation_factor_ix"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate_ix_activated </ci>
+              <ci> activated_coagulation_factor_ix </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Activated coagulation factor IX - activated coagulation factor VIII complex formation -->
+      <reaction id="aix_aviii_complex_formation" name="aix_aviii_complex_formation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="activated_coagulation_factor_viii"/>
+          <speciesReference species="activated_coagulation_factor_ix"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="aix_aviii_complex"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> complex_formation_rate_aix_aviii </ci>
+              <ci> activated_coagulation_factor_ix </ci>
+              <ci> activated_coagulation_factor_viii </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Activated coagulation factor IX - activated coagulation factor VIII complex degredation -->
+      <reaction id="aix_aviii_complex_degradation" name="aix_aviii_complex_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="aix_aviii_complex"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate_aix_aviii_complex </ci>
+              <ci> aix_aviii_complex </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Activated coagulation factor IX - (antithrombin III - heparin complex) complex formation -->
+      <reaction id="aix_atiii_heparin_complex_formation" name="aix_atiii_heparin_complex_formation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="activated_coagulation_factor_ix"/>
+          <speciesReference species="atiii_heparin_complex"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="aix_atiii_heparin_complex"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> complex_formation_rate_aix_atiii_heparin_complex </ci>
+              <ci> activated_coagulation_factor_ix </ci>
+              <ci> atiii_heparin_complex </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor X production -->
+      <reaction id="x_production" name="x_production" reversible="false" fast="false">
+        <listOfProducts>
+          <speciesReference species="coagulation_factor_x"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="vitamin_k_hydroquinone"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> production_rate_x </ci>
+              <ci> vitamin_k_hydroquinone </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor X degredation -->
+      <reaction id="x_degradation" name="x_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="coagulation_factor_x"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate_x </ci>
+              <ci> coagulation_factor_x </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor X activation through activated coagulation factor VII -->
+      <reaction id="avii_x_activation" name="avii_x_activation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="coagulation_factor_x"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="activated_coagulation_factor_x"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="activated_coagulation_factor_vii"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> central </ci>
+                <ci> maximal_activation_rate_avii_x </ci>
+                <ci> activated_coagulation_factor_vii </ci>
+                <ci> coagulation_factor_x </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> half_maximal_effect_concentration_avii_x </ci>
+                <ci> activated_coagulation_factor_vii </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor X activation through activated coagulation factor VII - tissue factor complex -->
+      <reaction id="avii_tf_complex_x_activation" name="avii_tf_complex_x_activation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="coagulation_factor_x"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="activated_coagulation_factor_x"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="avii_tf_complex"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> central </ci>
+                <ci> maximal_activation_rate_avii_tf_complex_x </ci>
+                <ci> avii_tf_complex </ci>
+                <ci> coagulation_factor_x </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> half_maximal_effect_concentration_avii_tf_complex_x </ci>
+                <ci> avii_tf_complex </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor X activation through activated coagulation factor IX -->
+      <reaction id="aix_x_activation" name="aix_x_activation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="coagulation_factor_x"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="activated_coagulation_factor_x"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="activated_coagulation_factor_ix"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> central </ci>
+                <ci> maximal_activation_rate_aix_x </ci>
+                <ci> activated_coagulation_factor_ix </ci>
+                <ci> coagulation_factor_x </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> half_maximal_effect_concentration_aix_x </ci>
+                <ci> activated_coagulation_factor_ix </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor X activation through activated coagulation factor IX - activated coagulation factor VIII -->
+      <reaction id="aix_aviii_complex_x_activation" name="aix_aviii_complex_x_activation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="coagulation_factor_x"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="activated_coagulation_factor_x"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="aix_aviii_complex"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> central </ci>
+                <ci> maximal_activation_rate_aix_aviii_complex_x </ci>
+                <ci> aix_aviii_complex </ci>
+                <ci> coagulation_factor_x </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> half_maximal_effect_concentration_aix_aviii_complex_x </ci>
+                <ci> aix_aviii_complex </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Activated coagulation factor X degredation -->
+      <reaction id="ax_degradation" name="ax_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="activated_coagulation_factor_x"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate_x_activated </ci>
+              <ci> activated_coagulation_factor_x </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Activated coagulation factor X - (antithrombin III - heparin complex) complex formation -->
+      <reaction id="ax_atiii_heparin_complex_complex_formation" name="ax_atiii_heparin_complex_complex_formation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="activated_coagulation_factor_x"/>
+          <speciesReference species="atiii_heparin_complex"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="ax_atiii_heparin_complex_complex"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> complex_formation_rate_ax_atiii_heparin_complex </ci>
+              <ci> activated_coagulation_factor_x </ci>
+              <ci> atiii_heparin_complex </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Activated coagulation factor X - tissue factor pathway inhibitor complex formation -->
+      <reaction id="ax_tfpi_complex_formation" name="ax_tfpi_complex_formation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="activated_coagulation_factor_x"/>
+          <speciesReference species="tissue_factor_pathway_inhibitor"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="ax_tfpi_complex"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> complex_formation_rate_ax_tfpi </ci>
+              <ci> activated_coagulation_factor_x </ci>
+              <ci> tissue_factor_pathway_inhibitor </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Activated coagulation factor X - tissue factor pathway inhibitor complex degredation -->
+      <reaction id="ax_tfpi_complex_degradation" name="ax_tfpi_complex_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="ax_tfpi_complex"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate_ax_tfpi_complex </ci>
+              <ci> ax_tfpi_complex </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor XI degredation -->
+      <reaction id="xi_degradation" name="xi_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="coagulation_factor_xi"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate_xi </ci>
+              <ci> coagulation_factor_xi </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor XI activation through thrombin -->
+      <reaction id="thrombin_xi_activation" name="thrombin_xi_activation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="coagulation_factor_xi"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="activated_coagulation_factor_xi"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="activated_coagulation_factor_ii"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> central </ci>
+                <ci> maximal_activation_rate_thrombin_xi </ci>
+                <ci> activated_coagulation_factor_ii </ci>
+                <ci> coagulation_factor_xi </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> half_maximal_effect_concentration_thrombin_xi </ci>
+                <ci> activated_coagulation_factor_ii </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Activated coagulation factor XI degredation -->
+      <reaction id="activated_xi_degradation" name="activated_xi_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="activated_coagulation_factor_xi"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate_xi_activated </ci>
+              <ci> activated_coagulation_factor_xi </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor XIII degredation -->
+      <reaction id="xiii_degradation" name="xiii_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="coagulation_factor_xiii"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate_xiii </ci>
+              <ci> coagulation_factor_xiii </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Coagulation factor XIII activation through thrombin -->
+      <reaction id="thrombin_xiii_activation" name="thrombin_xiii_activation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="coagulation_factor_xiii"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="activated_coagulation_factor_xiii"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="activated_coagulation_factor_ii"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> central </ci>
+                <ci> maximal_activation_rate_thrombin_xiii </ci>
+                <ci> activated_coagulation_factor_ii </ci>
+                <ci> coagulation_factor_xiii </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> half_maximal_effect_concentration_thrombin_xiii </ci>
+                <ci> activated_coagulation_factor_ii </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Activated coagulation factor XIII degredation -->
+      <reaction id="axiii_degradation" name="axiii_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="activated_coagulation_factor_xiii"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate_xiii_activated </ci>
+              <ci> activated_coagulation_factor_xiii </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Fibrinogen degredation -->
+      <reaction id="fibrinogen_degradation" name="fibrinogen_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="fibrinogen"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate_fibrinogen </ci>
+              <ci> fibrinogen </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Fibrinogen conversion (to fibrin) through thrombin -->
+      <reaction id="thrombin_fibrinogen_conversion" name="thrombin_fibrinogen_conversion" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="fibrinogen"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="fibrin"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="activated_coagulation_factor_ii"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> central </ci>
+                <ci> maximal_conversion_rate_thrombin_fibrinogen </ci>
+                <ci> activated_coagulation_factor_ii </ci>
+                <ci> fibrinogen </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> half_maximal_effect_concentration_thrombin_fibrinogen </ci>
+                <ci> activated_coagulation_factor_ii </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Fibrinogen degradation through plasmin -->
+      <reaction id="plasmin_fibrinogen_degradation" name="plasmin_fibrinogen_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="fibrinogen"/>
+        </listOfReactants>
+        <listOfModifiers>
+          <modifierSpeciesReference species="plasmin"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> central </ci>
+                <ci> maximal_degradation_rate_plasmin_fibrinogen </ci>
+                <ci> plasmin </ci>
+                <ci> fibrinogen </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> half_maximal_effect_concentration_plasmin_fibrinogen </ci>
+                <ci> plasmin </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Fibrin integral -->
+      <reaction id="fibrin_concentration_integral" name="fibrin_concentration_integral" reversible="false" fast="false">
+        <listOfProducts>
+          <speciesReference species="fibrin_integral"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="fibrin"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> fibrin </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Fibrin degredation -->
+      <reaction id="fibrin_degradation" name="fibrin_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="fibrin"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate_fibrin </ci>
+              <ci> fibrin </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Fibrin conversion (to cross-linked fibrin) through activated coagulation factor XIII -->
+      <!-- (For efficiency fibrin is imply degredated becasue XF has no captured downstream tasks) -->
+      <reaction id="axiii_fibrin_conversion" name="axiii_fibrin_conversion" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="fibrin"/>
+        </listOfReactants>
+        <listOfModifiers>
+          <modifierSpeciesReference species="activated_coagulation_factor_xiii"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> central </ci>
+                <ci> maximal_conversion_rate_axiii_fibrin </ci>
+                <ci> activated_coagulation_factor_xiii </ci>
+                <ci> fibrin </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> half_maximal_effect_concentration_axiii_fibrin </ci>
+                <ci> activated_coagulation_factor_xiii </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Fibrin degradation through plasmin -->
+      <reaction id="plasmin_fibrin_degradation" name="plasmin_fibrin_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="fibrin"/>
+        </listOfReactants>
+        <listOfModifiers>
+          <modifierSpeciesReference species="plasmin"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> central </ci>
+                <ci> maximal_degradation_rate_plasmin_fibrin </ci>
+                <ci> plasmin </ci>
+                <ci> fibrin </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> half_maximal_effect_concentration_plasmin_fibrin </ci>
+                <ci> plasmin </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Plasminogen degredation -->
+      <reaction id="plasminogen_degradation" name="plasminogen_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="plasminogen"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate_plasminogen </ci>
+              <ci> plasminogen </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Plasminogen conversion (to plasmin) through thrombin -->
+      <reaction id="thrombin_plasminogen_conversion" name="thrombin_plasminogen_conversion" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="plasminogen"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="plasmin"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="activated_coagulation_factor_ii"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> central </ci>
+                <ci> maximal_conversion_rate_thrombin_plasminogen </ci>
+                <ci> activated_coagulation_factor_ii </ci>
+                <ci> plasminogen </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> half_maximal_effect_concentration_thrombin_plasminogen </ci>
+                <ci> activated_coagulation_factor_ii </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Plasminogen conversion (to plasmin) through fibrin -->
+      <reaction id="fibrin_plasminogen_conversion" name="fibrin_plasminogen_conversion" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="plasminogen"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="plasmin"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="fibrin"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> central </ci>
+                <ci> maximal_conversion_rate_fibrin_plasminogen </ci>
+                <ci> fibrin </ci>
+                <ci> plasminogen </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> half_maximal_effect_concentration_fibrin_plasminogen </ci>
+                <ci> fibrin </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Plasmin degredation -->
+      <reaction id="plasmin_degradation" name="plasmin_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="plasmin"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate_plasmin </ci>
+              <ci> plasmin </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Tissue factor degredation -->
+      <reaction id="tissue_factor_degradation" name="tissue_factor_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="tissue_factor"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate_tissue_factor </ci>
+              <ci> tissue_factor </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Tissue factor pathway inhibitor degredation -->
+      <reaction id="tfpi_degradation" name="tfpi_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="tissue_factor_pathway_inhibitor"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate_tfpi </ci>
+              <ci> tissue_factor_pathway_inhibitor </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Vitamin K degredation -->
+      <reaction id="vk_degradation" name="vk_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="vitamin_k"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> elimination_rate_vk </ci>
+              <ci> vitamin_k </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Vitamin K conversion (to vitamin K hydroquinone) and inhibition of conversion by warfarin -->
+      <reaction id="vitamin_k_conversion" name="vitamin_k_conversion" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="vitamin_k"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="vitamin_k_hydroquinone"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="warfarin"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> conversion_rate_vk_vkh2 </ci>
+              <ci> vitamin_k </ci>
+              <apply>
+                <minus/>
+                <cn> 1 </cn>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> maximal_inhibitory_effect_warfarin </ci>
+                    <ci> warfarin </ci>
+                  </apply>
+                  <apply>
+                    <plus/>
+                    <ci> half_maximal_effect_concentration_warfarin </ci>
+                    <ci> warfarin </ci>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Vitamin K hydroquinone conversion (to vitamin K epoxide) -->
+      <reaction id="vkh2_conversion" name="vkh2_conversion" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="vitamin_k_hydroquinone"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="vitamin_k_epoxide"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> conversion_rate_vkh2_vko </ci>
+              <ci> vitamin_k_hydroquinone </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Vitamin K epixode conversion (to vitamin K) and inhibition of conversion by warfarin -->
+      <reaction id="vitamin_k_epoxide_conversion" name="vitamin_k_epoxide_conversion" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="vitamin_k_epoxide"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="vitamin_k"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="warfarin"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> conversion_rate_vko_vk </ci>
+              <ci> vitamin_k_epoxide </ci>
+              <apply>
+                <minus/>
+                <cn> 1 </cn>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> maximal_inhibitory_effect_warfarin </ci>
+                    <ci> warfarin </ci>
+                  </apply>
+                  <apply>
+                    <plus/>
+                    <ci> half_maximal_effect_concentration_warfarin </ci>
+                    <ci> warfarin </ci>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+    </listOfReactions>
+  </model>
+</sbml>

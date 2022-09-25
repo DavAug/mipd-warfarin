@@ -1,0 +1,29 @@
+Parameter,Value,Unit
+central.s_warfarin_amount,0.0,mg
+dose.drug_amount,0.0,mg
+myokit.delay_compartment_1_chain_1,1.0,dimensionless
+myokit.delay_compartment_2_chain_1,1.0,dimensionless
+myokit.delay_compartment_1_chain_2,1.0,dimensionless
+myokit.delay_compartment_2_chain_2,1.0,dimensionless
+myokit.relative_change_cf1,1.0,dimensionless
+myokit.relative_change_cf2,1.0,dimensionless
+dose.absorption_rate,2.0,1/h
+myokit.baseline_inr,1.0,dimensionless
+myokit.maximal_effect,1.0,1
+myokit.maximal_inr_shift,20.0,dimensionless
+central.size,14.3,L
+myokit.clearance,0.348,L/h
+myokit.gamma,1.15,dimensionless
+myokit.half_maximal_effect_concentration,4.1,mg/L
+myokit.transition_rate_chain_1,0.1048951048951049,1/h
+myokit.transition_rate_chain_2,0.0253592561284869,1/h
+Std. log myokit.clearance,0.1,dimensionless
+Shift per *1 allele myokit.clearance,0.174,L/h
+Shift per *2 allele myokit.clearance,0.0879,L/h
+Shift per *3 allele myokit.clearance,0.0422,L/h
+Rel. change per year myokit.clearance,0.00571,dimensionless
+Mean log central.size,2.6602595372658615,dimensionless
+Std. log central.size,0.1,dimensionless
+Std. log myokit.half_maximal_effect_concentration,0.1,dimensionless
+Shift per G allele myokit.half_maximal_effect_concentration,2.05,dimensionless
+Shift per A allele myokit.half_maximal_effect_concentration,0.96,dimensionless
