@@ -102,12 +102,13 @@ class HambergClearanceCovariateModel(chi.CovariateModel):
     the age and the CYP2C9 genotype
 
     .. math::
-        CL = (CL_{a_1} + CL_{a_2}) (1 - r_{age})(Age - 71),
+        CL = (CL_{a_1} + CL_{a_2}) (1 - tanh(r_{age}(Age - 71))),
 
     where :math:`CL` denotes the clearance, and
     :math:`CL_{a_1}` and :math:`CL_{a_2}` the clearance contributions from the
     CYP2C9 alleles. :math:`r_{age}` denotes the change of the clearance with the
-    age of the patient.
+    age of the patient. Note that the tanh is a modification of Hamberg's model
+    that avoids negative clearances.
 
     The first covariate encodes the CYP2C9 genotype, and the second covariate
     the genotype the age. In particular, the CYP2C9 variants are encoded as
@@ -121,6 +122,12 @@ class HambergClearanceCovariateModel(chi.CovariateModel):
     5: 'CYP2C9 variant *3/*3'
 
     The age of the patients are expected to be in years.
+
+    The parameters of the model are the relative decrease of the clearance from
+    *1/*1 to *2/2, the relative decrease from *1/*1 to *3/*3 and the change of
+    the clearance with age, :math:`r_{age}`. The first two parameters are
+    defined in the interval [0, 1], and :math:`r_{age}` is defined over all
+    positive numbers.
 
     .. note::
         This model is meant to be used together with a lognormal population
@@ -139,8 +146,8 @@ class HambergClearanceCovariateModel(chi.CovariateModel):
         # Note the clearance for *1/*1 is implemented as the baseline
         self._n_parameters = 3
         self._parameter_names = [
-            'Rel. clearance shift per *2 allele',
-            'Rel. clearance shift per *3 allele',
+            'Rel. clearance shift *2/*2',
+            'Rel. clearance shift *3/3*',
             'Rel. clearance shift with age']
 
     def compute_population_parameters(
@@ -160,7 +167,7 @@ class HambergClearanceCovariateModel(chi.CovariateModel):
         parameters = np.asarray(parameters)
         if parameters.ndim == 1:
             parameters = parameters.reshape(1, self._n_parameters)
-        relative_shift_v2, relative_shift_v3, age_change = parameters[0]
+        relative_shift_22, relative_shift_33, age_change = parameters[0]
 
         # Compute population parameters
         n_pop, n_dim = pop_parameters.shape
@@ -182,27 +189,28 @@ class HambergClearanceCovariateModel(chi.CovariateModel):
 
         # CYP2C9 variant *1/*2
         mask = cyp2c9 == 1
-        vartheta[mask, 0] += np.log(1 - relative_shift_v2)
+        vartheta[mask, 0] += np.log(1 - relative_shift_22 / 2)
 
         # CYP2C9 variant *1/*3
         mask = cyp2c9 == 2
-        vartheta[mask, 0] += np.log(1 - relative_shift_v3)
+        vartheta[mask, 0] += np.log(1 - relative_shift_33 / 2)
 
         # CYP2C9 variant *2/*2
         mask = cyp2c9 == 3
-        vartheta[mask, 0] += np.log(1 - 2 * relative_shift_v2)
+        vartheta[mask, 0] += np.log(1 - relative_shift_22)
 
         # CYP2C9 variant *2/*3
         mask = cyp2c9 == 4
-        vartheta[mask, 0] += np.log(1 - relative_shift_v2 - relative_shift_v3)
+        vartheta[mask, 0] += np.log(
+            1 - (relative_shift_22 + relative_shift_33) / 2)
 
         # CYP2C9 variant *3/*3
         mask = cyp2c9 == 5
-        vartheta[mask, 0] += np.log(1 - 2 * relative_shift_v3)
+        vartheta[mask, 0] += np.log(1 - relative_shift_33)
 
         # Age
         vartheta[:, 0] += \
-            np.log(1 - age[:, np.newaxis] * age_change)
+            np.log(1 - np.tanh(age[:, np.newaxis] * age_change))
 
         return vartheta
 
@@ -230,7 +238,7 @@ class HambergClearanceCovariateModel(chi.CovariateModel):
         parameters = np.asarray(parameters)
         if parameters.ndim == 1:
             parameters = parameters.reshape(1, self._n_parameters)
-        relative_shift_v2, relative_shift_v3, age_change = parameters[0]
+        relative_shift_22, relative_shift_33, age_change = parameters[0]
 
         # Compute sensitivities
         n_pop, n_dim = pop_parameters.shape
@@ -248,27 +256,30 @@ class HambergClearanceCovariateModel(chi.CovariateModel):
 
         # CYP2C9 variant *1/*2
         mask = cyp2c9 == 1
-        dmu[mask, 0] -= 1 / (1 - relative_shift_v2)
+        dmu[mask, 0] -= 1 / (1 - relative_shift_22 / 2) / 2
 
         # CYP2C9 variant *1/*3
         mask = cyp2c9 == 2
-        dmu[mask, 1] -= 1 / (1 - relative_shift_v3)
+        dmu[mask, 1] -= 1 / (1 - relative_shift_33 / 2) / 2
 
         # CYP2C9 variant *2/*2
         mask = cyp2c9 == 3
-        dmu[mask, 0] -= 2 / (1 - 2 * relative_shift_v2)
+        dmu[mask, 0] -= 1 / (1 - relative_shift_22)
 
         # CYP2C9 variant *2/*3
         mask = cyp2c9 == 4
-        dmu[mask, 0] -= 1 / (1 - relative_shift_v2 - relative_shift_v3)
-        dmu[mask, 1] -= 1 / (1 - relative_shift_v2 - relative_shift_v3)
+        dmu[mask, 0] -= \
+            1 / (1 - (relative_shift_22 + relative_shift_33) / 2) / 2
+        dmu[mask, 1] -= \
+            1 / (1 - (relative_shift_22 + relative_shift_33) / 2) / 2
 
         # CYP2C9 variant *3/*3
         mask = cyp2c9 == 5
-        dmu[mask, 1] -= 2 / (1 - 2 * relative_shift_v3)
+        dmu[mask, 1] -= 1 / (1 - relative_shift_33)
 
         # Age
-        dmu[:, 2] -= age / (1 - age * age_change)
+        dmu[:, 2] -= \
+            age / (1 - np.tanh(age * age_change)) / (1 + (age * age_change)**2)
 
         dparams = np.sum(
             dlogp_dvartheta[:, 0, 0, np.newaxis] * dmu, axis=0)
@@ -331,6 +342,9 @@ class HambergEC50CovariateModel(chi.CovariateModel):
     1: 'VKORC1 variant GA'
     2: 'VKORC1 variant AA'
 
+    The parameter of the model is the relative decrease of the EC50 from
+    G/G to A/A, which assumes values between 0 and 1.
+
     .. note::
         This model is meant to be used together with a lognormal population
         model where the location parameter is the logarithm of the typical
@@ -387,11 +401,11 @@ class HambergEC50CovariateModel(chi.CovariateModel):
 
         # VKORC1 variant G/A
         mask = vkorc1 == 1
-        vartheta[mask, 0] += np.log(1 - relative_shift)
+        vartheta[mask, 0] += np.log(1 - relative_shift / 2)
 
         # VKORC1 variant A/A
         mask = vkorc1 == 2
-        vartheta[mask, 0] += np.log(1 - 2 * relative_shift)
+        vartheta[mask, 0] += np.log(1 - relative_shift)
 
         return vartheta
 
@@ -436,11 +450,11 @@ class HambergEC50CovariateModel(chi.CovariateModel):
 
         # VKORC1 variant G/A
         mask = vkorc1 == 1
-        dmu[mask, 0] -= 1 / (1 - relative_shift)
+        dmu[mask, 0] -= 1 / (1 - relative_shift / 2) / 2
 
         # VKORC1 variant G/A
         mask = vkorc1 == 2
-        dmu[mask, 0] -= 2 / (1 - 2 * relative_shift)
+        dmu[mask, 0] -= 1 / (1 - relative_shift)
 
         dparams = np.sum(
             dlogp_dvartheta[:, 0, 0, np.newaxis] * dmu, axis=0)

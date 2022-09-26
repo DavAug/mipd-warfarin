@@ -13,6 +13,12 @@ def define_log_posterior():
     measurements_df = pd.read_csv(
         directory + '/data/synthetic_hamberg_model_data.csv')
 
+    ids = measurements_df.ID.dropna().unique()
+    mask = measurements_df.ID == ids[0]
+    for _id in ids[:10]:
+        mask = mask | (measurements_df.ID == _id)
+    measurements_df = measurements_df[mask]
+
     # Define hierarchical log-posterior
     mechanistic_model,_ = define_hamberg_model()
     error_models = [chi.LogNormalErrorModel(), chi.LogNormalErrorModel()]
@@ -22,12 +28,12 @@ def define_log_posterior():
         pints.LogNormalLogPrior(0.1, 0.3),   # Sigma log volume
         pints.GaussianLogPrior(-1, 0.5),     # Mean log clearance
         pints.LogNormalLogPrior(0.1, 0.3),   # Sigma log clearance
-        pints.LogNormalLogPrior(-1.6, 0.7),  # Rel. shift clearance CYP29P *2
-        pints.LogNormalLogPrior(-1.6, 0.7),  # Rel. shift clearance CYP29P *3
-        pints.GaussianLogPrior(0, 0.01),     # Rel. shift clearance Age
+        pints.UniformLogPrior(0, 1),         # Rel. shift clearance *2/*2
+        pints.UniformLogPrior(0, 1),         # Rel. shift clearance *3/*3
+        pints.LogNormalLogPrior(0.1, 0.3),   # Rel. shift clearance Age
         pints.GaussianLogPrior(1.41, 0.5),   # Mean log EC50
         pints.LogNormalLogPrior(0.1, 0.3),   # Sigma log EC50
-        pints.LogNormalLogPrior(-1.6, 0.7),  # Rel. shift EC50 VKORC1 A
+        pints.UniformLogPrior(0, 1),         # Rel. shift EC50 A/A
         pints.LogNormalLogPrior(-2.3, 0.7),  # Pooled rate chain 1
         pints.LogNormalLogPrior(-3.7, 1.5),  # Pooled rate chain 2
         pints.LogNormalLogPrior(0.1, 0.3),   # Sigma log drug conc.
@@ -47,6 +53,13 @@ def run_inference(log_posterior):
     controller.set_n_runs(1)
     controller.set_parallel_evaluation(True)
     controller.set_sampler(pints.NoUTurnMCMC)
+    controller.set_transform(pints.ComposedTransformation(
+        pints.IdentityTransformation(n_parameters=10 * 3 + 4),
+        pints.LogitTransformation(n_parameters=2),
+        pints.IdentityTransformation(n_parameters=3),
+        pints.LogitTransformation(n_parameters=1),
+        pints.IdentityTransformation(n_parameters=4)
+    ))
 
     n_iterations = 1500
     posterior_samples = controller.run(
