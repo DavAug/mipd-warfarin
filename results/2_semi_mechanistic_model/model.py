@@ -147,7 +147,7 @@ class HambergClearanceCovariateModel(chi.CovariateModel):
         self._n_parameters = 3
         self._parameter_names = [
             'Rel. clearance shift *2/*2',
-            'Rel. clearance shift *3/3*',
+            'Rel. clearance shift *3/*3',
             'Rel. clearance shift with age']
 
     def compute_population_parameters(
@@ -361,7 +361,7 @@ class HambergEC50CovariateModel(chi.CovariateModel):
         # Set number of parameters (shift A)
         # Note the EC50 for G/G is implemented as the baseline
         self._n_parameters = 1
-        self._parameter_names = ['Rel. EC50 shift per A allele']
+        self._parameter_names = ['Rel. EC50 shift AA']
 
     def compute_population_parameters(
             self, parameters, pop_parameters, covariates):
