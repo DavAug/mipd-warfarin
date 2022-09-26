@@ -13,12 +13,6 @@ def define_log_posterior():
     measurements_df = pd.read_csv(
         directory + '/data/synthetic_hamberg_model_data.csv')
 
-    ids = measurements_df.ID.dropna().unique()
-    mask = measurements_df.ID == ids[0]
-    for _id in ids[:10]:
-        mask = mask | (measurements_df.ID == _id)
-    measurements_df = measurements_df[mask]
-
     # Define hierarchical log-posterior
     mechanistic_model,_ = define_hamberg_model()
     error_models = [chi.LogNormalErrorModel(), chi.LogNormalErrorModel()]
