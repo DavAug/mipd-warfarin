@@ -1148,6 +1148,218 @@
         </math>
       </rateRule>
 
+      <!-- Sensitivity of warfarin concentration to transition rate chain 1 -->
+      <!-- Hack to return zero, but let sensitivity be a state -->
+      <assignmentRule variable="dconcentration_central_compartment_dtransition_rate_chain_1">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <cn> 0 </cn>
+            <ci> concentration_central_compartment </ci>
+          </apply>
+        </math>
+      </assignmentRule>
+
+      <!-- Sensitivity of inr to transition rate chain 1 -->
+      <assignmentRule variable="dinr_dtransition_rate_chain_1">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <cn> -1 </cn>
+            <ci> maximal_inr_shift </ci>
+            <ci> drelative_change_cf1_dtransition_rate_chain_1 </ci>
+            <apply>
+              <divide/>
+              <ci> relative_change_cf2 </ci>
+              <cn> 2 </cn>
+            </apply>
+          </apply>
+        </math>
+      </assignmentRule>
+
+      <!-- Sensitivity of relative change of coagulation factor 1 to transition rate chain 1 -->
+      <rateRule variable="drelative_change_cf1_dtransition_rate_chain_1">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <plus/>
+              <ci> delay_compartment_2_chain_1 </ci>
+              <apply>
+                <times/>
+                <ci> transition_rate_chain_1 </ci>
+                <ci> ddelay_compartment_2_chain_1_dtransition_rate_chain_1 </ci>
+              </apply>
+            </apply>
+            <apply>
+              <plus/>
+              <ci> relative_change_cf1 </ci>
+              <apply>
+                <times/>
+                <ci> transition_rate_chain_1 </ci>
+                <ci> drelative_change_cf1_dtransition_rate_chain_1 </ci>
+              </apply>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Sensitivity of delay comp 2 chain 1 to transition rate chain 1 -->
+      <rateRule variable="ddelay_compartment_2_chain_1_dtransition_rate_chain_1">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <plus/>
+              <ci> delay_compartment_1_chain_1 </ci>
+              <apply>
+                <times/>
+                <ci> transition_rate_chain_1 </ci>
+                <ci> ddelay_compartment_1_chain_1_dtransition_rate_chain_1 </ci>
+              </apply>
+            </apply>
+            <apply>
+              <plus/>
+              <ci> delay_compartment_2_chain_1 </ci>
+              <apply>
+                <times/>
+                <ci> transition_rate_chain_1 </ci>
+                <ci> ddelay_compartment_2_chain_1_dtransition_rate_chain_1 </ci>
+              </apply>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Sensitivity of delay comp 1 chain 1 to transition rate chain 1 -->
+      <rateRule variable="ddelay_compartment_1_chain_1_dtransition_rate_chain_1">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <minus/>
+              <cn> 1 </cn>
+              <ci> inhibitory_effect </ci>
+            </apply>
+            <apply>
+              <plus/>
+              <ci> delay_compartment_1_chain_1 </ci>
+              <apply>
+                <times/>
+                <ci> transition_rate_chain_1 </ci>
+                <ci> ddelay_compartment_1_chain_1_dtransition_rate_chain_1 </ci>
+              </apply>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Sensitivity of warfarin concentration to transition rate chain 2 -->
+      <!-- Hack to return zero, but let sensitivity be a state -->
+      <assignmentRule variable="dconcentration_central_compartment_dtransition_rate_chain_2">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <cn> 0 </cn>
+            <ci> concentration_central_compartment </ci>
+          </apply>
+        </math>
+      </assignmentRule>
+
+      <!-- Sensitivity of inr to transition rate chain 2 -->
+      <assignmentRule variable="dinr_dtransition_rate_chain_2">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <cn> -1 </cn>
+            <ci> maximal_inr_shift </ci>
+            <ci> drelative_change_cf1_dtransition_rate_chain_2 </ci>
+            <apply>
+              <divide/>
+              <ci> relative_change_cf2 </ci>
+              <cn> 2 </cn>
+            </apply>
+          </apply>
+        </math>
+      </assignmentRule>
+
+      <!-- Sensitivity of relative change of coagulation factor 1 to transition rate chain 2 -->
+      <rateRule variable="drelative_change_cf1_dtransition_rate_chain_2">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <plus/>
+              <ci> delay_compartment_2_chain_2 </ci>
+              <apply>
+                <times/>
+                <ci> transition_rate_chain_2 </ci>
+                <ci> ddelay_compartment_2_chain_2_dtransition_rate_chain_2 </ci>
+              </apply>
+            </apply>
+            <apply>
+              <plus/>
+              <ci> relative_change_cf1 </ci>
+              <apply>
+                <times/>
+                <ci> transition_rate_chain_2 </ci>
+                <ci> drelative_change_cf1_dtransition_rate_chain_2 </ci>
+              </apply>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Sensitivity of delay comp 2 chain 2 to transition rate chain 2 -->
+      <rateRule variable="ddelay_compartment_2_chain_2_dtransition_rate_chain_2">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <plus/>
+              <ci> delay_compartment_1_chain_2 </ci>
+              <apply>
+                <times/>
+                <ci> transition_rate_chain_2 </ci>
+                <ci> ddelay_compartment_1_chain_2_dtransition_rate_chain_2 </ci>
+              </apply>
+            </apply>
+            <apply>
+              <plus/>
+              <ci> delay_compartment_2_chain_2 </ci>
+              <apply>
+                <times/>
+                <ci> transition_rate_chain_2 </ci>
+                <ci> ddelay_compartment_2_chain_2_dtransition_rate_chain_2 </ci>
+              </apply>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Sensitivity of delay comp 1 chain 2 to transition rate chain 2 -->
+      <rateRule variable="ddelay_compartment_1_chain_2_dtransition_rate_chain_2">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <minus/>
+              <cn> 1 </cn>
+              <ci> inhibitory_effect </ci>
+            </apply>
+            <apply>
+              <plus/>
+              <ci> delay_compartment_1_chain_2 </ci>
+              <apply>
+                <times/>
+                <ci> transition_rate_chain_2 </ci>
+                <ci> ddelay_compartment_1_chain_2_dtransition_rate_chain_2 </ci>
+              </apply>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
     </listOfRules>
   </model>
 </sbml>
