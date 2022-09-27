@@ -48,7 +48,7 @@ Sensitivities:
 
 1. with respect to $v$:
 ```math
-\frac{\mathrm{d}a_c}{\mathrm{d}v} = -\frac{a_c}{v^2}
+\frac{\mathrm{d}c}{\mathrm{d}v} = -\frac{a_c}{v^2}
 \quad \text{and} \quad
 \frac{\mathrm{d}\bar{y}}{\mathrm{d}v} = -\bar{y}_{max}\left( \frac{f_2}{2}\frac{\mathrm{d}f_1}{\mathrm{d}v} + \frac{f_1}{2}\frac{\mathrm{d}f_2}{\mathrm{d}v} \right)
 ```
