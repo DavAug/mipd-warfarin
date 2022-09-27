@@ -1,0 +1,927 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">
+  <model id="hamberg_warfarin_inr_model_with_sensitivities" timeUnits="h">
+
+    <listOfUnitDefinitions>
+      <unitDefinition id="h">
+        <listOfUnits>
+          <unit kind="second" exponent="1" scale="0" multiplier="3600"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="per_h">
+        <listOfUnits>
+          <unit kind="second" exponent="-1" scale="0" multiplier="3600"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="l_per_h">
+        <listOfUnits>
+          <unit kind="liter" exponent="1" scale="0" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="0" multiplier="3600"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="mg">
+        <listOfUnits>
+          <unit kind="gram" exponent="1" scale="-3" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="mg_per_l">
+        <listOfUnits>
+          <unit kind="gram" exponent="1" scale="-3" multiplier="1"/>
+          <unit kind="liter" exponent="-1" scale="0" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="mg_per_h">
+        <listOfUnits>
+          <unit kind="gram" exponent="1" scale="-3" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="0" multiplier="3600"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="mgh_per_l">
+        <listOfUnits>
+          <unit kind="gram" exponent="1" scale="-3" multiplier="1"/>
+          <unit kind="second" exponent="1" scale="0" multiplier="3600"/>
+          <unit kind="liter" exponent="-1" scale="0" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="l_per_mg">
+        <listOfUnits>
+          <unit kind="liter" exponent="1" scale="0" multiplier="1"/>
+          <unit kind="gram" exponent="-1" scale="-3" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="mg_per_l_per_l">
+        <listOfUnits>
+          <unit kind="gram" exponent="1" scale="-3" multiplier="1"/>
+          <unit kind="liter" exponent="-1" scale="0" multiplier="1"/>
+          <unit kind="liter" exponent="-1" scale="0" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="per_l">
+        <listOfUnits>
+          <unit kind="liter" exponent="-1" scale="0" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+    </listOfUnitDefinitions>
+
+    <listOfParameters>
+      <!-- INR-related parameters -->
+      <parameter id="baseline_inr" value="1" constant="true" units="dimensionless"/>
+      <parameter id="inr" value="1" constant="false" units="dimensionless"/>
+
+      <!-- Warfarin PD-related states -->
+      <parameter id="delay_compartment_1_chain_1" value="1" constant="false" units="dimensionless"/>
+      <parameter id="delay_compartment_1_chain_2" value="1" constant="false" units="dimensionless"/>
+      <parameter id="delay_compartment_2_chain_1" value="1" constant="false" units="dimensionless"/>
+      <parameter id="delay_compartment_2_chain_2" value="1" constant="false" units="dimensionless"/>
+      <parameter id="relative_change_cf1" value="1" constant="false" units="dimensionless"/>
+      <parameter id="relative_change_cf2" value="1" constant="false" units="dimensionless"/>
+
+      <!-- Warfarin PD-related parameters -->
+      <parameter id="gamma" value="1" constant="true" units="dimensionless"/>
+      <parameter id="half_maximal_effect_concentration" value="1" constant="true" units="mg_per_l"/>
+      <parameter id="inhibitory_effect" value="1" constant="false" units="dimensionless"/>
+      <parameter id="maximal_inr_shift" value="1" constant="true" units="dimensionless"/>
+      <parameter id="maximal_effect" value="1" constant="true" units="dimensionless"/>
+      <parameter id="transition_rate_chain_1" value="1" constant="true" units="per_h"/>
+      <parameter id="transition_rate_chain_2" value="1" constant="true" units="per_h"/>
+
+      <!-- Warfarin PK-related states -->
+      <parameter id="amount_dose_compartment" value="1" constant="true" units="mg"/>
+      <parameter id="amount_central_compartment" value="1" constant="true" units="mg"/>
+      <parameter id="concentration_central_compartment" value="1" constant="true" units="mg_per_l"/>
+
+      <!-- Warfarin PK-related parameters -->
+      <parameter id="absorption_rate" value="1" constant="true" units="per_h"/>
+      <parameter id="dose_rate" value="1" constant="true" units="mg_per_h"/>
+      <parameter id="elimination_rate" value="1" constant="true" units="per_h"/>
+      <parameter id="volume" value="1" constant="true" units="liter"/>
+
+      <!-- Sensitivities -->
+      <parameter id="dconcentration_central_compartment_dvolume" value="1" constant="true" units="mg_per_l_per_l"/>
+      <parameter id="dconcentration_central_compartment_delimination_rate" value="1" constant="true" units="mgh_per_l"/>
+      <parameter id="dconcentration_central_compartment_dhalf_maximal_effect_concentration" value="1" constant="true" units="dimensionless"/>
+      <parameter id="dconcentration_central_compartment_dtransition_rate_chain_1" value="1" constant="true" units="mgh_per_l"/>
+      <parameter id="dconcentration_central_compartment_dtransition_rate_chain_2" value="1" constant="true" units="mgh_per_l"/>
+
+      <parameter id="dinr_dvolume" value="1" constant="true" units="per_l"/>
+      <parameter id="dinr_delimination_rate" value="1" constant="true" units="h"/>
+      <parameter id="dinr_dhalf_maximal_effect_concentration" value="1" constant="true" units="l_per_mg"/>
+      <parameter id="dinr_dtransition_rate_chain_1" value="1" constant="true" units="h"/>
+      <parameter id="dinr_dtransition_rate_chain_2" value="1" constant="true" units="h"/>
+
+      <!-- Intermediary sensitivities-->
+      <parameter id="damount_central_compartment_delimination_rate" value="1" constant="true" units="mg_per_l"/>
+
+      <parameter id="drelative_change_cf1_dvolume" value="1" constant="true" units="per_l"/>
+      <parameter id="drelative_change_cf1_delimination_rate" value="1" constant="true" units="h"/>
+      <parameter id="drelative_change_cf1_dhalf_maximal_effect_concentration" value="1" constant="true" units="l_per_mg"/>
+      <parameter id="drelative_change_cf1_dtransition_rate_chain_1" value="1" constant="true" units="h"/>
+      <parameter id="drelative_change_cf1_dtransition_rate_chain_2" value="1" constant="true" units="h"/>
+
+      <parameter id="drelative_change_cf2_dvolume" value="1" constant="true" units="per_l"/>
+      <parameter id="drelative_change_cf2_delimination_rate" value="1" constant="true" units="h"/>
+      <parameter id="drelative_change_cf2_dhalf_maximal_effect_concentration" value="1" constant="true" units="l_per_mg"/>
+      <parameter id="drelative_change_cf2_dtransition_rate_chain_1" value="1" constant="true" units="h"/>
+      <parameter id="drelative_change_cf2_dtransition_rate_chain_2" value="1" constant="true" units="h"/>
+
+      <parameter id="ddelay_compartment_1_chain_1_dvolume" value="1" constant="true" units="per_l"/>
+      <parameter id="ddelay_compartment_1_chain_1_delimination_rate" value="1" constant="true" units="h"/>
+      <parameter id="ddelay_compartment_1_chain_1_dhalf_maximal_effect_concentration" value="1" constant="true" units="l_per_mg"/>
+      <parameter id="ddelay_compartment_1_chain_1_dtransition_rate_chain_1" value="1" constant="true" units="h"/>
+      <parameter id="ddelay_compartment_1_chain_1_dtransition_rate_chain_2" value="1" constant="true" units="h"/>
+
+      <parameter id="ddelay_compartment_1_chain_2_dvolume" value="1" constant="true" units="per_l"/>
+      <parameter id="ddelay_compartment_1_chain_2_delimination_rate" value="1" constant="true" units="h"/>
+      <parameter id="ddelay_compartment_1_chain_2_dhalf_maximal_effect_concentration" value="1" constant="true" units="l_per_mg"/>
+      <parameter id="ddelay_compartment_1_chain_2_dtransition_rate_chain_1" value="1" constant="true" units="h"/>
+      <parameter id="ddelay_compartment_1_chain_2_dtransition_rate_chain_2" value="1" constant="true" units="h"/>
+
+      <parameter id="ddelay_compartment_2_chain_1_dvolume" value="1" constant="true" units="per_l"/>
+      <parameter id="ddelay_compartment_2_chain_1_delimination_rate" value="1" constant="true" units="h"/>
+      <parameter id="ddelay_compartment_2_chain_1_dhalf_maximal_effect_concentration" value="1" constant="true" units="l_per_mg"/>
+      <parameter id="ddelay_compartment_2_chain_1_dtransition_rate_chain_1" value="1" constant="true" units="h"/>
+      <parameter id="ddelay_compartment_2_chain_1_dtransition_rate_chain_2" value="1" constant="true" units="h"/>
+
+      <parameter id="ddelay_compartment_2_chain_2_dvolume" value="1" constant="true" units="per_l"/>
+      <parameter id="ddelay_compartment_2_chain_2_delimination_rate" value="1" constant="true" units="h"/>
+      <parameter id="ddelay_compartment_2_chain_2_dhalf_maximal_effect_concentration" value="1" constant="true" units="l_per_mg"/>
+      <parameter id="ddelay_compartment_2_chain_2_dtransition_rate_chain_1" value="1" constant="true" units="h"/>
+      <parameter id="ddelay_compartment_2_chain_2_dtransition_rate_chain_2" value="1" constant="true" units="h"/>
+    </listOfParameters>
+
+    <listOfRules>
+      <!-- Production and transition of first intermediate factor for coagulation factor 1 -->
+      <rateRule variable="delay_compartment_1_chain_1">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_1 </ci>
+              <apply>
+                <minus/>
+                <cn> 1 </cn>
+                <ci> inhibitory_effect </ci>
+              </apply>
+            </apply>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_1 </ci>
+              <ci> delay_compartment_1_chain_1 </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Transition of second intermediate factor for coagulation factor 1 -->
+      <rateRule variable="delay_compartment_2_chain_1">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_1 </ci>
+              <ci> delay_compartment_1_chain_1 </ci>
+            </apply>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_1 </ci>
+              <ci> delay_compartment_2_chain_1 </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Production and degradation of coagulation factor 1 -->
+      <rateRule variable="relative_change_cf1">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_1 </ci>
+              <ci> delay_compartment_2_chain_1 </ci>
+            </apply>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_1 </ci>
+              <ci> relative_change_cf1 </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Production and transition of first intermediate factor for coagulation factor 2 -->
+      <rateRule variable="delay_compartment_1_chain_2">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_2 </ci>
+              <apply>
+                <minus/>
+                <cn> 1 </cn>
+                <ci> inhibitory_effect </ci>
+              </apply>
+            </apply>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_2 </ci>
+              <ci> delay_compartment_1_chain_2 </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Transition of second intermediate factor for coagulation factor 2 -->
+      <rateRule variable="delay_compartment_2_chain_2">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_2 </ci>
+              <ci> delay_compartment_1_chain_2 </ci>
+            </apply>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_2 </ci>
+              <ci> delay_compartment_2_chain_2 </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Production and degradation of coagulation factor 2 -->
+      <rateRule variable="relative_change_cf2">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_2 </ci>
+              <ci> delay_compartment_2_chain_2 </ci>
+            </apply>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_2 </ci>
+              <ci> relative_change_cf2 </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Define inhibitory effect of S-warfarin -->
+      <assignmentRule variable="inhibitory_effect">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <divide/>
+            <apply>
+              <times/>
+              <ci> maximal_effect </ci>
+              <apply>
+                <power/>
+                <ci> concentration_central_compartment </ci>
+                <ci> gamma </ci>
+              </apply>
+            </apply>
+            <apply>
+              <plus/>
+              <apply>
+                <power/>
+                <ci> half_maximal_effect_concentration </ci>
+                <ci> gamma </ci>
+              </apply>
+              <apply>
+                <power/>
+                <ci> concentration_central_compartment </ci>
+                <ci> gamma </ci>
+              </apply>
+            </apply>
+          </apply>
+        </math>
+      </assignmentRule>
+
+      <!-- Define INR as a function of the fast response factor and the slow response factor -->
+      <assignmentRule variable="inr">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <plus/>
+            <ci> baseline_inr </ci>
+            <apply>
+              <times/>
+              <ci> maximal_inr_shift </ci>
+              <apply>
+                <minus/>
+                <cn> 1 </cn>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <plus/>
+                    <ci> relative_change_cf1 </ci>
+                    <ci> relative_change_cf2 </ci>
+                  </apply>
+                  <cn> 2 </cn>
+                </apply>
+              </apply>
+            </apply>
+          </apply>
+        </math>
+      </assignmentRule>
+
+      <!-- Warfarin dose compartment -->
+      <!-- Divide dose rate by 2 because only 50% of warfarin is -->
+      <!-- S-warfarin, which is the dominant active substance -->
+      <rateRule variable="amount_dose_compartment">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <divide/>
+              <ci> dose_rate </ci>
+              <cn> 2 </cn>
+            </apply>
+            <apply>
+              <times/>
+              <ci> absorption_rate </ci>
+              <ci> amount_dose_compartment </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Warfarin central compartment -->
+      <rateRule variable="amount_central_compartment">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> absorption_rate </ci>
+              <ci> amount_dose_compartment </ci>
+            </apply>
+            <apply>
+              <times/>
+              <ci> elimination_rate </ci>
+              <ci> amount_central_compartment </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Define Warfarin concentration -->
+      <assignmentRule variable="concentration_central_compartment">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <divide/>
+            <ci> amount_central_compartment </ci>
+            <ci> volume </ci>
+          </apply>
+        </math>
+      </assignmentRule>
+
+      <!-- Sensitivity of warfarin concentration to volume -->
+      <assignmentRule variable="dconcentration_central_compartment_dvolume">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <cn> -1 </cn>
+            <apply>
+              <divide/>
+              <ci> amount_central_compartment </ci>
+              <apply>
+                <power/>
+                <ci> volume </ci>
+                <cn> 2 </cn>
+              </apply>
+            </apply>
+          </apply>
+        </math>
+      </assignmentRule>
+
+      <!-- Sensitivity of inr to volume -->
+      <assignmentRule variable="dinr_dvolume">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <cn> -1 </cn>
+            <ci> maximal_inr_shift </ci>
+            <apply>
+              <plus/>
+              <apply>
+                <times/>
+                <apply>
+                  <divide/>
+                  <ci> relative_change_cf2 </ci>
+                  <cn> 2 </cn>
+                </apply>
+                <ci> drelative_change_cf1_dvolume </ci>
+              </apply>
+              <apply>
+                <times/>
+                <apply>
+                  <divide/>
+                  <ci> relative_change_cf1 </ci>
+                  <cn> 2 </cn>
+                </apply>
+                <ci> drelative_change_cf2_dvolume </ci>
+              </apply>
+            </apply>
+          </apply>
+        </math>
+      </assignmentRule>
+
+      <!-- Sensitivity of relative change of coagulation factor 1 to volume -->
+      <rateRule variable="drelative_change_cf1_dvolume">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_1 </ci>
+              <ci> ddelay_compartment_2_chain_1_dvolume </ci>
+            </apply>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_1 </ci>
+              <ci> drelative_change_cf1_dvolume </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Sensitivity of relative change of coagulation factor 2 to volume -->
+      <rateRule variable="drelative_change_cf2_dvolume">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_2 </ci>
+              <ci> ddelay_compartment_2_chain_2_dvolume </ci>
+            </apply>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_2 </ci>
+              <ci> drelative_change_cf2_dvolume </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Sensitivity of delay comp 2 chain 1 to volume -->
+      <rateRule variable="ddelay_compartment_2_chain_1_dvolume">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_1 </ci>
+              <ci> ddelay_compartment_1_chain_1_dvolume </ci>
+            </apply>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_1 </ci>
+              <ci> ddelay_compartment_2_chain_1_dvolume </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Sensitivity of delay comp 2 chain 2 to volume -->
+      <rateRule variable="ddelay_compartment_2_chain_2_dvolume">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_2 </ci>
+              <ci> ddelay_compartment_1_chain_2_dvolume </ci>
+            </apply>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_2 </ci>
+              <ci> ddelay_compartment_2_chain_2_dvolume </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Sensitivity of delay comp 1 chain 1 to volume -->
+      <rateRule variable="ddelay_compartment_1_chain_1_dvolume">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <ci> transition_rate_chain_1 </ci>
+            <apply>
+              <minus/>
+              <apply>
+                <times/>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> dconcentration_central_compartment_dvolume </ci>
+                    <ci> maximal_effect </ci>
+                    <ci> gamma </ci>
+                    <apply>
+                      <power/>
+                      <ci> concentration_central_compartment </ci>
+                      <apply>
+                        <minus/>
+                        <ci> gamma </ci>
+                        <cn> 1 </cn>
+                      </apply>
+                    </apply>
+                  </apply>
+                  <apply>
+                    <plus/>
+                    <apply>
+                      <power/>
+                      <ci> half_maximal_effect_concentration </ci>
+                      <ci> gamma </ci>
+                    </apply>
+                    <apply>
+                      <power/>
+                      <ci> concentration_central_compartment </ci>
+                      <ci> gamma </ci>
+                    </apply>
+                  </apply>
+                </apply>
+                <apply>
+                  <minus/>
+                  <apply>
+                    <divide/>
+                    <ci> concentration_central_compartment </ci>
+                    <apply>
+                      <plus/>
+                      <apply>
+                        <power/>
+                        <ci> half_maximal_effect_concentration </ci>
+                        <ci> gamma </ci>
+                      </apply>
+                      <apply>
+                        <power/>
+                        <ci> concentration_central_compartment </ci>
+                        <ci> gamma </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                  <cn> 1 </cn>
+                </apply>
+              </apply>
+              <ci> ddelay_compartment_1_chain_1_dvolume </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Sensitivity of delay comp 1 chain 2 to volume -->
+      <rateRule variable="ddelay_compartment_1_chain_2_dvolume">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <ci> transition_rate_chain_2 </ci>
+            <apply>
+              <minus/>
+              <apply>
+                <times/>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> dconcentration_central_compartment_dvolume </ci>
+                    <ci> maximal_effect </ci>
+                    <ci> gamma </ci>
+                    <apply>
+                      <power/>
+                      <ci> concentration_central_compartment </ci>
+                      <apply>
+                        <minus/>
+                        <ci> gamma </ci>
+                        <cn> 1 </cn>
+                      </apply>
+                    </apply>
+                  </apply>
+                  <apply>
+                    <plus/>
+                    <apply>
+                      <power/>
+                      <ci> half_maximal_effect_concentration </ci>
+                      <ci> gamma </ci>
+                    </apply>
+                    <apply>
+                      <power/>
+                      <ci> concentration_central_compartment </ci>
+                      <ci> gamma </ci>
+                    </apply>
+                  </apply>
+                </apply>
+                <apply>
+                  <minus/>
+                  <apply>
+                    <divide/>
+                    <ci> concentration_central_compartment </ci>
+                    <apply>
+                      <plus/>
+                      <apply>
+                        <power/>
+                        <ci> half_maximal_effect_concentration </ci>
+                        <ci> gamma </ci>
+                      </apply>
+                      <apply>
+                        <power/>
+                        <ci> concentration_central_compartment </ci>
+                        <ci> gamma </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                  <cn> 1 </cn>
+                </apply>
+              </apply>
+              <ci> ddelay_compartment_1_chain_2_dvolume </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Sensitivity of warfarin concentration to elimination rate -->
+      <assignmentRule variable="dconcentration_central_compartment_delimination_rate">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <divide/>
+            <ci> damount_central_compartment_delimination_rate </ci>
+            <ci> volume </ci>
+          </apply>
+        </math>
+      </assignmentRule>
+
+      <!-- Sensitivity of warfarin amount to volume -->
+      <rateRule variable="damount_central_compartment_delimination_rate">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <cn> -1 </cn>
+              <ci> amount_central_compartment </ci>
+            </apply>
+            <apply>
+              <times/>
+              <ci> elimination_rate </ci>
+              <ci> damount_central_compartment_delimination_rate </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Sensitivity of inr to elimination rate -->
+      <assignmentRule variable="dinr_delimination_rate">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <cn> -1 </cn>
+            <ci> maximal_inr_shift </ci>
+            <apply>
+              <plus/>
+              <apply>
+                <times/>
+                <apply>
+                  <divide/>
+                  <ci> relative_change_cf2 </ci>
+                  <cn> 2 </cn>
+                </apply>
+                <ci> drelative_change_cf1_delimination_rate </ci>
+              </apply>
+              <apply>
+                <times/>
+                <apply>
+                  <divide/>
+                  <ci> relative_change_cf1 </ci>
+                  <cn> 2 </cn>
+                </apply>
+                <ci> drelative_change_cf2_delimination_rate </ci>
+              </apply>
+            </apply>
+          </apply>
+        </math>
+      </assignmentRule>
+
+      <!-- Sensitivity of relative change of coagulation factor 1 to elimination rate -->
+      <rateRule variable="drelative_change_cf1_delimination_rate">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_1 </ci>
+              <ci> ddelay_compartment_2_chain_1_delimination_rate </ci>
+            </apply>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_1 </ci>
+              <ci> drelative_change_cf1_delimination_rate </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Sensitivity of relative change of coagulation factor 2 to elimination rate -->
+      <rateRule variable="drelative_change_cf2_delimination_rate">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_2 </ci>
+              <ci> ddelay_compartment_2_chain_2_delimination_rate </ci>
+            </apply>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_2 </ci>
+              <ci> drelative_change_cf2_delimination_rate </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Sensitivity of delay comp 2 chain 1 to elimination rate -->
+      <rateRule variable="ddelay_compartment_2_chain_1_delimination_rate">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_1 </ci>
+              <ci> ddelay_compartment_1_chain_1_delimination_rate </ci>
+            </apply>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_1 </ci>
+              <ci> ddelay_compartment_2_chain_1_delimination_rate </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Sensitivity of delay comp 2 chain 2 to elimination rate -->
+      <rateRule variable="ddelay_compartment_2_chain_2_delimination_rate">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_2 </ci>
+              <ci> ddelay_compartment_1_chain_2_delimination_rate </ci>
+            </apply>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_2 </ci>
+              <ci> ddelay_compartment_2_chain_2_delimination_rate </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Sensitivity of delay comp 1 chain 1 to elimination rate -->
+      <rateRule variable="ddelay_compartment_1_chain_1_delimination_rate">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <ci> transition_rate_chain_1 </ci>
+            <apply>
+              <minus/>
+              <apply>
+                <times/>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> dconcentration_central_compartment_delimination_rate </ci>
+                    <ci> maximal_effect </ci>
+                    <ci> gamma </ci>
+                    <apply>
+                      <power/>
+                      <ci> concentration_central_compartment </ci>
+                      <apply>
+                        <minus/>
+                        <ci> gamma </ci>
+                        <cn> 1 </cn>
+                      </apply>
+                    </apply>
+                  </apply>
+                  <apply>
+                    <plus/>
+                    <apply>
+                      <power/>
+                      <ci> half_maximal_effect_concentration </ci>
+                      <ci> gamma </ci>
+                    </apply>
+                    <apply>
+                      <power/>
+                      <ci> concentration_central_compartment </ci>
+                      <ci> gamma </ci>
+                    </apply>
+                  </apply>
+                </apply>
+                <apply>
+                  <minus/>
+                  <apply>
+                    <divide/>
+                    <ci> concentration_central_compartment </ci>
+                    <apply>
+                      <plus/>
+                      <apply>
+                        <power/>
+                        <ci> half_maximal_effect_concentration </ci>
+                        <ci> gamma </ci>
+                      </apply>
+                      <apply>
+                        <power/>
+                        <ci> concentration_central_compartment </ci>
+                        <ci> gamma </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                  <cn> 1 </cn>
+                </apply>
+              </apply>
+              <ci> ddelay_compartment_1_chain_1_delimination_rate </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Sensitivity of delay comp 1 chain 2 to volume -->
+      <rateRule variable="ddelay_compartment_1_chain_2_delimination_rate">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <ci> transition_rate_chain_2 </ci>
+            <apply>
+              <minus/>
+              <apply>
+                <times/>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> dconcentration_central_compartment_delimination_rate </ci>
+                    <ci> maximal_effect </ci>
+                    <ci> gamma </ci>
+                    <apply>
+                      <power/>
+                      <ci> concentration_central_compartment </ci>
+                      <apply>
+                        <minus/>
+                        <ci> gamma </ci>
+                        <cn> 1 </cn>
+                      </apply>
+                    </apply>
+                  </apply>
+                  <apply>
+                    <plus/>
+                    <apply>
+                      <power/>
+                      <ci> half_maximal_effect_concentration </ci>
+                      <ci> gamma </ci>
+                    </apply>
+                    <apply>
+                      <power/>
+                      <ci> concentration_central_compartment </ci>
+                      <ci> gamma </ci>
+                    </apply>
+                  </apply>
+                </apply>
+                <apply>
+                  <minus/>
+                  <apply>
+                    <divide/>
+                    <ci> concentration_central_compartment </ci>
+                    <apply>
+                      <plus/>
+                      <apply>
+                        <power/>
+                        <ci> half_maximal_effect_concentration </ci>
+                        <ci> gamma </ci>
+                      </apply>
+                      <apply>
+                        <power/>
+                        <ci> concentration_central_compartment </ci>
+                        <ci> gamma </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                  <cn> 1 </cn>
+                </apply>
+              </apply>
+              <ci> ddelay_compartment_1_chain_2_delimination_rate </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+    </listOfRules>
+  </model>
+</sbml>
