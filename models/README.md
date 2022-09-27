@@ -20,7 +20,7 @@ also simulates the normalised prothrombin time (INR).
 
 Outputs:
 ```math
-c = \frac{a_c}{v}\quad \text{and} \quad \bar{y} = \bar{y}_0 + \bar{y}_{max}\left( 1 - \frac{f_1 f_2}{2}\right)
+c \quad \text{and} \quad \bar{y} = \bar{y}_0 + \bar{y}_{max}\left( 1 - \frac{f_1 f_2}{2}\right)
 ```
 
 Pharmacokinetics:
@@ -28,7 +28,7 @@ Pharmacokinetics:
 \frac{\mathrm{d}a_d}{\mathrm{d}t} = -k_a a_d + r(t)
 ```
 ```math
-\frac{\mathrm{d}a_c}{\mathrm{d}t} = k_a a_d - k_e a_c
+\frac{\mathrm{d}c}{\mathrm{d}t} = k_a \frac{a_d}{v} - Cl c
 ```
 
 Pharmacodynamics:
@@ -48,7 +48,7 @@ Sensitivities:
 
 1. with respect to $v$:
 ```math
-\frac{\mathrm{d}c}{\mathrm{d}v} = -\frac{a_c}{v^2}
+\frac{\mathrm{d}}{\mathrm{d}t}\frac{\mathrm{d}c}{\mathrm{d}v} = -k_a\frac{a_d}{v^2}
 \quad \text{and} \quad
 \frac{\mathrm{d}\bar{y}}{\mathrm{d}v} = -\bar{y}_{max}\left( \frac{f_2}{2}\frac{\mathrm{d}f_1}{\mathrm{d}v} + \frac{f_1}{2}\frac{\mathrm{d}f_2}{\mathrm{d}v} \right)
 ```
