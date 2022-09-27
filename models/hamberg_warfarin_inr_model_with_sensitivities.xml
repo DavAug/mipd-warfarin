@@ -853,7 +853,7 @@
         </math>
       </rateRule>
 
-      <!-- Sensitivity of delay comp 1 chain 2 to volume -->
+      <!-- Sensitivity of delay comp 1 chain 2 to elimination rate -->
       <rateRule variable="ddelay_compartment_1_chain_2_delimination_rate">
         <math xmlns="http://www.w3.org/1998/Math/MathML">
           <apply>
@@ -917,6 +917,232 @@
                 </apply>
               </apply>
               <ci> ddelay_compartment_1_chain_2_delimination_rate </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Sensitivity of warfarin concentration to EC 50 -->
+      <!-- Hack to return zero, but let sensitivity be a state -->
+      <assignmentRule variable="dconcentration_central_compartment_dhalf_maximal_effect_concentration">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <cn> 0 </cn>
+            <ci> concentration_central_compartment </ci>
+          </apply>
+        </math>
+      </assignmentRule>
+
+      <!-- Sensitivity of inr to EC 50 -->
+      <assignmentRule variable="dinr_dhalf_maximal_effect_concentration">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <cn> -1 </cn>
+            <ci> maximal_inr_shift </ci>
+            <apply>
+              <plus/>
+              <apply>
+                <times/>
+                <apply>
+                  <divide/>
+                  <ci> relative_change_cf2 </ci>
+                  <cn> 2 </cn>
+                </apply>
+                <ci> drelative_change_cf1_dhalf_maximal_effect_concentration </ci>
+              </apply>
+              <apply>
+                <times/>
+                <apply>
+                  <divide/>
+                  <ci> relative_change_cf1 </ci>
+                  <cn> 2 </cn>
+                </apply>
+                <ci> drelative_change_cf2_dhalf_maximal_effect_concentration </ci>
+              </apply>
+            </apply>
+          </apply>
+        </math>
+      </assignmentRule>
+
+      <!-- Sensitivity of relative change of coagulation factor 1 to EC 50 -->
+      <rateRule variable="drelative_change_cf1_dhalf_maximal_effect_concentration">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_1 </ci>
+              <ci> ddelay_compartment_2_chain_1_dhalf_maximal_effect_concentration </ci>
+            </apply>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_1 </ci>
+              <ci> drelative_change_cf1_dhalf_maximal_effect_concentration </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Sensitivity of relative change of coagulation factor 2 to EC 50 -->
+      <rateRule variable="drelative_change_cf2_dhalf_maximal_effect_concentration">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_2 </ci>
+              <ci> ddelay_compartment_2_chain_2_dhalf_maximal_effect_concentration </ci>
+            </apply>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_2 </ci>
+              <ci> drelative_change_cf2_dhalf_maximal_effect_concentration </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Sensitivity of delay comp 2 chain 1 to EC 50 -->
+      <rateRule variable="ddelay_compartment_2_chain_1_dhalf_maximal_effect_concentration">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_1 </ci>
+              <ci> ddelay_compartment_1_chain_1_dhalf_maximal_effect_concentration </ci>
+            </apply>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_1 </ci>
+              <ci> ddelay_compartment_2_chain_1_dhalf_maximal_effect_concentration </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Sensitivity of delay comp 2 chain 2 to EC 50 -->
+      <rateRule variable="ddelay_compartment_2_chain_2_dhalf_maximal_effect_concentration">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_2 </ci>
+              <ci> ddelay_compartment_1_chain_2_dhalf_maximal_effect_concentration </ci>
+            </apply>
+            <apply>
+              <times/>
+              <ci> transition_rate_chain_2 </ci>
+              <ci> ddelay_compartment_2_chain_2_dhalf_maximal_effect_concentration </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Sensitivity of delay comp 1 chain 1 to EC 50 -->
+      <rateRule variable="ddelay_compartment_1_chain_1_dhalf_maximal_effect_concentration">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <ci> transition_rate_chain_1 </ci>
+            <apply>
+              <minus/>
+              <apply>
+                <divide/>
+                <apply>
+                  <times/>
+                  <ci> maximal_effect </ci>
+                  <ci> gamma </ci>
+                  <apply>
+                    <power/>
+                    <ci> concentration_central_compartment </ci>
+                    <ci> gamma </ci>
+                  </apply>
+                  <apply>
+                    <power/>
+                    <ci> half_maximal_effect_concentration </ci>
+                    <apply>
+                      <minus/>
+                      <ci> gamma </ci>
+                      <cn> 1 </cn>
+                    </apply>
+                  </apply>
+                </apply>
+                <apply>
+                  <power/>
+                  <apply>
+                    <plus/>
+                    <apply>
+                      <power/>
+                      <ci> half_maximal_effect_concentration </ci>
+                      <ci> gamma </ci>
+                    </apply>
+                    <apply>
+                      <power/>
+                      <ci> concentration_central_compartment </ci>
+                      <ci> gamma </ci>
+                    </apply>
+                  </apply>
+                  <cn> 2 </cn>
+                </apply>
+              </apply>
+              <ci> ddelay_compartment_1_chain_1_dhalf_maximal_effect_concentration </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+
+      <!-- Sensitivity of delay comp 1 chain 2 to EC 50 -->
+      <rateRule variable="ddelay_compartment_1_chain_2_dhalf_maximal_effect_concentration">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <ci> transition_rate_chain_2 </ci>
+            <apply>
+              <minus/>
+              <apply>
+                <divide/>
+                <apply>
+                  <times/>
+                  <ci> maximal_effect </ci>
+                  <ci> gamma </ci>
+                  <apply>
+                    <power/>
+                    <ci> concentration_central_compartment </ci>
+                    <ci> gamma </ci>
+                  </apply>
+                  <apply>
+                    <power/>
+                    <ci> half_maximal_effect_concentration </ci>
+                    <apply>
+                      <minus/>
+                      <ci> gamma </ci>
+                      <cn> 1 </cn>
+                    </apply>
+                  </apply>
+                </apply>
+                <apply>
+                  <power/>
+                  <apply>
+                    <plus/>
+                    <apply>
+                      <power/>
+                      <ci> half_maximal_effect_concentration </ci>
+                      <ci> gamma </ci>
+                    </apply>
+                    <apply>
+                      <power/>
+                      <ci> concentration_central_compartment </ci>
+                      <ci> gamma </ci>
+                    </apply>
+                  </apply>
+                  <cn> 2 </cn>
+                </apply>
+              </apply>
+              <ci> ddelay_compartment_1_chain_2_dhalf_maximal_effect_concentration </ci>
             </apply>
           </apply>
         </math>
