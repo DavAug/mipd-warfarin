@@ -19,17 +19,17 @@ def define_log_posterior():
     population_model = define_hamberg_population_model(centered=False)
     log_prior = pints.ComposedLogPrior(
         pints.GaussianLogPrior(-3.7, 0.5),   # Mean log elim. rate
-        pints.LogNormalLogPrior(0.1, 0.3),   # Sigma log elim. rate
+        pints.LogNormalLogPrior(-1, 0.3),    # Sigma log elim. rate
         pints.UniformLogPrior(0, 1),         # Rel. shift elim. rate *2/*2
         pints.UniformLogPrior(0, 1),         # Rel. shift elim. rate *3/*3
         pints.LogNormalLogPrior(-3, 1.4),    # Rel. shift elim. rate Age
-        pints.GaussianLogPrior(1.41, 0.5),   # Mean log EC50
-        pints.LogNormalLogPrior(0.1, 0.3),   # Sigma log EC50
+        pints.GaussianLogPrior(1.41, 0.3),   # Mean log EC50
+        pints.LogNormalLogPrior(0.1, 0.2),   # Sigma log EC50
         pints.UniformLogPrior(0, 1),         # Rel. shift EC50 A/A
         pints.LogNormalLogPrior(-2.3, 0.7),  # Pooled rate chain 1
         pints.LogNormalLogPrior(-3.7, 1.5),  # Pooled rate chain 2
-        pints.GaussianLogPrior(2.7, 0.5),    # Mean log volume
-        pints.LogNormalLogPrior(0.1, 0.3),   # Sigma log volume
+        pints.GaussianLogPrior(2.7, 0.1),    # Mean log volume
+        pints.LogNormalLogPrior(-1, 0.1),    # Sigma log volume
         pints.LogNormalLogPrior(0.1, 0.3),   # Sigma log drug conc.
         pints.LogNormalLogPrior(0.1, 0.3)    # Sigma log INR
     )
