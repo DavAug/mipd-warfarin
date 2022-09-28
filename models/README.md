@@ -28,7 +28,7 @@ Pharmacokinetics:
 \frac{\mathrm{d}a_d}{\mathrm{d}t} = -k_a a_d + r(t)
 ```
 ```math
-\frac{\mathrm{d}c}{\mathrm{d}t} = k_a a_d - k_e a_c
+\frac{\mathrm{d}a_c}{\mathrm{d}t} = k_a a_d - k_e a_c
 ```
 
 Pharmacodynamics:
