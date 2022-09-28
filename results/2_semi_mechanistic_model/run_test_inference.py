@@ -18,11 +18,11 @@ def define_log_posterior():
     error_models = [chi.LogNormalErrorModel(), chi.LogNormalErrorModel()]
     population_model = define_hamberg_population_model(centered=False)
     log_prior = pints.ComposedLogPrior(
-        pints.GaussianLogPrior(-1, 1.5),     # Mean log elim. rate
+        pints.GaussianLogPrior(-3.7, 0.5),   # Mean log elim. rate
         pints.LogNormalLogPrior(0.1, 0.3),   # Sigma log elim. rate
         pints.UniformLogPrior(0, 1),         # Rel. shift elim. rate *2/*2
         pints.UniformLogPrior(0, 1),         # Rel. shift elim. rate *3/*3
-        pints.LogNormalLogPrior(0.1, 0.3),   # Rel. shift elim. rate Age
+        pints.LogNormalLogPrior(-3, 1.4),    # Rel. shift elim. rate Age
         pints.GaussianLogPrior(1.41, 0.5),   # Mean log EC50
         pints.LogNormalLogPrior(0.1, 0.3),   # Sigma log EC50
         pints.UniformLogPrior(0, 1),         # Rel. shift EC50 A/A
@@ -42,7 +42,7 @@ def define_log_posterior():
 
 
 def run_inference(log_posterior):
-    seed = 3
+    seed = 2
     controller = chi.SamplingController(log_posterior, seed=seed)
     controller.set_n_runs(1)
     controller.set_parallel_evaluation(True)
