@@ -18,18 +18,18 @@ def define_log_posterior():
     error_models = [chi.LogNormalErrorModel(), chi.LogNormalErrorModel()]
     population_model = define_hamberg_population_model(centered=False)
     log_prior = pints.ComposedLogPrior(
-        pints.GaussianLogPrior(2.7, 0.5),    # Mean log volume
-        pints.LogNormalLogPrior(0.1, 0.3),   # Sigma log volume
-        pints.GaussianLogPrior(-1, 0.5),     # Mean log clearance
-        pints.LogNormalLogPrior(0.1, 0.3),   # Sigma log clearance
-        pints.UniformLogPrior(0, 1),         # Rel. shift clearance *2/*2
-        pints.UniformLogPrior(0, 1),         # Rel. shift clearance *3/*3
-        pints.LogNormalLogPrior(0.1, 0.3),   # Rel. shift clearance Age
+        pints.GaussianLogPrior(-1, 1.5),     # Mean log elim. rate
+        pints.LogNormalLogPrior(0.1, 0.3),   # Sigma log elim. rate
+        pints.UniformLogPrior(0, 1),         # Rel. shift elim. rate *2/*2
+        pints.UniformLogPrior(0, 1),         # Rel. shift elim. rate *3/*3
+        pints.LogNormalLogPrior(0.1, 0.3),   # Rel. shift elim. rate Age
         pints.GaussianLogPrior(1.41, 0.5),   # Mean log EC50
         pints.LogNormalLogPrior(0.1, 0.3),   # Sigma log EC50
         pints.UniformLogPrior(0, 1),         # Rel. shift EC50 A/A
         pints.LogNormalLogPrior(-2.3, 0.7),  # Pooled rate chain 1
         pints.LogNormalLogPrior(-3.7, 1.5),  # Pooled rate chain 2
+        pints.GaussianLogPrior(2.7, 0.5),    # Mean log volume
+        pints.LogNormalLogPrior(0.1, 0.3),   # Sigma log volume
         pints.LogNormalLogPrior(0.1, 0.3),   # Sigma log drug conc.
         pints.LogNormalLogPrior(0.1, 0.3)    # Sigma log INR
     )
@@ -48,11 +48,11 @@ def run_inference(log_posterior):
     controller.set_parallel_evaluation(True)
     controller.set_sampler(pints.NoUTurnMCMC)
     controller.set_transform(pints.ComposedTransformation(
-        pints.IdentityTransformation(n_parameters=100 * 3 + 4),
+        pints.IdentityTransformation(n_parameters=3 * 3 + 2),
         pints.LogitTransformation(n_parameters=2),
         pints.IdentityTransformation(n_parameters=3),
         pints.LogitTransformation(n_parameters=1),
-        pints.IdentityTransformation(n_parameters=4)
+        pints.IdentityTransformation(n_parameters=6)
     ))
 
     n_iterations = 1500

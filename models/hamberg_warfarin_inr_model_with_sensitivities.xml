@@ -116,36 +116,30 @@
       <parameter id="drelative_change_cf1_delimination_rate" value="1" constant="true" units="h"/>
       <parameter id="drelative_change_cf1_dhalf_maximal_effect_concentration" value="1" constant="true" units="l_per_mg"/>
       <parameter id="drelative_change_cf1_dtransition_rate_chain_1" value="1" constant="true" units="h"/>
-      <parameter id="drelative_change_cf1_dtransition_rate_chain_2" value="1" constant="true" units="h"/>
 
       <parameter id="drelative_change_cf2_dvolume" value="1" constant="true" units="per_l"/>
       <parameter id="drelative_change_cf2_delimination_rate" value="1" constant="true" units="h"/>
       <parameter id="drelative_change_cf2_dhalf_maximal_effect_concentration" value="1" constant="true" units="l_per_mg"/>
-      <parameter id="drelative_change_cf2_dtransition_rate_chain_1" value="1" constant="true" units="h"/>
       <parameter id="drelative_change_cf2_dtransition_rate_chain_2" value="1" constant="true" units="h"/>
 
       <parameter id="ddelay_compartment_1_chain_1_dvolume" value="1" constant="true" units="per_l"/>
       <parameter id="ddelay_compartment_1_chain_1_delimination_rate" value="1" constant="true" units="h"/>
       <parameter id="ddelay_compartment_1_chain_1_dhalf_maximal_effect_concentration" value="1" constant="true" units="l_per_mg"/>
       <parameter id="ddelay_compartment_1_chain_1_dtransition_rate_chain_1" value="1" constant="true" units="h"/>
-      <parameter id="ddelay_compartment_1_chain_1_dtransition_rate_chain_2" value="1" constant="true" units="h"/>
 
       <parameter id="ddelay_compartment_1_chain_2_dvolume" value="1" constant="true" units="per_l"/>
       <parameter id="ddelay_compartment_1_chain_2_delimination_rate" value="1" constant="true" units="h"/>
       <parameter id="ddelay_compartment_1_chain_2_dhalf_maximal_effect_concentration" value="1" constant="true" units="l_per_mg"/>
-      <parameter id="ddelay_compartment_1_chain_2_dtransition_rate_chain_1" value="1" constant="true" units="h"/>
       <parameter id="ddelay_compartment_1_chain_2_dtransition_rate_chain_2" value="1" constant="true" units="h"/>
 
       <parameter id="ddelay_compartment_2_chain_1_dvolume" value="1" constant="true" units="per_l"/>
       <parameter id="ddelay_compartment_2_chain_1_delimination_rate" value="1" constant="true" units="h"/>
       <parameter id="ddelay_compartment_2_chain_1_dhalf_maximal_effect_concentration" value="1" constant="true" units="l_per_mg"/>
       <parameter id="ddelay_compartment_2_chain_1_dtransition_rate_chain_1" value="1" constant="true" units="h"/>
-      <parameter id="ddelay_compartment_2_chain_1_dtransition_rate_chain_2" value="1" constant="true" units="h"/>
 
       <parameter id="ddelay_compartment_2_chain_2_dvolume" value="1" constant="true" units="per_l"/>
       <parameter id="ddelay_compartment_2_chain_2_delimination_rate" value="1" constant="true" units="h"/>
       <parameter id="ddelay_compartment_2_chain_2_dhalf_maximal_effect_concentration" value="1" constant="true" units="l_per_mg"/>
-      <parameter id="ddelay_compartment_2_chain_2_dtransition_rate_chain_1" value="1" constant="true" units="h"/>
       <parameter id="ddelay_compartment_2_chain_2_dtransition_rate_chain_2" value="1" constant="true" units="h"/>
     </listOfParameters>
 
@@ -1273,18 +1267,18 @@
             <times/>
             <cn> -1 </cn>
             <ci> maximal_inr_shift </ci>
-            <ci> drelative_change_cf1_dtransition_rate_chain_2 </ci>
+            <ci> drelative_change_cf2_dtransition_rate_chain_2 </ci>
             <apply>
               <divide/>
-              <ci> relative_change_cf2 </ci>
+              <ci> relative_change_cf1 </ci>
               <cn> 2 </cn>
             </apply>
           </apply>
         </math>
       </assignmentRule>
 
-      <!-- Sensitivity of relative change of coagulation factor 1 to transition rate chain 2 -->
-      <rateRule variable="drelative_change_cf1_dtransition_rate_chain_2">
+      <!-- Sensitivity of relative change of coagulation factor 2 to transition rate chain 2 -->
+      <rateRule variable="drelative_change_cf2_dtransition_rate_chain_2">
         <math xmlns="http://www.w3.org/1998/Math/MathML">
           <apply>
             <minus/>
@@ -1299,11 +1293,11 @@
             </apply>
             <apply>
               <plus/>
-              <ci> relative_change_cf1 </ci>
+              <ci> relative_change_cf2 </ci>
               <apply>
                 <times/>
                 <ci> transition_rate_chain_2 </ci>
-                <ci> drelative_change_cf1_dtransition_rate_chain_2 </ci>
+                <ci> drelative_change_cf2_dtransition_rate_chain_2 </ci>
               </apply>
             </apply>
           </apply>
