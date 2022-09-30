@@ -88,56 +88,6 @@ def define_hamberg_model():
     return (model, parameters)
 
 
-def define_hamberg_model_old():
-    # TODO: Delete
-    """
-    Returns Hamberg's semi-mechanistic model of the INR response to warfarin
-    treatment.
-
-    Reference
-    ---------
-    .. Hamberg AK, Wadelius M, Lindh JD, Dahl ML, Padrini R, Deloukas P,
-        Rane A, Jonsson EN. A pharmacometric model describing the relationship
-        between warfarin dose and INR response with respect to variations in
-        CYP2C9, VKORC1, and age. Clin Pharmacol Ther. 2010 Jun;87(6):727-34.
-
-    :returns: Hamberg model, typical parameter values
-    :rtype: Tuple[chi.MechanisticModel, pandas.DataFrame]
-    """
-    directory = os.path.dirname(
-        os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    model_file = '/models/hamberg_warfarin_inr_model.xml'
-    parameter_file = '/models/hamberg_warfarin_inr_model_parameters.csv'
-
-    # Define model
-    model = chi.PKPDModel(directory + model_file)
-    model.set_administration(
-        compartment='central', amount_var='s_warfarin_amount', direct=False)
-    model = chi.ReducedMechanisticModel(model)
-    model.fix_parameters({
-        'central.s_warfarin_amount': 0.001,
-        'dose.drug_amount': 0.001,
-        'myokit.delay_compartment_1_chain_1': 1,
-        'myokit.delay_compartment_2_chain_1': 1,
-        'myokit.delay_compartment_1_chain_2': 1,
-        'myokit.delay_compartment_2_chain_2': 1,
-        'myokit.relative_change_cf1': 1,
-        'myokit.relative_change_cf2': 1,
-        'myokit.gamma': 1.15,
-        'dose.absorption_rate': 2,
-        'myokit.baseline_inr': 1,
-        'myokit.maximal_effect': 1,
-        'myokit.maximal_inr_shift': 20
-    })
-    model.set_outputs(
-        ['myokit.inr', 'central.s_warfarin_concentration'])
-
-    # Import model parameters
-    parameters = pd.read_csv(directory + parameter_file)
-
-    return (model, parameters)
-
-
 def define_hamberg_population_model(centered=True):
     """
     Returns Hamberg's population model for the semi-mechanistic model of the
@@ -186,6 +136,13 @@ class HambergModel(chi.MechanisticModel):
     """
     Implements Hamberg's semi-mechanistic model of the INR response to warfarin
     treatment.
+
+    .. note::
+        An out-of-the-box implementation of the model can be instantiated using
+        the SBML file in /models/hamberg_warfarin_inr_model.xml and
+        chi.PKPDModel(model_file). However, for the inference of the model,
+        we found that implementing the sensitivities manually improves the
+        performance which requires wrapping the model in this way.
 
     Reference
     ---------
@@ -574,7 +531,8 @@ class HambergEliminationRateCovariateModel(chi.CovariateModel):
         k_e = \frac{1}{v}Cl,
 
     where :math:`v` is the volume of distribution. In Hamberg's model the
-    volume of distribution is modelled to be independent of the covariates.
+    volume of distribution is modelled to be independent of the covariates and
+    the clearance.
     As a result, the covariate model describes also the variation of the
     elimination rate.
 

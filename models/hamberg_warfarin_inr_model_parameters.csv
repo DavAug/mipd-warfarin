@@ -12,20 +12,20 @@ myokit.baseline_inr,1.0,dimensionless
 myokit.maximal_effect,1.0,1
 myokit.maximal_inr_shift,20.0,dimensionless
 central.size,14.3,L
-myokit.elimination_rate,0.243,1/h
+myokit.elimination_rate,0.0243,1/h
 myokit.gamma,1.15,dimensionless
 myokit.half_maximal_effect_concentration,4.1,mg/L
 Pooled Transition rate chain 1,0.1048951048951049,1/h
 Pooled Transition rate chain 2,0.0253592561284869,1/h
-Log std. Elimination rate,0.1,dimensionless
-Log mean Elimination rate,-3.7158123364735243,dimensionless
-Rel. elimination rate shift *2/*2,0.494,dimensionless
-Rel. elimination rate shift *3/*3,0.758,dimensionless
+Log std. Elimination rate,0.089,dimensionless
+Log mean Elimination rate,-3.716,dimensionless
+Rel. elimination rate shift *2/*2,0.495,dimensionless
+Rel. elimination rate shift *3/*3,0.757,dimensionless
 Rel. elimination rate shift with age,0.00571,dimensionless
-Log mean Volume of distribution,2.6602595372658615,dimensionless
-Log std. Volume of distribution,0.1,dimensionless
-Log std. EC50,0.1,dimensionless
-Log mean EC50,1.41,dimensionless
-Rel. EC50 shift AA,0.538,dimensionless
-Pooled Drug conc. Sigma log, 0.1, dimensionless
-Pooled INR Sigma log, 0.1, dimensionless
+Log mean Volume of distribution,2.660,dimensionless
+Log std. Volume of distribution,0.054,dimensionless
+Log std. EC50,0.240,dimensionless
+Log mean EC50,1.411,dimensionless
+Rel. EC50 shift AA,0.532,dimensionless
+Pooled Drug conc. Sigma log, 0.099, dimensionless
+Pooled INR Sigma log, 0.190, dimensionless
