@@ -62,12 +62,37 @@ def define_hartmann_population_model():
     The model assumes that the production rates associated with
     coagulation factors II, V, VII, IX, X, XI, XII and XIII as well as
     the production rates of PC and PS display normally distributed IIV.
-    TODO: Covariates.
-    The remaining parameters are assumed to display no IIV.
+    The IIV of the warfarin clearance and the warfarin EC50 are goverened
+    by covariate models developed by Hamberg et al. This model also extends
+    the covariate model to the conversion rate of vitamin K to VKH2, and the
+    conversion rate of VKO to VK. The remaining parameters are assumed to
+    display no IIV.
     """
+    # Define covariate population models
+    p1 = chi.CovariatePopulationModel(
+        chi.LogNormalModel(),
+        HambergVKORC1CovariateModel(parameter='Conv. rate VK to VKH2'))
+    p2 = chi.CovariatePopulationModel(
+        chi.LogNormalModel(),
+        HambergVKORC1CovariateModel(parameter='Conv. rate VKO to VK'))
+    p3 = chi.CovariatePopulationModel(
+        chi.LogNormalModel(),
+        HambergEliminationRateCovariateModel())
+    p4 = chi.CovariatePopulationModel(
+        chi.LogNormalModel(),
+        HambergVKORC1CovariateModel(parameter='EC50'))
+
     # Define population model
     population_model = chi.ComposedPopulationModel([
-        chi.PooledModel(n_dim=190),
+        chi.PooledModel(n_dim=67),
+        p1,
+        chi.PooledModel(n_dim=1),
+        p2,
+        chi.PooledModel(n_dim=45),
+        p3,
+        chi.PooledModel(n_dim=35),
+        p4,
+        chi.PooledModel(n_dim=38),
         chi.GaussianModel(n_dim=3),
         chi.PooledModel(n_dim=2),
         chi.GaussianModel(n_dim=1),
@@ -336,7 +361,7 @@ class WajimaWarfarinINRResponseModel(chi.MechanisticModel):
 
     Extends :class:`chi.PharmacokineticModel`.
     """
-    def __init__(self, standard_pt=None, inr_test_duration=70):
+    def __init__(self, standard_pt=11.8, inr_test_duration=120):
         # Check inputs
         standard_pt = float(standard_pt) if standard_pt else 1
         if standard_pt <= 0:
@@ -354,6 +379,10 @@ class WajimaWarfarinINRResponseModel(chi.MechanisticModel):
             patient=True, inr_test=False)
         self._inr_test_model, _ = define_wajima_model(
             patient=False, inr_test=True)
+
+        # Set the output of the coagulation model to the blood state variables
+        self._network_model.set_outputs(
+            self._network_model.parameters()[:self._network_model._n_states])
 
         # Define INR test hyperparameters
         self._fibrin_auc_threshold = 1500  # nMs
@@ -657,3 +686,421 @@ class WajimaWarfarinINRResponseModel(chi.MechanisticModel):
         Returns the model's unit of time.
         """
         return self._network_model.time_unit()
+
+
+class HambergEliminationRateCovariateModel(chi.CovariateModel):
+    r"""
+    Implements Hamberg's covariate model of the elimination rate.
+
+    In this model the typical elimination rate is assumed to be a function of
+    the age and the CYP2C9 genotype
+
+    .. math::
+        k_e = (k_{a_1} + k_{a_2}) (1 - tanh(r_{age}(Age - 71))),
+
+    where :math:`k_e` denotes the elimination rate, and
+    :math:`k_{a_1}` and :math:`__{a_2}` the elimination rate contributions
+    from the CYP2C9 alleles. :math:`r_{age}` denotes the change of the
+    clearance with the age of the patient. Note that the tanh is a modification
+    of Hamberg's model that avoids negative clearances.
+
+    Hamberg's original model defines the covariate model for the clearance
+    and not for the elimination rate. However, the elimination rate and
+    clearance are proportional to each other
+
+    .. math::
+        k_e = \frac{1}{v}Cl,
+
+    where :math:`v` is the volume of distribution. In Hamberg's model the
+    volume of distribution is modelled to be independent of the covariates and
+    the clearance.
+    As a result, the covariate model describes also the variation of the
+    elimination rate.
+
+    The first covariate encodes the CYP2C9 genotype, and the second covariate
+    the genotype the age. In particular, the CYP2C9 variants are encoded as
+    follows:
+
+    0: 'CYP2C9 variant *1/*1'
+    1: 'CYP2C9 variant *1/*2'
+    2: 'CYP2C9 variant *1/*3'
+    3: 'CYP2C9 variant *2/*2'
+    4: 'CYP2C9 variant *2/*3'
+    5: 'CYP2C9 variant *3/*3'
+
+    The age of the patients are expected to be in years.
+
+    The parameters of the model are the relative decrease of the elimination
+    rate from *1/*1 to *2/2, the relative decrease from *1/*1 to *3/*3 and the
+    change of the elimination rate with age, :math:`r_{age}`. The first two
+    parameters are defined in the interval [0, 1], and :math:`r_{age}` is
+    defined over all positive numbers.
+
+    .. note::
+        This model is meant to be used together with a lognormal population
+        model where the location parameter is the logarithm of the typical
+        population value. The model is therefore implement under the assumption
+        that the logarithm of the typical population value is provided.
+
+    Extends :class:`CovariateModel`.
+    """
+    def __init__(self):
+        n_cov = 2
+        cov_names = ['CYP2C9', 'Age']
+        super(HambergEliminationRateCovariateModel, self).__init__(
+            n_cov, cov_names)
+
+        # Set number of parameters (shift *2, shift *3, shift age)
+        # Note the clearance for *1/*1 is implemented as the baseline
+        self._n_parameters = 3
+        self._parameter_names = [
+            'Rel. elimination rate shift *2/*2',
+            'Rel. elimination rate shift *3/*3',
+            'Rel. elimination rate shift with age']
+
+    def compute_population_parameters(
+            self, parameters, pop_parameters, covariates):
+        """
+        Returns the transformed population model parameters.
+
+        :param parameters: Model parameters.
+        :type parameters: np.ndarray of shape ``(n_parameters,)``
+        :param pop_parameters: Population model parameters.
+        :type pop_parameters: np.ndarray of shape
+            ``(n_pop_params_per_dim, n_dim)``
+        :param covariates: Covariates of individuals.
+        :type covariates: np.ndarray of shape ``(n_ids, n_cov)``
+        :rtype: np.ndarray of shape ``(n_ids, n_pop_params_per_dim, n_dim)``
+        """
+        parameters = np.asarray(parameters)
+        if parameters.ndim == 1:
+            parameters = parameters.reshape(1, self._n_parameters)
+        relative_shift_22, relative_shift_33, age_change = parameters[0]
+
+        # Compute population parameters
+        n_pop, n_dim = pop_parameters.shape
+        if n_dim > 1:
+            raise ValueError(
+                'Invalid pop_parameters. The model is only defined for 1 '
+                'dimensional population models.')
+
+        n_ids = len(covariates)
+        vartheta = np.zeros((n_ids, n_pop, n_dim))
+        vartheta += pop_parameters[np.newaxis, ...]
+
+        # Compute individual parameters
+        cyp2c9 = covariates[:, 0]
+        age = covariates[:, 1] - 71
+
+        # CYP2C9 variant *1/*1
+        # Implemented as baseline
+
+        # CYP2C9 variant *1/*2
+        mask = cyp2c9 == 1
+        vartheta[mask, 0] += np.log(1 - relative_shift_22 / 2)
+
+        # CYP2C9 variant *1/*3
+        mask = cyp2c9 == 2
+        vartheta[mask, 0] += np.log(1 - relative_shift_33 / 2)
+
+        # CYP2C9 variant *2/*2
+        mask = cyp2c9 == 3
+        vartheta[mask, 0] += np.log(1 - relative_shift_22)
+
+        # CYP2C9 variant *2/*3
+        mask = cyp2c9 == 4
+        vartheta[mask, 0] += np.log(
+            1 - (relative_shift_22 + relative_shift_33) / 2)
+
+        # CYP2C9 variant *3/*3
+        mask = cyp2c9 == 5
+        vartheta[mask, 0] += np.log(1 - relative_shift_33)
+
+        # Age
+        vartheta[:, 0] += \
+            np.log(1 - np.tanh(age[:, np.newaxis] * age_change))
+
+        return vartheta
+
+    def compute_sensitivities(
+            self, parameters, pop_parameters, covariates, dlogp_dvartheta):
+        """
+        Returns the sensitivities of the likelihood with respect to
+        the model parameters and the population model parameters.
+
+        :param parameters: Model parameters.
+        :type parameters: np.ndarray of shape ``(n_parameters,)`` or
+            ``(n_selected, n_cov)``
+        :param pop_parameters: Population model parameters.
+        :type pop_parameters: np.ndarray of shape
+            ``(n_pop_params_per_dim, n_dim)``
+        :param covariates: Covariates of individuals.
+        :type covariates: np.ndarray of shape ``(n_ids, n_cov)``
+        :param dlogp_dvartheta: Unflattened sensitivities of the population
+            model to the transformed parameters.
+        :type dlogp_dvartheta: np.ndarray of shape
+            ``(n_ids, n_param_per_dim, n_dim)``
+        :rtype: Tuple[np.ndarray of shape ``(n_pop_params,)``,
+            np.ndarray of shape ``(n_parameters,)``]
+        """
+        parameters = np.asarray(parameters)
+        if parameters.ndim == 1:
+            parameters = parameters.reshape(1, self._n_parameters)
+        relative_shift_22, relative_shift_33, age_change = parameters[0]
+
+        # Compute sensitivities
+        n_pop, n_dim = pop_parameters.shape
+        n_pop = n_pop * n_dim
+        dpop = np.sum(dlogp_dvartheta, axis=0).flatten()
+
+        # Compute derivates of mu
+        n_ids = len(covariates)
+        cyp2c9 = covariates[:, 0]
+        age = covariates[:, 1] - 71
+        dmu = np.zeros(shape=(n_ids, self._n_parameters))
+
+        # CYP2C9 variant *1/*1
+        # Implemented as baseline
+
+        # CYP2C9 variant *1/*2
+        mask = cyp2c9 == 1
+        dmu[mask, 0] -= 1 / (1 - relative_shift_22 / 2) / 2
+
+        # CYP2C9 variant *1/*3
+        mask = cyp2c9 == 2
+        dmu[mask, 1] -= 1 / (1 - relative_shift_33 / 2) / 2
+
+        # CYP2C9 variant *2/*2
+        mask = cyp2c9 == 3
+        dmu[mask, 0] -= 1 / (1 - relative_shift_22)
+
+        # CYP2C9 variant *2/*3
+        mask = cyp2c9 == 4
+        dmu[mask, 0] -= \
+            1 / (1 - (relative_shift_22 + relative_shift_33) / 2) / 2
+        dmu[mask, 1] -= \
+            1 / (1 - (relative_shift_22 + relative_shift_33) / 2) / 2
+
+        # CYP2C9 variant *3/*3
+        mask = cyp2c9 == 5
+        dmu[mask, 1] -= 1 / (1 - relative_shift_33)
+
+        # Age
+        dmu[:, 2] -= \
+            age / (1 - np.tanh(age * age_change)) / (1 + (age * age_change)**2)
+
+        dparams = np.sum(
+            dlogp_dvartheta[:, 0, 0, np.newaxis] * dmu, axis=0)
+
+        return dpop, dparams
+
+    def get_parameter_names(self):
+        """
+        Returns the names of the model parameters.
+        """
+        return super(
+            HambergEliminationRateCovariateModel, self).get_parameter_names(
+                exclude_cov_names=True)
+
+    def set_parameter_names(self, names=None, mask_names=False):
+        """
+        Sets the names of the model parameters.
+
+        :param names: A list of parameter names. If ``None``, parameter names
+            are reset to defaults.
+        :type names: List
+        """
+        # This is just a dummy method. The names of the parameters are fixed
+        # for this class
+        pass
+
+    def set_population_parameters(self, indices):
+        """
+        This is a dummy method. The modified population parameter of this
+        model is always the first parameter.
+
+        :param indices: A list of parameter indices
+            [param index per dim, dim index].
+        :type indices: List[List[int]]
+        """
+        self._pidx = np.array([0])
+        self._didx = np.array([0])
+
+        # Update number of parameters and parameters names
+        self._n_selected = 1
+
+
+class HambergVKORC1CovariateModel(chi.CovariateModel):
+    r"""
+    Implements Hamberg's covariate model of the VKORC1 gentoype.
+
+    In this model the typical parameter is assumed to be a function of
+    the VKORC1 genotype
+
+    .. math::
+        p = p_{a_1} + p_{a_2},
+
+    where :math:`p` denotes the half maximal effect concentration of
+    warfarin, and :math:`p_{a_1}` and :math:`p_{a_2}` the parameter
+    contributions from the VKORC1 alleles.
+
+    The covariate encodes the VKORC1 genotype. In particular, the VKORC1
+    variants are encoded as follows:
+
+    0: 'VKORC1 variant GG'
+    1: 'VKORC1 variant GA'
+    2: 'VKORC1 variant AA'
+
+    The parameter of the model is the relative decrease of the parameter from
+    G/G to A/A, which assumes values between 0 and 1.
+
+    .. note::
+        This model is meant to be used together with a lognormal population
+        model where the location parameter is the logarithm of the typical
+        population value. The model is therefore implement under the assumption
+        that the logarithm of the typical population value is provided.
+
+    Extends :class:`CovariateModel`.
+    """
+    def __init__(self, parameter='EC50'):
+        n_cov = 1
+        cov_names = ['VKORC1']
+        super(HambergVKORC1CovariateModel, self).__init__(
+            n_cov, cov_names)
+
+        # Set number of parameters (shift A)
+        # Note the EC50 for G/G is implemented as the baseline
+        self._n_parameters = 1
+        self._parameter_names = ['Rel. %s shift AA' % str(parameter)]
+
+    def compute_population_parameters(
+            self, parameters, pop_parameters, covariates):
+        """
+        Returns the transformed population model parameters.
+
+        :param parameters: Model parameters.
+        :type parameters: np.ndarray of shape ``(n_parameters,)``
+        :param pop_parameters: Population model parameters.
+        :type pop_parameters: np.ndarray of shape
+            ``(n_pop_params_per_dim, n_dim)``
+        :param covariates: Covariates of individuals.
+        :type covariates: np.ndarray of shape ``(n_ids, n_cov)``
+        :rtype: np.ndarray of shape ``(n_ids, n_pop_params_per_dim, n_dim)``
+        """
+        parameters = np.asarray(parameters)
+        if parameters.ndim == 1:
+            parameters = parameters.reshape(1, self._n_parameters)
+        relative_shift = parameters[0, 0]
+
+        # Compute population parameters
+        n_pop, n_dim = pop_parameters.shape
+        if n_dim > 1:
+            raise ValueError(
+                'Invalid pop_parameters. The model is only defined for 1 '
+                'dimensional population models.')
+
+        n_ids = len(covariates)
+        vartheta = np.zeros((n_ids, n_pop, n_dim))
+        vartheta += pop_parameters[np.newaxis, ...]
+
+        # Compute individual parameters
+        vkorc1 = covariates[:, 0]
+
+        # VKORC1 variant G/G
+        # Implemented as baseline
+
+        # VKORC1 variant G/A
+        mask = vkorc1 == 1
+        vartheta[mask, 0] += np.log(1 - relative_shift / 2)
+
+        # VKORC1 variant A/A
+        mask = vkorc1 == 2
+        vartheta[mask, 0] += np.log(1 - relative_shift)
+
+        return vartheta
+
+    def compute_sensitivities(
+            self, parameters, pop_parameters, covariates, dlogp_dvartheta):
+        """
+        Returns the sensitivities of the likelihood with respect to
+        the model parameters and the population model parameters.
+
+        :param parameters: Model parameters.
+        :type parameters: np.ndarray of shape ``(n_parameters,)`` or
+            ``(n_selected, n_cov)``
+        :param pop_parameters: Population model parameters.
+        :type pop_parameters: np.ndarray of shape
+            ``(n_pop_params_per_dim, n_dim)``
+        :param covariates: Covariates of individuals.
+        :type covariates: np.ndarray of shape ``(n_ids, n_cov)``
+        :param dlogp_dvartheta: Unflattened sensitivities of the population
+            model to the transformed parameters.
+        :type dlogp_dvartheta: np.ndarray of shape
+            ``(n_ids, n_param_per_dim, n_dim)``
+        :rtype: Tuple[np.ndarray of shape ``(n_pop_params,)``,
+            np.ndarray of shape ``(n_parameters,)``]
+        """
+        parameters = np.asarray(parameters)
+        if parameters.ndim == 1:
+            parameters = parameters.reshape(1, self._n_parameters)
+        relative_shift = parameters[0, 0]
+
+        # Compute sensitivities
+        n_pop, n_dim = pop_parameters.shape
+        n_pop = n_pop * n_dim
+        dpop = np.sum(dlogp_dvartheta, axis=0).flatten()
+
+        # Compute derivates of mu
+        n_ids = len(covariates)
+        vkorc1 = covariates[:, 0]
+        dmu = np.zeros(shape=(n_ids, self._n_parameters))
+
+        # VKORC1 variant G/G
+        # Implemented as baseline
+
+        # VKORC1 variant G/A
+        mask = vkorc1 == 1
+        dmu[mask, 0] -= 1 / (1 - relative_shift / 2) / 2
+
+        # VKORC1 variant G/A
+        mask = vkorc1 == 2
+        dmu[mask, 0] -= 1 / (1 - relative_shift)
+
+        dparams = np.sum(
+            dlogp_dvartheta[:, 0, 0, np.newaxis] * dmu, axis=0)
+
+        return dpop, dparams
+
+    def get_parameter_names(self):
+        """
+        Returns the names of the model parameters.
+        """
+        return super(HambergVKORC1CovariateModel, self).get_parameter_names(
+            exclude_cov_names=True)
+
+    def set_parameter_names(self, names=None, mask_names=False):
+        """
+        Sets the names of the model parameters.
+
+        :param names: A list of parameter names. If ``None``, parameter names
+            are reset to defaults.
+        :type names: List
+        """
+        # This is just a dummy method. The names of the parameters are fixed
+        # for this class
+        pass
+
+    def set_population_parameters(self, indices):
+        """
+        This is a dummy method. The modified population parameter of this
+        model is always the first parameter.
+
+        :param indices: A list of parameter indices
+            [param index per dim, dim index].
+        :type indices: List[List[int]]
+        """
+        self._pidx = np.array([0])
+        self._didx = np.array([0])
+
+        # Update number of parameters and parameters names
+        self._n_selected = 1
