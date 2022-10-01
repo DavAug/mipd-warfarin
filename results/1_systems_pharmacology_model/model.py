@@ -84,7 +84,9 @@ def define_hartmann_population_model():
 
     # Define population model
     population_model = chi.ComposedPopulationModel([
-        chi.PooledModel(n_dim=67),
+        chi.PooledModel(n_dim=54),
+        chi.LogNormalModel(n_dim=1),
+        chi.PooledModel(n_dim=12),
         p1,
         chi.PooledModel(n_dim=1),
         p2,
