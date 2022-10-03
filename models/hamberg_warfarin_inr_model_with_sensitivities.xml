@@ -400,27 +400,15 @@
           <apply>
             <times/>
             <cn> -1 </cn>
-            <ci> maximal_inr_shift </ci>
+            <apply>
+              <divide/>
+              <ci> maximal_inr_shift </ci>
+              <cn> 2 </cn>
+            </apply>
             <apply>
               <plus/>
-              <apply>
-                <times/>
-                <apply>
-                  <divide/>
-                  <ci> relative_change_cf2 </ci>
-                  <cn> 2 </cn>
-                </apply>
-                <ci> drelative_change_cf1_dvolume </ci>
-              </apply>
-              <apply>
-                <times/>
-                <apply>
-                  <divide/>
-                  <ci> relative_change_cf1 </ci>
-                  <cn> 2 </cn>
-                </apply>
-                <ci> drelative_change_cf2_dvolume </ci>
-              </apply>
+              <ci> drelative_change_cf1_dvolume </ci>
+              <ci> drelative_change_cf2_dvolume </ci>
             </apply>
           </apply>
         </math>
@@ -676,27 +664,15 @@
           <apply>
             <times/>
             <cn> -1 </cn>
-            <ci> maximal_inr_shift </ci>
+            <apply>
+              <divide/>
+              <ci> maximal_inr_shift </ci>
+              <cn> 2 </cn>
+            </apply>
             <apply>
               <plus/>
-              <apply>
-                <times/>
-                <apply>
-                  <divide/>
-                  <ci> relative_change_cf2 </ci>
-                  <cn> 2 </cn>
-                </apply>
-                <ci> drelative_change_cf1_delimination_rate </ci>
-              </apply>
-              <apply>
-                <times/>
-                <apply>
-                  <divide/>
-                  <ci> relative_change_cf1 </ci>
-                  <cn> 2 </cn>
-                </apply>
-                <ci> drelative_change_cf2_delimination_rate </ci>
-              </apply>
+              <ci> drelative_change_cf1_delimination_rate </ci>
+              <ci> drelative_change_cf2_delimination_rate </ci>
             </apply>
           </apply>
         </math>
@@ -934,27 +910,15 @@
           <apply>
             <times/>
             <cn> -1 </cn>
-            <ci> maximal_inr_shift </ci>
+            <apply>
+              <divide/>
+              <ci> maximal_inr_shift </ci>
+              <cn> 2 </cn>
+            </apply>
             <apply>
               <plus/>
-              <apply>
-                <times/>
-                <apply>
-                  <divide/>
-                  <ci> relative_change_cf2 </ci>
-                  <cn> 2 </cn>
-                </apply>
-                <ci> drelative_change_cf1_dhalf_maximal_effect_concentration </ci>
-              </apply>
-              <apply>
-                <times/>
-                <apply>
-                  <divide/>
-                  <ci> relative_change_cf1 </ci>
-                  <cn> 2 </cn>
-                </apply>
-                <ci> drelative_change_cf2_dhalf_maximal_effect_concentration </ci>
-              </apply>
+              <ci> drelative_change_cf1_dhalf_maximal_effect_concentration </ci>
+              <ci> drelative_change_cf2_dhalf_maximal_effect_concentration </ci>
             </apply>
           </apply>
         </math>
@@ -1161,10 +1125,9 @@
             <times/>
             <cn> -1 </cn>
             <ci> maximal_inr_shift </ci>
-            <ci> drelative_change_cf1_dtransition_rate_chain_1 </ci>
             <apply>
               <divide/>
-              <ci> relative_change_cf2 </ci>
+              <ci> drelative_change_cf1_dtransition_rate_chain_1 </ci>
               <cn> 2 </cn>
             </apply>
           </apply>
@@ -1267,10 +1230,9 @@
             <times/>
             <cn> -1 </cn>
             <ci> maximal_inr_shift </ci>
-            <ci> drelative_change_cf2_dtransition_rate_chain_2 </ci>
             <apply>
               <divide/>
-              <ci> relative_change_cf1 </ci>
+              <ci> drelative_change_cf2_dtransition_rate_chain_2 </ci>
               <cn> 2 </cn>
             </apply>
           </apply>
