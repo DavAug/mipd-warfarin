@@ -1,4 +1,5 @@
 import copy
+from multiprocessing.sharedctypes import Value
 import os
 
 import chi
@@ -8,7 +9,7 @@ import numpy as np
 import pandas as pd
 
 
-def define_hamberg_model():
+def define_hamberg_model(pk_only=False):
     """
     Returns Hamberg's semi-mechanistic model of the INR response to warfarin
     treatment.
@@ -79,6 +80,14 @@ def define_hamberg_model():
         'drelative_change_cf2_dvolume']
     model.fix_parameters({'myokit.' + p: 0 for p in sens_0})
 
+    if pk_only:
+        # Fix all PD related model parameters to typical values
+        model.fix_parameters({
+            'myokit.half_maximal_effect_concentration': 4.1,
+            'myokit.transition_rate_chain_1': 0.105,
+            'myokit.transition_rate_chain_2': 0.025
+        })
+
     # Import model parameters
     directory = os.path.dirname(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -88,25 +97,71 @@ def define_hamberg_model():
     return (model, parameters)
 
 
-def define_hamberg_population_model(centered=True):
+def define_hamberg_population_model(
+        centered=True, conc=True, inr=True, pk_only=False):
     """
     Returns Hamberg's population model for the semi-mechanistic model of the
     INR response to warfarin treatment.
+
+    centered: Determines whether the population model is in a centered or
+        non-centered parametrisation.
+    conc: Boolean indicating whether the model has a noise parameter for the
+        concentration
+    inr: Boolean indicating whether the model has a noise parameter for the inr
+    pk_only: Boolean indicating whether only the population model for the pk
+        parameters should be returned.
     """
     # Define covariate model for the elimination rate
-    # (Hamberg model for clearance is effectively a model for the elimination
-    # rate, since the effective volume of distribution is independent of
-    # covariates)
     elim_rate_cov_model = chi.CovariatePopulationModel(
         population_model=chi.LogNormalModel(
             dim_names=['Elimination rate'], centered=centered),
         covariate_model=HambergEliminationRateCovariateModel()
     )
+
+    if pk_only:
+        # Return the population model for the PK model
+        noise_pop_model = []
+        dim_name = []
+        if conc:
+            noise_pop_model.append(chi.PooledModel(n_dim=1))
+            dim_name += ['Drug conc. Sigma log']
+
+        # Define population model
+        population_model = chi.ComposedPopulationModel([
+            elim_rate_cov_model,
+            chi.LogNormalModel(
+                dim_names=['Volume of distribution'], centered=centered)
+        ] + noise_pop_model)
+        population_model.set_dim_names([
+            'Elimination rate',
+            'Volume of distribution'
+        ] + dim_name)
+
+        return population_model
+
+    # Define covariare model for the EC50
     ec50_cov_model = chi.CovariatePopulationModel(
         population_model=chi.LogNormalModel(
             dim_names=['EC50'], centered=centered),
         covariate_model=HambergEC50CovariateModel()
     )
+
+    # Define noise population models
+    noise_pop_models = []
+    dim_names = []
+    if conc and inr:
+        noise_pop_models.append(chi.PooledModel(n_dim=2))
+        dim_names += ['Drug conc. Sigma log', 'INR Sigma log']
+    elif not conc and inr:
+        noise_pop_models.append(chi.PooledModel(n_dim=1))
+        dim_names += ['INR Sigma log']
+    elif conc and not inr:
+        noise_pop_models.append(chi.PooledModel(n_dim=1))
+        dim_names += ['Drug conc. Sigma log']
+    else:
+        pass
+
+    # Define population model
     population_model = chi.ComposedPopulationModel([
         elim_rate_cov_model,
         ec50_cov_model,
@@ -114,20 +169,15 @@ def define_hamberg_population_model(centered=True):
             'Transition rate chain 1',
             'Transition rate chain 2']),
         chi.LogNormalModel(
-            dim_names=['Volume of distribution'], centered=centered),
-        chi.PooledModel(n_dim=2, dim_names=[
-            'Drug conc. Sigma log',
-            'INR Sigma log'])
-    ])
+            dim_names=['Volume of distribution'], centered=centered)
+    ] + noise_pop_models)
     population_model.set_dim_names([
         'Elimination rate',
         'EC50',
         'Transition rate chain 1',
         'Transition rate chain 2',
-        'Volume of distribution',
-        'Drug conc. Sigma log',
-        'INR Sigma log'
-    ])
+        'Volume of distribution'
+    ] + dim_names)
 
     return population_model
 
@@ -186,6 +236,7 @@ class HambergModel(chi.MechanisticModel):
             dinr + '_dtransition_rate_chain_1',
             dinr + '_dtransition_rate_chain_2',
             dinr + '_dvolume']
+        self._dparams = [0, 1, 2, 3, 4]
 
     def _set_const(self, parameters):
         """
@@ -283,7 +334,7 @@ class HambergModel(chi.MechanisticModel):
         """
         return self._dosing_regimen
 
-    def enable_sensitivities(self, enabled, *arg, **kwargs):
+    def enable_sensitivities(self, enabled, parameter_names=None):
         """
         Enables the computation of the model output sensitivities to the model
         parameters if set to ``True``.
@@ -305,6 +356,21 @@ class HambergModel(chi.MechanisticModel):
         # determines whether or not they are returned.
         enabled = bool(enabled)
         self._has_sensitivities = enabled
+
+        dparams = [0, 1, 2, 3, 4]
+        if parameter_names is not None:
+            dparams = []
+            if 'myokit.elimination_rate' in parameter_names:
+                dparams += [0]
+            if 'myokit.half_maximal_effect_concentration' in parameter_names:
+                dparams += [1]
+            if 'myokit.transition_rate_chain_1' in parameter_names:
+                dparams += [2]
+            if 'myokit.transition_rate_chain_2' in parameter_names:
+                dparams += [3]
+            if 'myokit.volume' in parameter_names:
+                dparams += [4]
+        self._dparams = dparams
 
     def has_sensitivities(self):
         """
@@ -435,6 +501,7 @@ class HambergModel(chi.MechanisticModel):
         sensitivities = np.moveaxis(
             sensitivities, source=(0, 1, 2), destination=(1, 2, 0))
         sensitivities = sensitivities[:, self._sensitivity_index, :]
+        sensitivities = sensitivities[:, :, self._dparams]
 
         return output, sensitivities
 
@@ -753,7 +820,7 @@ class HambergEC50CovariateModel(chi.CovariateModel):
     r"""
     Implements Hamberg's covariate model of the EC50.
 
-    In this model the typical clearance is assumed to be a function of
+    In this model the typical EC50 is assumed to be a function of
     the VKORC1 genotype
 
     .. math::
