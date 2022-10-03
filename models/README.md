@@ -20,7 +20,7 @@ also simulates the normalised prothrombin time (INR).
 
 Outputs:
 ```math
-c = \frac{a_c}{v} \quad \text{and} \quad \bar{y} = \bar{y}_0 + \bar{y}_{max}\left( 1 - \frac{f_1 f_2}{2}\right)
+c = \frac{a_c}{v} \quad \text{and} \quad \bar{y} = \bar{y}_0 + \bar{y}_{max}\left( 1 - \frac{f_1 + f_2}{2}\right)
 ```
 
 Pharmacokinetics:
@@ -50,7 +50,7 @@ Sensitivities:
 ```math
 \frac{\mathrm{d}c}{\mathrm{d}v} = -\frac{a_c}{v^2}
 \quad \text{and} \quad
-\frac{\mathrm{d}\bar{y}}{\mathrm{d}v} = -\bar{y}_{max}\left( \frac{f_2}{2}\frac{\mathrm{d}f_1}{\mathrm{d}v} + \frac{f_1}{2}\frac{\mathrm{d}f_2}{\mathrm{d}v} \right)
+\frac{\mathrm{d}\bar{y}}{\mathrm{d}v} = -\frac{\bar{y}_{max}}{2}\left( \frac{\mathrm{d}f_1}{\mathrm{d}v} + \frac{\mathrm{d}f_2}{\mathrm{d}v} \right)
 ```
 ```math
 \frac{\mathrm{d}}{\mathrm{d}t}\frac{\mathrm{d}f_i}{\mathrm{d}v} = k_i \frac{\mathrm{d}f_{2, i}}{\mathrm{d}v} - k_i \frac{\mathrm{d}f_i}{\mathrm{d}v}
@@ -66,7 +66,7 @@ Sensitivities:
 ```math
 \frac{\mathrm{d}c}{\mathrm{d}k_e} = \frac{1}{v}\frac{\mathrm{d}a_c}{\mathrm{d}k_e}
 \quad \text{and} \quad
-\frac{\mathrm{d}\bar{y}}{\mathrm{d}k_e} = -\bar{y}_{max}\left( \frac{f_2}{2}\frac{\mathrm{d}f_1}{\mathrm{d}k_e} + \frac{f_1}{2}\frac{\mathrm{d}f_2}{\mathrm{d}k_e} \right)
+\frac{\mathrm{d}\bar{y}}{\mathrm{d}k_e} = -\frac{\bar{y}_{max}}{2}\left( \frac{\mathrm{d}f_1}{\mathrm{d}k_e} + \frac{\mathrm{d}f_2}{\mathrm{d}k_e} \right)
 ```
 ```math
 \frac{\mathrm{d}}{\mathrm{d}t}\frac{\mathrm{d}a_c}{\mathrm{d}k_e} = - a_c - k_e \frac{\mathrm{d}a_c}{\mathrm{d}k_e}
@@ -85,7 +85,7 @@ Sensitivities:
 ```math
 \frac{\mathrm{d}c}{\mathrm{d}c_{50}} = 0
 \quad \text{and} \quad
-\frac{\mathrm{d}\bar{y}}{\mathrm{d}c_{50}} = -\bar{y}_{max}\left( \frac{f_2}{2}\frac{\mathrm{d}f_1}{\mathrm{d}c_{50}} + \frac{f_1}{2}\frac{\mathrm{d}f_2}{\mathrm{d}c_{50}} \right)
+\frac{\mathrm{d}\bar{y}}{\mathrm{d}c_{50}} = -\frac{\bar{y}_{max}}{2}\left(\frac{\mathrm{d}f_1}{\mathrm{d}c_{50}} + \frac{\mathrm{d}f_2}{\mathrm{d}c_{50}} \right)
 ```
 ```math
 \frac{\mathrm{d}}{\mathrm{d}t}\frac{\mathrm{d}f_i}{\mathrm{d}c_{50}} = k_i \frac{\mathrm{d}f_{2, i}}{\mathrm{d}c_{50}} - k_i \frac{\mathrm{d}f_i}{\mathrm{d}c_{50}}
@@ -101,7 +101,7 @@ Sensitivities:
 ```math
 \frac{\mathrm{d}c}{\mathrm{d}k_i} = 0
 \quad \text{and} \quad
-\frac{\mathrm{d}\bar{y}}{\mathrm{d}k_i} = -\bar{y}_{max}\left( \frac{f_2}{2}\frac{\mathrm{d}f_1}{\mathrm{d}k_i} + \frac{f_1}{2}\frac{\mathrm{d}f_2}{\mathrm{d}k_i} \right)
+\frac{\mathrm{d}\bar{y}}{\mathrm{d}k_i} = -\frac{\bar{y}_{max}}{2}\frac{\mathrm{d}f_i}{\mathrm{d}k_i}
 ```
 ```math
 \frac{\mathrm{d}}{\mathrm{d}t}\frac{\mathrm{d}f_i}{\mathrm{d}k_i} = f_{2, i} - f_{i} + k_i \frac{\mathrm{d}f_{2, i}}{\mathrm{d}k_i} - k_i \frac{\mathrm{d}f_i}{\mathrm{d}k_i}
