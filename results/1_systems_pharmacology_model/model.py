@@ -3,6 +3,7 @@ import os
 import chi
 import numpy as np
 import pandas as pd
+import pints
 from scipy import interpolate
 
 
@@ -323,6 +324,75 @@ def define_hartmann_population_model():
     parameters = pd.read_csv(directory + parameter_file)
 
     return (population_model, parameters)
+
+
+def find_dose(model, parameters, target=2.5, time=20*24):
+    """
+    Returns the daily dose that reaches the target INR at the specified time.
+
+    :param model: Model of the INR response.
+    :type model: WajimaWarfarinINRModel
+    :param parameters: Parameters of the model.
+    :type parameters: np.ndarray of shape (n_parameters,) or
+        (n_ids, n_parameters)
+    :param target: Target INR.
+    :type target: float
+    :param time: Reference time since start of treatment.
+    """
+    # Check inputs
+    if not isinstance(model, WajimaWarfarinINRResponseModel):
+        raise TypeError('Invalid model.')
+    parameters = np.array(parameters)
+    if parameters.ndim == 1:
+        parameters = parameters[np.newaxis, :]
+    n_ids, n_parameters = parameters.shape
+    if n_parameters != model.n_parameters():
+        raise ValueError('Invalid parameters.')
+    target = float(target)
+    if target <= 0:
+        raise ValueError('Invalid target.')
+    time = float(time)
+    if target <= 0:
+        raise ValueError('Invalid time.')
+
+    # Define pints error measure
+    class SquaredINRDistance(pints.ErrorMeasure):
+        """
+        Error measure for dose optimisation.
+        """
+        def __init__(self, model, parameters, target, time):
+            super(SquaredINRDistance, self).__init__()
+            self._model = model
+            self._parameters = parameters
+            self._target = target
+            self._calibration_phase = 24 * 100
+            self._times = np.array([time + self._calibration_phase])
+
+        def __call__(self, parameters):
+            # Set daily dose, starting after calibration phase
+            dose = parameters[0]
+            model.set_dosing_regimen(
+                dose=dose, start=self._calibration_phase, period=24)
+            inr = self._model.simulate(
+                parameters=self._parameters, times=self._times)[0, 0]
+
+            return (self._target - inr) ** 2
+
+        def n_parameters(self):
+            return 1
+
+    # Find dose
+    doses = np.empty(n_ids)
+    for idp, params in enumerate(parameters):
+        objective = SquaredINRDistance(model, params, target, time)
+        p, _ = pints.optimise(
+            objective,
+            x0=5,
+            transformation=pints.LogTransformation(n_parameters=1),
+            method=pints.NelderMead)
+        doses[idp] = p[0]
+
+    return doses
 
 
 class WajimaWarfarinINRResponseModel(chi.MechanisticModel):
