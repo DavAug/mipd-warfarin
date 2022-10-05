@@ -132,7 +132,7 @@ Inferred parameters: $(v, k_e, c_{50})$
 \frac{\mathrm{d}\bar{y}_{ss}}{\mathrm{d}k_e} = \bar{y}_{max}\frac{\kappa}{c_{ss} + c_{50}}\left( 1 - \frac{ c_{ss}}{c_{ss} + c_{50}}\right)\frac{c_{ss}}{k_e}
 ```
 
-3. with respect to $c_50$:
+3. with respect to $c_{50}$:
 ```math
 \frac{\mathrm{d}\bar{y}_{ss}}{\mathrm{d}c_{50}} = -\bar{y}_{max}\frac{\kappa c_{ss}}{(c_{ss} + c_{50})^2}
 ```
