@@ -12,6 +12,7 @@ myokit.baseline_inr,1.0,dimensionless
 myokit.maximal_effect,1.0,1
 myokit.maximal_inr_shift,20.0,dimensionless
 central.size,14.3,L
+myokit.volume,14.3,L
 myokit.elimination_rate,0.0243,1/h
 myokit.gamma,1.15,dimensionless
 myokit.half_maximal_effect_concentration,4.1,mg/L

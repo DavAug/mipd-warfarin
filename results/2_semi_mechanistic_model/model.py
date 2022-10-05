@@ -182,6 +182,81 @@ def define_hamberg_population_model(
     return population_model
 
 
+def define_steady_state_hamberg_model():
+    """
+    Returns the steady state model of Hamberg's semi-mechanistic model of the
+    INR response to warfarin treatment.
+
+    Reference
+    ---------
+    .. Hamberg AK, Wadelius M, Lindh JD, Dahl ML, Padrini R, Deloukas P,
+        Rane A, Jonsson EN. A pharmacometric model describing the relationship
+        between warfarin dose and INR response with respect to variations in
+        CYP2C9, VKORC1, and age. Clin Pharmacol Ther. 2010 Jun;87(6):727-34.
+
+    :returns: Hamberg model, typical parameter values
+    :rtype: Tuple[chi.MechanisticModel, pandas.DataFrame]
+    """
+    # Define model
+    model = SteadyStateHambergModel()
+
+    # Fix parameters that are not inferred
+    model = chi.ReducedMechanisticModel(model)
+
+    # Fix parameter that are not inferred
+    model.fix_parameters({
+        'myokit.gamma': 1.15,
+        'myokit.baseline_inr': 1,
+        'myokit.maximal_effect': 1,
+        'myokit.maximal_inr_shift': 20
+    })
+
+    # Import model parameters
+    directory = os.path.dirname(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    parameter_file = '/models/hamberg_warfarin_inr_model_parameters.csv'
+    parameters = pd.read_csv(directory + parameter_file)
+
+    return (model, parameters)
+
+
+def define_steady_state_hamberg_population_model(centered=True):
+    """
+    Returns Hamberg's population model for the steadt state model of the
+    semi-mechanistic model of the INR response to warfarin treatment.
+    """
+    # Define covariate model for the elimination rate
+    elim_rate_cov_model = chi.CovariatePopulationModel(
+        population_model=chi.LogNormalModel(
+            dim_names=['Elimination rate'], centered=centered),
+        covariate_model=HambergEliminationRateCovariateModel()
+    )
+
+    # Define covariare model for the EC50
+    ec50_cov_model = chi.CovariatePopulationModel(
+        population_model=chi.LogNormalModel(
+            dim_names=['EC50'], centered=centered),
+        covariate_model=HambergEC50CovariateModel()
+    )
+
+    # Define population model
+    population_model = chi.ComposedPopulationModel([
+        elim_rate_cov_model,
+        ec50_cov_model,
+        chi.LogNormalModel(
+            dim_names=['Volume of distribution'], centered=centered),
+        chi.PooledModel()
+    ])
+    population_model.set_dim_names([
+        'Elimination rate',
+        'EC50',
+        'Volume of distribution',
+        'INR Sigma log'
+    ])
+
+    return population_model
+
+
 class HambergModel(chi.MechanisticModel):
     """
     Implements Hamberg's semi-mechanistic model of the INR response to warfarin
@@ -989,3 +1064,235 @@ class HambergEC50CovariateModel(chi.CovariateModel):
 
         # Update number of parameters and parameters names
         self._n_selected = 1
+
+
+class SteadyStateHambergModel(chi.MechanisticModel):
+    """
+    Implements the steady state of Hamberg;s semi-mechanistic model for the INR
+    response to warfarin treatment.
+
+    This assumes constant that the dose rate is constant over time, e.g.
+    55 mg per week.
+
+    Reference
+    ---------
+    .. Hamberg AK, Wadelius M, Lindh JD, Dahl ML, Padrini R, Deloukas P,
+        Rane A, Jonsson EN. A pharmacometric model describing the relationship
+        between warfarin dose and INR response with respect to variations in
+        CYP2C9, VKORC1, and age. Clin Pharmacol Ther. 2010 Jun;87(6):727-34.
+    """
+    def __init__(self):
+        self._dose_rate = 0  # in mg/h
+        self._has_sensitivities = False
+        self._n_parameters = 7
+        self._parameter_names = [
+            'myokit.baseline_inr',
+            'myokit.maximal_inr_shift',
+            'myokit.maximal_effect',
+            'myokit.gamma',
+            'myokit.elimination_rate',
+            'myokit.half_maximal_effect_concentration',
+            'myokit.volume'
+        ]
+        self._n_outputs = 1
+        self._output_names = ['myokit.inr']
+
+    def copy(self):
+        """
+        Returns a deep copy of the mechanistic model.
+
+        .. note::
+            Copying the model resets the sensitivity settings.
+        """
+        return copy.deepcopy(self)
+
+    def dosing_regimen(self):
+        """
+        Returns the dosing regimen of the compound in form of a
+        :class:`myokit.Protocol`. If the protocol has not been set, ``None`` is
+        returned.
+        """
+        return self._dosing_regimen
+
+    def enable_sensitivities(self, enabled, parameter_names=None):
+        """
+        Enables the computation of the model output sensitivities to the model
+        parameters if set to ``True``.
+
+        The sensitivities are computed using the forward sensitivities method,
+        where an ODE for each sensitivity is derived. The sensitivities are
+        returned together with the solution to the orginal system of ODEs when
+        simulating the mechanistic model :meth:`simulate`.
+
+        The optional parameter names argument can be used to set which
+        sensitivities are computed. By default the sensitivities to all
+        parameters are computed.
+
+        :param enabled: A boolean flag which enables (``True``) / disables
+            (``False``) the computation of sensitivities.
+        :type enabled: bool
+        """
+        self._has_sensitivities = bool(enabled)
+
+    def has_sensitivities(self):
+        """
+        Returns a boolean indicating whether sensitivities have been enabled.
+        """
+        return self._has_sensitivities
+
+    def n_outputs(self):
+        """
+        Returns the number of output dimensions.
+
+        By default this is the number of states.
+        """
+        return self._n_outputs
+
+    def n_parameters(self):
+        """
+        Returns the number of parameters in the model.
+
+        Parameters of the model are initial state values and structural
+        parameter values.
+        """
+        return self._n_parameters
+
+    def outputs(self):
+        """
+        Returns the output names of the model.
+        """
+        # Get user specified output names
+        output_names = [
+            self._output_name_map[name] for name in self._output_names]
+        return output_names
+
+    def parameters(self):
+        """
+        Returns the parameter names of the model.
+        """
+        # Get user specified parameter names
+        parameter_names = [name for name in self._parameter_names]
+
+        return parameter_names
+
+    def simulate(self, parameters, times):
+        """
+        Returns the numerical solution of the model outputs (and optionally
+        the sensitivites) for the specified parameters and times.
+
+        The model outputs are returned as a 2 dimensional NumPy array of shape
+        ``(n_outputs, n_times)``. If sensitivities are enabled, a tuple is
+        returned with the NumPy array of the model outputs and a NumPy array of
+        the sensitivities of shape ``(n_times, n_outputs, n_parameters)``.
+
+        :param parameters: An array-like object with values for the model
+            parameters.
+        :type parameters: list, numpy.ndarray
+        :param times: An array-like object with time points at which the output
+            values are returned.
+        :type times: list, numpy.ndarray
+
+        :rtype: np.ndarray of shape (n_outputs, n_times) or
+            (n_times, n_outputs, n_parameters)
+        """
+        if len(times) > 1:
+            raise ValueError('Invalid times. Only except times of length 1.')
+
+        # Unpack paramegers
+        y0, ymax, kappa, gamma, ke, c50, v = parameters
+
+        # Compute steady state concentration
+        c = self._dose_rate / ke / v
+
+        # Compute steady state INR
+        delta_y = ymax * kappa * c**gamma / (c50**gamma + c**gamma)
+        y = y0 + delta_y
+
+        # Return, if sensitivities are off
+        y = np.array([[y]])
+        if not self._has_sensitivities:
+            return y
+
+        # Compute sensitivities
+        dv = \
+            delta_y * gamma \
+            * (1 - c * c50**(gamma - 1) / (c50**gamma + c**gamma)) \
+            / v
+        dke = \
+            delta_y * gamma \
+            * (1 - c * c50**(gamma - 1) / (c50**gamma + c**gamma)) \
+            / ke
+        dc50 = -delta_y * gamma * c50**(gamma - 1) / (c50**gamma + c**gamma)
+
+        return (y, np.array([[[dke, dc50, dv]]]))
+
+    def set_dosing_regimen(
+            self, dose, start=0, duration=0.01, period=None, num=None):
+        """
+        Sets the dosing regimen with which the compound is administered.
+
+        The route of administration can be set with :meth:`set_administration`.
+        However, the type of administration, e.g. bolus injection or infusion,
+        may be controlled with the duration input.
+
+        By default the dose is administered as a bolus injection (duration on
+        a time scale that is 100 fold smaller than the basic time unit). To
+        model an infusion of the dose over a longer time period, the
+        ``duration`` can be adjusted to the appropriate time scale.
+
+        By default the dose is administered once. To apply multiple doses
+        provide a dose administration period.
+
+        :param dose: The amount of the compound that is injected at each
+            administration, or a myokit.Protocol instance that defines the
+            dosing regimen.
+        :type dose: float or myokit.Protocol
+        :param start: Start time of the treatment. By default the
+            administration starts at t=0.
+        :type start: float, optional
+        :param duration: Duration of dose administration. By default the
+            duration is set to 0.01 of the time unit (bolus).
+        :type duration: float, optional
+        :param period: Periodicity at which doses are administered. If ``None``
+            the dose is administered only once.
+        :type period: float, optional
+        :param num: Number of administered doses. If ``None`` and the
+            periodicity of the administration is not ``None``, doses are
+            administered indefinitely.
+        :type num: int, optional
+        """
+        if num is None:
+            # Myokits default is zero, i.e. infinitely many doses
+            num = 0
+
+        if period is None:
+            # If period is not provided, we administer a single dose
+            # Myokits defaults are 0s for that.
+            period = 0
+            num = 0
+
+        if period == 0:
+            raise ValueError(
+                'This model is not defined for single doses.')
+
+        if isinstance(dose, myokit.Protocol):
+            self._dosing_regimen = dose
+            self._dosing_rate = dose._level * dose._duration / dose._period
+            return None
+
+        # Translate dose to dose rate
+        dose_rate = dose / duration
+
+        # Set dosing regimen
+        dosing_regimen = myokit.pacing.blocktrain(
+            period=period, duration=duration, offset=start, level=dose_rate,
+            limit=num)
+        self._dosing_regimen = dosing_regimen
+        self._dose_rate = dose / period
+
+    def supports_dosing(self):
+        """
+        Returns a boolean whether dose administration with
+        :meth:`PKPDModel.set_dosing_regimen` is supported by the model.
+        """
+        return True
