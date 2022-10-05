@@ -113,3 +113,11 @@ Sensitivities:
 \frac{\mathrm{d}}{\mathrm{d}t}\frac{\mathrm{d}f_{1, i}}{\mathrm{d}k_i} = \left( 1 - \frac{\kappa c}{c + c_{50}}\right) - f_{i, 1} - k_i \frac{\mathrm{d}f_{1, i}}{\mathrm{d}k_i}
 ```
 
+## Hamberg steady state model and sensitivities
+
+```math
+\bar{y}_{ss} = \bar{y}_0 + \bar{y}_{max}\frac{\kappa c_{ss}}{c_{ss} + c_{50}} \quad \text{and} \quad c_{ss} = \frac{\bar{r}}{v \,k_e} 
+```
+
+Inferred parameters: $(v, k_e, c_{50})$
+
