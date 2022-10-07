@@ -1202,7 +1202,7 @@ class SteadyStateHambergModel(chi.MechanisticModel):
         y0, ymax, kappa, gamma, ke, c50, v = parameters
 
         # Compute steady state concentration
-        c = self._dose_rate / ke / v
+        c = self._dose_rate / ke / v / 2
 
         # Compute steady state INR
         delta_y = ymax * kappa * c**gamma / (c50**gamma + c**gamma)
@@ -1277,7 +1277,8 @@ class SteadyStateHambergModel(chi.MechanisticModel):
 
         if isinstance(dose, myokit.Protocol):
             self._dosing_regimen = dose
-            self._dosing_rate = dose._level * dose._duration / dose._period
+            event = dose.events()[0]
+            self._dosing_rate = event._level * event._duration / dose.period()
             return None
 
         # Translate dose to dose rate
