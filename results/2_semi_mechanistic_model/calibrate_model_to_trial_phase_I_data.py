@@ -31,7 +31,9 @@ def define_log_posterior():
     )
     problem = chi.ProblemModellingController(mechanistic_model, error_model)
     problem.set_population_model(population_model)
-    problem.set_data(measurements_df)
+    problem.set_data(measurements_df, output_observable_dict={
+        'myokit.concentration_central_compartment':
+            'central_warfarin.warfarin_concentration'})
     problem.set_log_prior(log_prior)
 
     return problem.get_log_posterior()
