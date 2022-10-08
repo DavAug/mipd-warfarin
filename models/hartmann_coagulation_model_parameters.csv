@@ -329,8 +329,8 @@
 114,Pooled myokit.elimination_rate_vk,0.2052,1/h
 115,Log mean myokit.elimination_rate_warfarin,-3.716,dimensionless
 115,Log std. myokit.elimination_rate_warfarin,0.089,dimensionless
-115,Rel. elimination rate shift *2/*2,0.495,dimensionless
-115,Rel. elimination rate shift *3/*3,0.757,dimensionless
+115,Rel. elimination rate shift *2*2,0.495,dimensionless
+115,Rel. elimination rate shift *3*3,0.757,dimensionless
 115,Rel. elimination rate shift with age,0.00571,dimensionless
 116,Pooled myokit.half_maximal_effect_concentration_aii_tmod_complex_pc,0.0001,nM
 117,Pooled myokit.half_maximal_effect_concentration_aix_aviii_complex_x,0.2,nM

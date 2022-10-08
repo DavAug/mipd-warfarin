@@ -715,8 +715,8 @@ class HambergEliminationRateCovariateModel(chi.CovariateModel):
         # Note the clearance for *1/*1 is implemented as the baseline
         self._n_parameters = 3
         self._parameter_names = [
-            'Rel. elimination rate shift *2/*2',
-            'Rel. elimination rate shift *3/*3',
+            'Rel. elimination rate shift *2*2',
+            'Rel. elimination rate shift *3*3',
             'Rel. elimination rate shift with age']
 
     def compute_population_parameters(
