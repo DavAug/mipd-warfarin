@@ -51,7 +51,7 @@
 49,dose.drug_amount,0.0,mg
 50,peripheral_vitamin_k.vitamin_k_peripheral_amount,115.47540983606557,nmol
 51,central.size,24.0,L
-52,central_warfarin.size,14.3,L
+52,central_warfarin.size,28.6,L
 53,central_warfarin.warfarin_amount,0.0,nmol
 54,central.contact_system_activator_amount,0.0,nmol
 55,dose.absorption_rate,1.0,1/h
@@ -259,7 +259,7 @@
 49,Pooled dose.drug_amount,0.0,mg
 50,Pooled peripheral_vitamin_k.vitamin_k_peripheral_amount,115.47540983606557,nmol
 51,Pooled central.size,24,L
-52,Log mean central_warfarin.size,2.660,dimensionless
+52,Log mean central_warfarin.size,3.353,dimensionless
 52,Log std. central_warfarin.size,0.054,dimensionless
 53,Pooled central_warfarin.warfarin_amount,0.0,nmol
 54,Pooled central.contact_system_activator_amount,0.0,nmol

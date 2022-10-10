@@ -1,9 +1,7 @@
 import os
-from xml.etree.ElementInclude import include
 
 import chi
 import numpy as np
-from traitlets import directional_link
 
 from model import define_wajima_model, define_hartmann_population_model
 
