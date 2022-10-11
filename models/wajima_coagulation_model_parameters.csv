@@ -115,6 +115,7 @@
 113,myokit.elimination_rate_atiii_heparin_complex,0.693,1/h
 114,myokit.elimination_rate_vk,0.2052,1/h
 115,myokit.elimination_rate_warfarin,0.02,1/h
+115,myokit.gamma,1,dimensionless
 116,myokit.half_maximal_effect_concentration_aii_tmod_complex_pc,1.0,nM
 117,myokit.half_maximal_effect_concentration_aix_aviii_complex_x,0.1,nM
 118,myokit.half_maximal_effect_concentration_aix_vii,10.0,nM

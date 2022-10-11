@@ -258,6 +258,9 @@
       <parameter id="half_maximal_effect_concentration_warfarin" value="0.34" constant="true" units="mg_per_l"/>
       <parameter id="maximal_inhibitory_effect_warfarin" value="1" constant="true" units="dimensionless"/>
 
+      <!-- Warfarin -->
+      <parameter id="gamma" value="1" constant="true" units="dimensionless"/>
+
       <!-- Tissue factor pathway inhibitor production and degradation -->
       <parameter id="degradation_rate_tfpi" value="1" constant="true" units="per_s"/>
 
@@ -1919,12 +1922,24 @@
                   <apply>
                     <times/>
                     <ci> maximal_inhibitory_effect_warfarin </ci>
-                    <ci> warfarin </ci>
+                    <apply>
+                      <power/>
+                      <ci> warfarin </ci>
+                      <ci> gamma </ci>
+                    </apply>
                   </apply>
                   <apply>
                     <plus/>
-                    <ci> half_maximal_effect_concentration_warfarin </ci>
-                    <ci> warfarin </ci>
+                    <apply>
+                      <power/>
+                      <ci> half_maximal_effect_concentration_warfarin </ci>
+                      <ci> gamma </ci>
+                    </apply>
+                    <apply>
+                      <power/>
+                      <ci> warfarin </ci>
+                      <ci> gamma </ci>
+                    </apply>
                   </apply>
                 </apply>
               </apply>
@@ -1979,12 +1994,24 @@
                   <apply>
                     <times/>
                     <ci> maximal_inhibitory_effect_warfarin </ci>
-                    <ci> warfarin </ci>
+                    <apply>
+                      <power/>
+                      <ci> warfarin </ci>
+                      <ci> gamma </ci>
+                    </apply>
                   </apply>
                   <apply>
                     <plus/>
-                    <ci> half_maximal_effect_concentration_warfarin </ci>
-                    <ci> warfarin </ci>
+                    <apply>
+                      <power/>
+                      <ci> half_maximal_effect_concentration_warfarin </ci>
+                      <ci> gamma </ci>
+                    </apply>
+                    <apply>
+                      <power/>
+                      <ci> warfarin </ci>
+                      <ci> gamma </ci>
+                    </apply>
                   </apply>
                 </apply>
               </apply>

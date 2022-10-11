@@ -115,6 +115,7 @@
 113,myokit.elimination_rate_atiii_heparin_complex,0.693,1/h
 114,myokit.elimination_rate_vk,0.2052,1/h
 115,myokit.elimination_rate_warfarin,0.02,1/h
+115,myokit.gamma,1.15,dimensionless
 116,myokit.half_maximal_effect_concentration_aii_tmod_complex_pc,0.0001,nM
 117,myokit.half_maximal_effect_concentration_aix_aviii_complex_x,0.2,nM
 118,myokit.half_maximal_effect_concentration_aix_vii,10.0,nM
@@ -150,7 +151,7 @@
 148,myokit.half_maximal_effect_concentration_thrombin_viii,0.0001,nM
 149,myokit.half_maximal_effect_concentration_thrombin_xi,10.0,nM
 150,myokit.half_maximal_effect_concentration_thrombin_xiii,1.0,nM
-151,myokit.half_maximal_effect_concentration_warfarin,0.2,mg/L
+151,myokit.half_maximal_effect_concentration_warfarin,0.17,mg/L
 152,myokit.input_rate_vk,0.20519999999999997,nM/h
 153,myokit.maximal_activation_rate_aii_tmod_complex_pc,1.0,1/h
 154,myokit.maximal_activation_rate_aix_aviii_complex_x,2.0,1/h
@@ -332,6 +333,7 @@
 115,Rel. elimination rate shift *2*2,0.495,dimensionless
 115,Rel. elimination rate shift *3*3,0.757,dimensionless
 115,Rel. elimination rate shift with age,0.00571,dimensionless
+115,Pooled myokit.gamma,1.15,dimensionless
 116,Pooled myokit.half_maximal_effect_concentration_aii_tmod_complex_pc,0.0001,nM
 117,Pooled myokit.half_maximal_effect_concentration_aix_aviii_complex_x,0.2,nM
 118,Pooled myokit.half_maximal_effect_concentration_aix_vii,10.0,nM
@@ -367,7 +369,7 @@
 148,Pooled myokit.half_maximal_effect_concentration_thrombin_viii,0.0001,nM
 149,Pooled myokit.half_maximal_effect_concentration_thrombin_xi,10.0,nM
 150,Pooled myokit.half_maximal_effect_concentration_thrombin_xiii,1.0,nM
-151,Log mean myokit.half_maximal_effect_concentration_warfarin,-1.609,dimensionless
+151,Log mean myokit.half_maximal_effect_concentration_warfarin,-1.772,dimensionless
 151,Log std. myokit.half_maximal_effect_concentration_warfarin,0.240,dimensionless
 151,Rel. EC50 shift AA,0.532,dimensionless
 152,Pooled myokit.input_rate_vk,0.20519999999999997,nM/h
