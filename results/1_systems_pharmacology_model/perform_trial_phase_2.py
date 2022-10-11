@@ -35,7 +35,7 @@ def define_demographics(n):
     The frequencies of the alleles as well as age ranges are modelled
     after Hamberg et al (2011).
     """
-    seed = 99
+    seed = 808
     n_cov = 5  # (1, 2, 5) all refer to the VKORC1 genotype
     covariates = np.zeros(shape=(n, n_cov))
 
@@ -59,7 +59,7 @@ def define_demographics(n):
     n_vkorc1_AA = int(np.ceil(0.15 * n))
     covariates[:n_vkorc1_AA, [0, 1, 4]] += 1
     n_vkorc1_GA = int(np.ceil(0.485 * n))
-    covariates[:n_vkorc1_AA+n_vkorc1_GA, [0, 3, 4]] += 1
+    covariates[:n_vkorc1_AA+n_vkorc1_GA, [0, 1, 4]] += 1
 
     # Shuffle CYP-VKORC pairs
     indices = np.random.choice(np.arange(n), replace=False, size=n)
@@ -223,13 +223,27 @@ def get_initial_dosing_regimen(covariates, offset):
 
 
 def adjust_dosing_regimen(dose_rates, latest_inr, days, offset):
-    # Naively adjust dose by fraction to target INR
+    # Naively adjust dose by fraction to target INR, if INR is outside
+    # therapeutic range
+    duration = 0.01
     dose_rate = dose_rates[-1]
     target = 2.5
-    dose_rate = dose_rate * target / latest_inr
+    if (latest_inr < 2) or (latest_inr > 3):
+        dose_rate = dose_rate * target / latest_inr
+
+        # Make sure that dose can be taken with conventional tablets
+        dose = dose_rate * duration
+        if dose < 1.5:
+            # Smallest pill
+            dose = 1
+        elif dose < 2.25:
+            dose = 2
+        else:
+            # From now on, any dose can be delivered in 0.5 steps
+            dose = np.round(dose * 2) / 2
+        dose_rate = dose / duration
 
     # Add a dose event until the next check
-    duration = 0.01
     new_regimen = myokit.Protocol()
     for idx, dr in enumerate(dose_rates):
         new_regimen.add(myokit.ProtocolEvent(
