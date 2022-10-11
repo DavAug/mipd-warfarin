@@ -20,7 +20,7 @@ myokit.transition_rate_chain_1, 0.105, 1/h
 myokit.transition_rate_chain_2, 0.025, 1/h
 Pooled Transition rate chain 1,0.1048951048951049,1/h
 Pooled Transition rate chain 2,0.0253592561284869,1/h
-Log std. Elimination rate,0.089,dimensionless
+Log std. Elimination rate,0.071,dimensionless
 Log mean Elimination rate,-3.716,dimensionless
 Rel. elimination rate shift *2*2,0.495,dimensionless
 Rel. elimination rate shift *3*3,0.757,dimensionless
