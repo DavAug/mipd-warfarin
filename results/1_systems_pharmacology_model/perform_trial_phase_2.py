@@ -292,6 +292,16 @@ def generate_data(model, parameters, covariates):
             seed=seed, n_samples=1, include_regimen=True)
         d.ID = idc
         d.Time -= warmup * 24
+
+        # Remove duplicates of VKORC genotype
+        # (Duplicates are a bug of model.sample)
+        mask = d.Observable == 'VKORC1'
+        genotype = d[mask].Value.unique()
+        d = d[~mask]
+        d = pd.concat((d, pd.DataFrame({
+            'ID': [idc], 'Observable': 'VKORC1', 'Value': genotype
+            })), ignore_index=True)
+
         data = pd.concat((data, d), ignore_index=True)
         seed += 1
 
