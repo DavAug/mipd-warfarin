@@ -51,10 +51,10 @@ def define_demographics(n):
     covariates[
         :n_cyp2p9_33+n_cyp2p9_23+n_cyp2p9_22+n_cyp2p9_13+n_cyp2p9_12, 2] += 1
 
-    typical_age = 65
+    typical_age = 50
     np.random.seed(seed)
     covariates[:, 3] = np.random.lognormal(
-        mean=np.log(typical_age), sigma=0.1, size=n)
+        mean=np.log(typical_age), sigma=0.15, size=n)
 
     n_vkorc1_AA = int(np.ceil(0.15 * n))
     covariates[:n_vkorc1_AA, [0, 1, 4]] += 1
@@ -292,6 +292,16 @@ def generate_data(model, parameters, covariates):
             seed=seed, n_samples=1, include_regimen=True)
         d.ID = idc
         d.Time -= warmup * 24
+
+        # Remove duplicates of VKORC genotype
+        # (Duplicates are a bug of model.sample)
+        mask = d.Observable == 'VKORC1'
+        genotype = d[mask].Value.unique()
+        d = d[~mask]
+        d = pd.concat((d, pd.DataFrame({
+            'ID': [idc], 'Observable': 'VKORC1', 'Value': genotype
+            })), ignore_index=True)
+
         data = pd.concat((data, d), ignore_index=True)
         seed += 1
 

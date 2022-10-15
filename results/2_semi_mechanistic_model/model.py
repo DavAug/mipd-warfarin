@@ -1161,10 +1161,8 @@ class SteadyStateHambergModel(chi.MechanisticModel):
         """
         Returns the output names of the model.
         """
-        # Get user specified output names
-        output_names = [
-            self._output_name_map[name] for name in self._output_names]
-        return output_names
+        names = [n for n in self._output_names]
+        return names
 
     def parameters(self):
         """
@@ -1271,15 +1269,21 @@ class SteadyStateHambergModel(chi.MechanisticModel):
             period = 0
             num = 0
 
+        if isinstance(dose, myokit.Protocol):
+            self._dosing_regimen = dose
+            try:
+                period = dose.period()
+            except AttributeError:
+                # We assume that dose is administered once a day
+                period = 24
+            event = dose.events()[0]
+            self._dosing_rate = \
+                event.level() * event.duration() / period
+            return None
+
         if period == 0:
             raise ValueError(
                 'This model is not defined for single doses.')
-
-        if isinstance(dose, myokit.Protocol):
-            self._dosing_regimen = dose
-            event = dose.events()[0]
-            self._dosing_rate = event._level * event._duration / dose.period()
-            return None
 
         # Translate dose to dose rate
         dose_rate = dose / duration
