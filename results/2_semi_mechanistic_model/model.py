@@ -1274,7 +1274,7 @@ class SteadyStateHambergModel(chi.MechanisticModel):
             except AttributeError:
                 # We assume that dose is administered once a day
                 period = 24
-            event = dose.events()[0]
+            event = dose.events()[-1]
             self._dose_rate = \
                 event.level() * event.duration() / period
             return None
