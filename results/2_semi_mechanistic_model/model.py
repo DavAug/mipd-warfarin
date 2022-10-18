@@ -1214,10 +1214,10 @@ class SteadyStateHambergModel(chi.MechanisticModel):
         # Compute sensitivities
         dv = \
             delta_y * gamma / v \
-            * (c * c50**gamma / (c50**gamma + c**gamma) - 1)
+            * (c**gamma / (c50**gamma + c**gamma) - 1)
         dke = \
             delta_y * gamma / ke \
-            * (c * c50**gamma / (c50**gamma + c**gamma) - 1)
+            * (c**gamma / (c50**gamma + c**gamma) - 1)
         dc50 = -delta_y * gamma * c50**(gamma - 1) / (c50**gamma + c**gamma)
 
         return (y, np.array([[[dke, dc50, dv]]]))
