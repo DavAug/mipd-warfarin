@@ -37,11 +37,14 @@ def find_dosing_regimen(objective_function):
     INR.
     """
     n_parameters = objective_function.n_parameters()
-    p, _ = pints.optimise(
+    controller = pints.OptimisationController(
         objective_function,
         x0=np.ones(n_parameters),
         transformation=pints.LogTransformation(n_parameters=n_parameters),
         method=pints.CMAES)
+    controller.set_parallel(True)
+
+    p, _ = controller.run()
 
     return p
 
@@ -151,8 +154,6 @@ if __name__ == '__main__':
 
     # Find optimal dosing strategy
     for _, patient in data.iterrows():
-        # o = define_objective_function(patient, model)
-        # r = find_dosing_regimen(o)
-        patient = {'ID': 1}
-        r = [3] * 19
+        o = define_objective_function(patient, model)
+        r = find_dosing_regimen(o)
         save_results(patient, r)
