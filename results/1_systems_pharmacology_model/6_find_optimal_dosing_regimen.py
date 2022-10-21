@@ -156,4 +156,3 @@ if __name__ == '__main__':
         patient = {'ID': 1}
         r = [3] * 19
         save_results(patient, r)
-        break
