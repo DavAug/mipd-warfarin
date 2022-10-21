@@ -123,6 +123,10 @@ class SquaredINRDistance(pints.ErrorMeasure):
         # Compute normalised squared distance to target
         squared_distance = np.mean((inrs - self._target)**2)
 
+        # Round squared distance to 2 digits for faster convergence of
+        # optimisation
+        squared_distance = np.round(squared_distance, decimals=2)
+
         return squared_distance
 
     def _define_regimen(self, doses):
