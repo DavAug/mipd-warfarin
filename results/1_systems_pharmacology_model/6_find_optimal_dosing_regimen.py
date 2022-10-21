@@ -46,7 +46,11 @@ def find_dosing_regimen(objective_function):
 
     p, _ = controller.run()
 
-    return p
+    # Format doses to daily doses for the first 19 days
+    doses = list(p)
+    doses = doses[:6] + [doses[6]] * 13
+
+    return doses
 
 def save_results(patient, regimen):
     """
@@ -99,7 +103,7 @@ class SquaredINRDistance(pints.ErrorMeasure):
         self._target = target
         self._doses = [0] * days
         self._duration = 0.01
-        self._n_doses = len(self._doses)
+        self._n_doses = 7  # After one week the maintenance dose is used
 
         # Construct simulation times in hours
         # NOTE: 100 days calibration, so patient can reach equilibrium,
@@ -123,15 +127,16 @@ class SquaredINRDistance(pints.ErrorMeasure):
         # Compute normalised squared distance to target
         squared_distance = np.mean((inrs - self._target)**2)
 
-        # Round squared distance to 2 digits for faster convergence of
+        # Round squared distance to 3 digits for faster convergence of
         # optimisation
-        squared_distance = np.round(squared_distance, decimals=2)
+        squared_distance = np.round(squared_distance, decimals=3)
 
         return squared_distance
 
     def _define_regimen(self, doses):
         if len(doses) != self._n_doses:
             raise ValueError('Invalid parameters.')
+        doses = list(doses[:6]) + [doses[6]] * 13
         dose_rates = np.array(doses) / self._duration
 
         regimen = myokit.Protocol()
