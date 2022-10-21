@@ -605,6 +605,13 @@ class WajimaWarfarinINRResponseModel(chi.MechanisticModel):
         """
         return self._fibrin_auc_times[-1]
 
+    def has_sensitivities(self):
+        """
+        Returns a boolean indicating whether the model also returns
+        sensitivities.
+        """
+        return False
+
     def n_outputs(self):
         """
         Returns the number of output dimensions.
