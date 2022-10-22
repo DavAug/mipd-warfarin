@@ -35,8 +35,8 @@ def load_model():
     return model
 
 def predict_maintenance_dose(data, model):
-    doses = model.predict(data)
-    return doses
+    log_doses = model.predict(data)
+    return np.exp(log_doses)
 
 def save_results(ids, doses):
     df = pd.DataFrame({

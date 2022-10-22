@@ -21,7 +21,7 @@ def prepare_data():
 
     # Reshape data into [INR, CYP *1/*1, CYP *1/*2, CYP *1/*3, CYP *2/*2,
     # CYP *2/*3, CYP *3/*3, VKORC GG, VKORC GA, VKORC AA, Age,
-    # Maintenance dose]
+    # log(Maintenance dose)]
     # NOTE: CYP and VKORC are implemented using a 1-hot encoding
     ids = measurements_df.ID.dropna().unique()
     data = np.zeros(shape=(len(ids), 12))
@@ -33,7 +33,7 @@ def prepare_data():
         vkorc = temp[temp.Observable == 'VKORC1'].Value.values[0]
         data[idx, int(vkorc + 7)] = 1
         data[idx, 10] = temp[temp.Observable == 'Age'].Value.values[0]
-        data[idx, 11] = temp.Dose.dropna().values[-1]
+        data[idx, 11] = np.log(temp.Dose.dropna().values[-1])
 
     return data
 
