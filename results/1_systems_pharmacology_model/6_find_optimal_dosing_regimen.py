@@ -44,7 +44,7 @@ def find_dosing_regimen(objective_function):
         transformation=pints.LogTransformation(n_parameters=n_parameters),
         method=pints.CMAES)
     controller.set_parallel(True)
-    controller.set_max_unchanged_iterations(iterations=100, threshold=1e-2)
+    controller.set_max_unchanged_iterations(iterations=100, threshold=1e-3)
 
     p, _ = controller.run()
 
