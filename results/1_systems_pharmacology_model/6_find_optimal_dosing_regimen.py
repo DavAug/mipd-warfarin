@@ -74,8 +74,9 @@ def save_results(patient, regimen):
 
     # Add data to file
     if patient['ID'] in data.ID.unique():
+        mask = data.ID == patient['ID']
         for idd, dose in enumerate(regimen):
-            data['Dose %d in mg' % (idd+1)] = dose
+            data.loc[mask, 'Dose %d in mg' % (idd+1)] = dose
     else:
         df = {
             'Dose %d in mg' % (idd+1): [dose]
