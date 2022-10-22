@@ -41,7 +41,8 @@ def find_dosing_regimen(objective_function):
     controller = pints.OptimisationController(
         objective_function,
         x0=np.ones(n_parameters),
-        transformation=pints.LogTransformation(n_parameters=n_parameters),
+        boundaries=pints.RectangularBoundaries(
+            lower=[0]*7, upper=[10] + [30] * 6),
         method=pints.CMAES)
     controller.set_parallel(True)
     controller.set_max_unchanged_iterations(iterations=100, threshold=1e-3)
