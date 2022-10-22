@@ -26,8 +26,9 @@ def define_objective_function(patient, model):
     from 2.5 within the first 19 days of warfarin treatment for a given
     schedule of daily warfarin doses.
     """
-    model.fix_parameters({n: patient[n] for n in model.parameters()})
-    obective_function = SquaredINRDistance(model, target=2.5, days=19, res=0.1)
+    parameters = patient[model.parameters()]
+    obective_function = SquaredINRDistance(
+        model, parameters, target=2.5, days=19, res=0.1)
 
     return obective_function
 
@@ -43,6 +44,7 @@ def find_dosing_regimen(objective_function):
         transformation=pints.LogTransformation(n_parameters=n_parameters),
         method=pints.CMAES)
     controller.set_parallel(True)
+    controller.set_max_unchanged_iterations(iterations=100, threshold=1e-2)
 
     p, _ = controller.run()
 
@@ -97,9 +99,12 @@ class SquaredINRDistance(pints.ErrorMeasure):
     :param res: Time steps in which the INR is evaluated against the target
         in days.
     """
-    def __init__(self, model, target=2.5, days=19, res=0.1):
+    def __init__(self, model, parameters, target=2.5, days=19, res=0.1):
         super(SquaredINRDistance, self).__init__()
+        if model.n_parameters() != len(parameters):
+            raise ValueError('Invalid model or parameters.')
         self._model = model
+        self._parameters = parameters
         self._target = target
         self._doses = [0] * days
         self._duration = 0.01
@@ -116,7 +121,8 @@ class SquaredINRDistance(pints.ErrorMeasure):
         regimen = self._define_regimen(parameters)
         self._model.set_dosing_regimen(regimen)
         try:
-            inrs = self._model.simulate(parameters=[], times=self._times)
+            inrs = self._model.simulate(
+                parameters=self._parameters, times=self._times)
         except (myokit.SimulationError, Exception) as e:  # pragma: no cover
             warnings.warn(
                 'An error occured while solving the mechanistic model: \n'
@@ -126,10 +132,6 @@ class SquaredINRDistance(pints.ErrorMeasure):
 
         # Compute normalised squared distance to target
         squared_distance = np.mean((inrs - self._target)**2)
-
-        # Round squared distance to 3 digits for faster convergence of
-        # optimisation
-        squared_distance = np.round(squared_distance, decimals=3)
 
         return squared_distance
 
