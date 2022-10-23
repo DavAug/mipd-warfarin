@@ -1,4 +1,3 @@
-import enum
 import os
 import warnings
 
@@ -42,7 +41,7 @@ def find_dosing_regimen(objective_function):
         objective_function,
         x0=np.ones(n_parameters),
         boundaries=pints.RectangularBoundaries(
-            lower=[0]*7, upper=[10] + [30] * 6),
+            lower=[0]*7, upper=[30.1]*7),
         method=pints.CMAES)
     controller.set_parallel(True)
     controller.set_max_unchanged_iterations(iterations=100, threshold=1e-3)
@@ -52,6 +51,7 @@ def find_dosing_regimen(objective_function):
     # Format doses to daily doses for the first 19 days
     doses = list(p)
     doses = doses[:6] + [doses[6]] * 13
+    doses = [objective_function._convert_to_tablets(d) for d in doses]
 
     return doses
 
@@ -137,14 +137,50 @@ class SquaredINRDistance(pints.ErrorMeasure):
 
         return squared_distance
 
+    def _convert_to_tablets(self, dose):
+        """
+        The model accepts any dose values, but in practice we can only
+        administer tablets.
+
+        Available tablets are:
+
+        - 1 mg
+        - 2 mg
+        - 2.5 mg
+        - 3 mg
+        - 4 mg
+        - 5 mg
+        - 6 mg
+        - 7.5 mg
+        - 10 mg
+
+        As a result, we define the following conversion:
+            1. If dose is < 0.5: 0mg
+            2. If dose is >= 0.5 and < 1.5: 1mg
+            3. If dose is >= 1.5 and < 2.25: 2mg
+            4. If dose is >= 2.25 and < 2.75: 2.5mg
+            5. Remaining doses are rounded to next half mg dose.
+        """
+        if dose < 0.5:
+            return 0
+        elif dose < 1.5:
+            return 1
+        elif dose < 2.25:
+            return 2
+        else:
+            return np.round(2 * dose) / 2
+
     def _define_regimen(self, doses):
         if len(doses) != self._n_doses:
             raise ValueError('Invalid parameters.')
-        doses = list(doses[:6]) + [doses[6]] * 13
+        doses = [self._convert_to_tablets(d) for d in doses]
+        doses = doses[:6] + [doses[6]] * 13
         dose_rates = np.array(doses) / self._duration
 
         regimen = myokit.Protocol()
         for idx, dr in enumerate(dose_rates):
+            if dr == 0:
+                continue
             regimen.add(myokit.ProtocolEvent(
                 level=dr,
                 start=self._cal_time+idx*24,
