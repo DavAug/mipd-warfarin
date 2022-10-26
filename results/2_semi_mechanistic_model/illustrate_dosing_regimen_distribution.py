@@ -45,11 +45,12 @@ def generate_individuals(model, parameters_df):
     n_ids = 2
     covariates = np.zeros(shape=(n_ids, 3))
     covariates[:, 1] = 70
-    psis = np.empty(shape=(3, n_ids, population_model.n_dim()))
+    psis = np.empty(shape=(3, n_ids, population_model.n_dim()-1))
     for idc, vkorc1 in enumerate([0, 1, 2]):
         covariates[:, 2] = vkorc1
         psis[idc] = population_model.sample(
-            pop_parameters, covariates=covariates, seed=seed, n_samples=n_ids)
+            pop_parameters, covariates=covariates, seed=seed, n_samples=n_ids
+        )[:, :-1]
     psis[:, :, 0] = parameters[0]
     psis[:, :, 2:] = parameters[np.newaxis, np.newaxis, 2:]
 
