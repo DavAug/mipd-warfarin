@@ -70,7 +70,7 @@ def define_objective_function(parameters, model):
     """
     model.set_outputs(['myokit.inr'])
     objective_function = SquaredINRDistance(
-        model, parameters[:-1], target=2.5, days=19, res=0.1)
+        model, parameters, target=2.5, days=19, res=0.1)
 
     return objective_function
 
