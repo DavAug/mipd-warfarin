@@ -1,7 +1,6 @@
 import os
 import warnings
 
-import chi
 import myokit
 import numpy as np
 import pandas as pd
