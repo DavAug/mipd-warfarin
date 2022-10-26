@@ -155,7 +155,7 @@ class SquaredINRDistance(pints.ErrorMeasure):
 
     def __call__(self, parameters):
         # Simulate INRs for given dosing regimen
-        parameters = 30 * np.array(parameters)  # Doses are for optimisation
+        parameters = 30 * np.array(parameters)  # Doses are scaled for optim.
         regimen = self._define_regimen(parameters)
         self._model.set_dosing_regimen(regimen)
         try:
