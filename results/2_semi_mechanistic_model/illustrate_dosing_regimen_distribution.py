@@ -237,7 +237,7 @@ class SquaredINRDistance(pints.ErrorMeasure):
 
 if __name__ == '__main__':
     m, df = define_hamberg_model()
-    psis = generate_individuals(df)
+    psis = generate_individuals(m, df)
     for idc, psi in enumerate(psis):
         for ids, sample in enumerate(psi):
             o = define_objective_function(sample, m)
