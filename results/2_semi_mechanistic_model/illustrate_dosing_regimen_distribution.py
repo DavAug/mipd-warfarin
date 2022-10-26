@@ -10,7 +10,7 @@ import pints
 from model import define_hamberg_model, define_hamberg_population_model
 
 
-def generate_individuals(parameters_df):
+def generate_individuals(model, parameters_df):
     """
     Returns a numpy array with model parameters of shape
     (n_cov, n_ids, n_parameters).
@@ -35,8 +35,12 @@ def generate_individuals(parameters_df):
         parameters_df[parameters_df.Parameter == p].Value.values[0]
         for p in population_model.get_parameter_names()
     ])
+    parameters = np.array([
+        parameters_df[parameters_df.Parameter == p].Value.values[0]
+        for p in model.parameters()
+    ])
 
-    # Sample population (explained variability only VKORC1)
+    # Sample population (only EC50 varies for simplicity)
     seed = 1
     n_ids = 2
     covariates = np.zeros(shape=(n_ids, 3))
@@ -46,6 +50,8 @@ def generate_individuals(parameters_df):
         covariates[:, 2] = vkorc1
         psis[idc] = population_model.sample(
             pop_parameters, covariates=covariates, seed=seed, n_samples=n_ids)
+    psis[:, :, 0] = parameters[0]
+    psis[:, :, 2:] = parameters[np.newaxis, np.newaxis, 2:]
 
     # Save individuals
     with open(directory + filename, 'wb') as f:
