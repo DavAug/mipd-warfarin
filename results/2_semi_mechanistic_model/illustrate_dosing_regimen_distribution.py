@@ -38,7 +38,7 @@ def generate_individuals(parameters_df):
 
     # Sample population (explained variability only VKORC1)
     seed = 1
-    n_ids = 1000
+    n_ids = 2
     covariates = np.zeros(shape=(n_ids, 3))
     covariates[:, 1] = 70
     psis = np.empty(shape=(3, n_ids, population_model.n_dim()))
@@ -61,6 +61,7 @@ def define_objective_function(parameters, model):
     from 2.5 within the first 19 days of warfarin treatment for a given
     schedule of daily warfarin doses.
     """
+    model.set_outputs(['myokit.inr'])
     objective_function = SquaredINRDistance(
         model, parameters[:-1], target=2.5, days=19, res=0.1)
 
@@ -74,16 +75,17 @@ def find_dosing_regimen(objective_function):
     n_parameters = objective_function.n_parameters()
     controller = pints.OptimisationController(
         objective_function,
-        x0=np.ones(n_parameters),
-        boundaries=pints.RectangularBoundaries(
-            lower=[0]*7, upper=[30.1]*7),
+        x0=np.ones(n_parameters) * 0.1,
+        transformation=pints.LogitTransformation(n_parameters=n_parameters),
         method=pints.CMAES)
     controller.set_parallel(True)
 
     p, _ = controller.run()
 
     # Format doses to daily doses for the first 19 days
-    doses = list(p)
+    # NOTE: Doses are increased by a factor 30, enabling the logit-transform,
+    # which needs to be reversed here.
+    doses = list(p * 30)
     doses = doses[:6] + [doses[6]] * 13
     doses = [objective_function._convert_to_tablets(d) for d in doses]
 
@@ -153,6 +155,7 @@ class SquaredINRDistance(pints.ErrorMeasure):
 
     def __call__(self, parameters):
         # Simulate INRs for given dosing regimen
+        parameters = 30 * np.array(parameters)  # Doses are for optimisation
         regimen = self._define_regimen(parameters)
         self._model.set_dosing_regimen(regimen)
         try:
@@ -207,7 +210,7 @@ class SquaredINRDistance(pints.ErrorMeasure):
         if len(doses) != self._n_doses:
             raise ValueError('Invalid parameters.')
         doses = [self._convert_to_tablets(d) for d in doses]
-        doses = doses[:6] + [doses[6]] * 13
+        doses = doses[:6] + [doses[6]] * (len(self._doses)-6)
         dose_rates = np.array(doses) / self._duration
 
         regimen = myokit.Protocol()
