@@ -42,7 +42,7 @@ def generate_individuals(model, parameters_df):
 
     # Sample population (only EC50 varies for simplicity)
     seed = 1
-    n_ids = 2
+    n_ids = 1000
     covariates = np.zeros(shape=(n_ids, 3))
     covariates[:, 1] = 70
     psis = np.empty(shape=(3, n_ids, population_model.n_dim()-1))
