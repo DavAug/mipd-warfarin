@@ -26,7 +26,7 @@ def generate_individuals(day):
     parameters = psis[vkorc1, _id]
 
     # Broadcast to (n_ids, n_parameters)
-    n_ids = 2
+    n_ids = 1000
     psis = np.zeros(shape=(n_ids, len(parameters)))
     psis[:] += parameters[np.newaxis, :]
 
