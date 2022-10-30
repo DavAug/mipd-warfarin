@@ -145,7 +145,7 @@ def get_posterior(patient_id, model, error_model, meas, times, df_prior):
     controller = chi.SamplingController(log_posterior)
     controller.set_n_runs(3)
     controller.set_sampler(pints.HaarioBardenetACMC)
-    controller._initial_params[:, -1] = 0.12  # Avoids infinities
+    controller._initial_params[:, -1] = 0.2  # Avoids infinities
     posterior_samples = controller.run(
         n_iterations=n_iterations, log_to_screen=True)
 
