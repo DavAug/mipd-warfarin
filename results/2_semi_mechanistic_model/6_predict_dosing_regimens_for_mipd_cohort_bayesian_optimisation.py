@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 import pints
 
-from model import define_hamberg_model, define_hamberg_population_model
+from model import define_hamberg_model
 
 
 def generate_measurements(day):
@@ -19,6 +19,8 @@ def generate_measurements(day):
     """
     directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     n_obs = day + 1
+
+    print('Generating TDM data for day: ', day)
     subprocess.Popen([
         'python',
         directory +
@@ -26,6 +28,7 @@ def generate_measurements(day):
         '--number',
         str(n_obs)
     ]).wait()
+    print('TDM data generated')
 
 
 def get_priors():
@@ -50,14 +53,14 @@ def get_tdm_data(day, ids):
     # Import file with dosing regimens
     directory = os.path.dirname(os.path.abspath(__file__))
     filename = \
-        '/mipd_trial_predicted_dosing_regimens_bayesian_optimisation.csv'
+        '/mipd_trial_predicted_dosing_regimens.csv'
     try:
         df = pd.read_csv(directory + filename)
     except FileNotFoundError:
         raise FileNotFoundError(
             'Invalid day. The TDM file from the '
             'previous days cannot be found. This means that either the file '
-            './mipd_trial_predicted_dosing_regimens_bayesian_optimisation.csv '
+            './mipd_trial_predicted_dosing_regimens.csv '
             'has been '
             'removed or the script was not executed from day 0.')
 
@@ -89,7 +92,7 @@ def get_regimen(day, patient_id):
     directory = os.path.dirname(os.path.abspath(__file__))
     df = pd.read_csv(
         directory +
-        '/mipd_trial_predicted_dosing_regimens_bayesian_optimisation.csv')
+        '/mipd_trial_predicted_dosing_regimens.csv')
 
     # Filter dataframe for individual
     df = df[df.ID == patient_id]
@@ -249,7 +252,7 @@ def save_regimen(doses, patient_id, day):
     # Import existing file
     directory = os.path.dirname(os.path.abspath(__file__))
     filename = \
-        '/mipd_trial_predicted_dosing_regimens_bayesian_optimisation.csv'
+        '/mipd_trial_predicted_dosing_regimens.csv'
     data = pd.read_csv(directory + filename)
 
     # Split data into n_obs = n and rest

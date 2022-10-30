@@ -92,7 +92,7 @@ def save_results(ids, measurements, n):
     directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     filename = \
         '/2_semi_mechanistic_model' \
-        + '/mipd_trial_predicted_dosing_regimens_bayesian_optimisation.csv'
+        + '/mipd_trial_predicted_dosing_regimens.csv'
     try:
         data = pd.read_csv(directory + filename)
     except FileNotFoundError:
