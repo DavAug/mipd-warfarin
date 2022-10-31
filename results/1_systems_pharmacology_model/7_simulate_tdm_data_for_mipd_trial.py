@@ -34,7 +34,7 @@ def get_regimen(n):
     directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     filename = \
         '/2_semi_mechanistic_model' \
-        + '/mipd_trial_predicted_dosing_regimens_bayesian_optimisation.csv'
+        + '/mipd_trial_predicted_dosing_regimens.csv'
     try:
         df = pd.read_csv(directory + filename)
     except FileNotFoundError:
@@ -43,8 +43,8 @@ def get_regimen(n):
             'executing the script with number = 1.')
 
     # Get dosing regimen from dataframe
-    doses = df[df['Number of observations'] == n][[
-        'Dose %d in mg' % (d+1) for d in range(n)]].values[0]
+    doses = df[df['Number of observations'] == (n-1)][[
+        'Dose %d in mg' % (d+1) for d in range(n-1)]].values[0]
 
     # Define dosing regimen
     cal_time = 100

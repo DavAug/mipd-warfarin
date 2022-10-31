@@ -142,7 +142,7 @@ def get_posterior(patient_id, model, error_model, meas, times, df_prior):
     warmup = 5000
     n_iterations = 10000
     thinning = 1
-    controller = chi.SamplingController(log_posterior)
+    controller = chi.SamplingController(log_posterior, seed=1)
     controller.set_n_runs(3)
     controller.set_sampler(pints.HaarioBardenetACMC)
     controller._initial_params[:, -1] = 0.2  # Avoids infinities
