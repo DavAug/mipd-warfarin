@@ -20,7 +20,7 @@ def define_model():
     return model
 
 
-def get_regimen(n):
+def get_regimen(patient, n):
     """
     Imports the patient's dosing regimen.
     """
@@ -43,8 +43,8 @@ def get_regimen(n):
             'executing the script with number = 1.')
 
     # Get dosing regimen from dataframe
-    doses = df[df['Number of observations'] == (n-1)][[
-        'Dose %d in mg' % (d+1) for d in range(n-1)]].values[0]
+    mask = (df['Number of observations'] == (n-1)) & (df.ID == patient.ID)
+    doses = df[mask][['Dose %d in mg' % (d+1) for d in range(n-1)]].values[0]
 
     # Define dosing regimen
     cal_time = 100
@@ -151,7 +151,7 @@ if __name__ == '__main__':
     ids = data.ID.unique()
     measurements = np.empty(shape=len(ids))
     for idp, patient in data.iterrows():
-        r = get_regimen(n)
+        r = get_regimen(patient, n)
         model.set_dosing_regimen(r)
         measurements[idp] = generate_measurement(model, patient, n)
 
