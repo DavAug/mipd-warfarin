@@ -25,7 +25,7 @@ def get_regimen(patient, n):
     Imports the patient's dosing regimen.
     """
     if n == 1:
-        # This is the first TDM  measurement of the patient, which is taken
+        # This is the first TDM measurement of the patient, which is taken
         # before any drug is administered. So we return an empty dosing
         # regimen
         return myokit.Protocol()
@@ -73,7 +73,7 @@ def generate_measurement(model, patient, n):
     parameters = np.array(patient[model.get_parameter_names()].values)
 
     # Simulate measurements
-    # NOTE nth  measurement occurs on (n-1)th day. And we let the system
+    # NOTE nth measurement occurs on (n-1)th day. And we let the system
     # equilibrate for 100 days.
     cal_time = 100
     times = [(cal_time + n - 1) * 24]

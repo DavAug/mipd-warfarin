@@ -67,7 +67,7 @@ def get_tdm_data(day, ids):
     # Get data
     n_obs = day + 1
     times = np.arange(0, n_obs) * 24
-    measurements = np.empty(shape=(len(ids), n_obs))
+    measurements = np.zeros(shape=(len(ids), n_obs))
     for idx, _id in enumerate(ids):
         temp = df[df.ID == _id]
         for n in range(1, n_obs+1):
@@ -85,6 +85,10 @@ def get_regimen(day, patient_id):
     So for the measurement on day 0 no warfarin is administered, on day 1 one
     dose is administered, etc.
     """
+    if day == 0:
+        # No dose has been administered when the first measurement was taken.
+        return myokit.Protocol(), []
+
     # Get regimen from dataframe
     directory = os.path.dirname(os.path.abspath(__file__))
     df = pd.read_csv(
@@ -95,9 +99,11 @@ def get_regimen(day, patient_id):
     df = df[df.ID == patient_id]
 
     # Get doses up to current day
-    n_obs = day + 1
-    doses = df[df['Number of observations'] == n_obs][[
-        'Dose %d in mg' % (d+1) for d in range(n_obs)]].values[0]
+    # NOTE: For inference of posterior, we use regimen applied when
+    # measurements were collected. Because we measure before administering
+    # the next dose, we administer the regimen with n_obs = day measurements
+    doses = df[df['Number of observations'] == day][[
+        'Dose %d in mg' % (d+1) for d in range(day)]].values[0]
 
     # Define dosing regimen
     duration = 0.01
