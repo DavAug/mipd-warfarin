@@ -12,6 +12,21 @@ import pints
 from model import define_hamberg_model
 
 
+def get_priors():
+    """
+    Returns a dataframe with the means and standard deviations of the priors.
+    """
+    # Load priors
+    directory = os.path.dirname(os.path.abspath(__file__))
+    data = pd.read_csv(directory + '/mipd_trial_prior_distributions.csv')
+
+    # Only keep prior (i.e. distributions after 0 observations)
+    n_obs = 0
+    data = data[data['Number of observations'] == n_obs]
+
+    return data
+
+
 def generate_measurements(day):
     """
     Runs the Wajima-Hartmann's QSP model to generate TDM data for the MIPD
@@ -29,21 +44,6 @@ def generate_measurements(day):
         str(n_obs)
     ]).wait()
     print('TDM data generated')
-
-
-def get_priors():
-    """
-    Returns a dataframe with the means and standard deviations of the priors.
-    """
-    # Load priors
-    directory = os.path.dirname(os.path.abspath(__file__))
-    data = pd.read_csv(directory + '/mipd_trial_prior_distributions.csv')
-
-    # Only keep prior (i.e. distributions after 0 observations)
-    n_obs = 0
-    data = data[data['Number of observations'] == n_obs]
-
-    return data
 
 
 def get_tdm_data(day, ids):
@@ -85,9 +85,6 @@ def get_regimen(day, patient_id):
     So for the measurement on day 0 no warfarin is administered, on day 1 one
     dose is administered, etc.
     """
-    if day == 0:
-        return myokit.Protocol(), []
-
     # Get regimen from dataframe
     directory = os.path.dirname(os.path.abspath(__file__))
     df = pd.read_csv(
@@ -98,8 +95,9 @@ def get_regimen(day, patient_id):
     df = df[df.ID == patient_id]
 
     # Get doses up to current day
-    doses = df[df['Number of observations'] == day][[
-        'Dose %d in mg' % (d+1) for d in range(day)]].values[0]
+    n_obs = day + 1
+    doses = df[df['Number of observations'] == n_obs][[
+        'Dose %d in mg' % (d+1) for d in range(n_obs)]].values[0]
 
     # Define dosing regimen
     duration = 0.01
