@@ -202,7 +202,7 @@ def find_dosing_regimen(objective_function):
     # NOTE: Doses are increased by a factor 30, enabling the logit-transform,
     # which needs to be reversed here.
     doses = list(p * 30)
-    doses = doses[:-1] + [doses[-1]] * 10
+    doses = doses[:-1] + [doses[-1]] * 7
     doses = [objective_function._convert_to_tablets(d) for d in doses]
 
     return doses
@@ -308,7 +308,7 @@ class SquaredINRDistance(pints.ErrorMeasure):
             init_doses = [float(d) for d in init_doses]
         else:
             init_doses = []
-        if len(init_doses) >= 10:
+        if len(init_doses) >= 13:
             # We only optimise the initial 14 doses
             raise ValueError('Invalid init_doses.')
         self._model = model
@@ -318,7 +318,7 @@ class SquaredINRDistance(pints.ErrorMeasure):
         self._doses = np.array(
             init_doses + [0] * (days - self._n_init_doses))
         self._duration = 0.01
-        self._n_doses = 10 - self._n_init_doses
+        self._n_doses = 13 - self._n_init_doses
 
         # Construct simulation times in hours
         self._times = np.arange(0, days, res) * 24
@@ -380,8 +380,8 @@ class SquaredINRDistance(pints.ErrorMeasure):
         if len(doses) != self._n_doses:
             raise ValueError('Invalid parameters.')
         doses = [self._convert_to_tablets(d) for d in doses]
-        self._doses[self._n_init_doses:9] = np.array(doses[:-1])
-        self._doses[9:] = doses[-1]
+        self._doses[self._n_init_doses:12] = np.array(doses[:-1])
+        self._doses[12:] = doses[-1]
         dose_rates = self._doses / self._duration
 
         regimen = myokit.Protocol()
@@ -400,8 +400,8 @@ class SquaredINRDistance(pints.ErrorMeasure):
 
 
 if __name__ == '__main__':
-    onset = 7
-    days = 9
+    onset = 9
+    days = 12
     m, _ = define_hamberg_model()
     em = chi.LogNormalErrorModel()
     df_pr = get_priors()
