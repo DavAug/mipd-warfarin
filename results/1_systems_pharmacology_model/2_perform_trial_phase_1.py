@@ -2,6 +2,7 @@ import os
 
 import chi
 import numpy as np
+import pandas as pd
 
 from model import define_wajima_model, define_hartmann_population_model
 
@@ -70,17 +71,39 @@ def define_demographics(n):
 
 def generate_data(model, parameters, covariates):
     # Define measurement times in h since dose
-    times = np.array([10, 35, 60])
+    nominal_times = np.array([10, 35, 60])
 
-    # Define dosing regimen (single dose 10 mg)
-    model.set_dosing_regimen(dose=10, start=0)
+    # Define mean delay in h
+    mean_delay = 0.5
 
-    # Sample measurements
-    n = len(covariates)
+    # Sample measurements of patients
     seed = 67
-    data = model.sample(
-        parameters=parameters, times=times, covariates=covariates, seed=seed,
-        n_samples=n, include_regimen=True)
+    data = pd.DataFrame(
+        columns=['ID', 'Time', 'Observable', 'Value', 'Dose', 'Duration'])
+    for idc, cov in enumerate(covariates):
+        # Sample deviations from nominal protocol
+        np.random.seed(idc)
+        delta_t = np.random.exponential(scale=mean_delay, size=4)
+
+        # Define dosing regimen (single dose 10 mg)
+        model.set_dosing_regimen(dose=10, start=delta_t[0])
+
+        # Sample measurements
+        meas = model.sample(
+            parameters=parameters, times=nominal_times+delta_t[1:],
+            covariates=cov, seed=seed+idc, return_df=False)
+        df = pd.DataFrame({
+            'ID': [idc] * 7,
+            'Time': list(nominal_times) + [np.nan] * 3 + [0],
+            'Observable': [
+                'central_warfarin.warfarin_concentration'] * 3 +
+                ['CYP2C9', 'Age', 'VKORC1'] + [np.nan],
+            'Value': list(meas[0, :, 0]) + list(cov[2:]) + [np.nan],
+            'Dose': [np.nan] * 6 + [10],
+            'Duration': [np.nan] * 6 + [0.01]
+        })
+
+        data = pd.concat((data, df), ignore_index=True)
 
     return data
 
