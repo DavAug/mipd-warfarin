@@ -1,10 +1,7 @@
-import copy
-from multiprocessing.sharedctypes import Value
 import os
 
 import chi
 import numpy as np
-import myokit
 import pandas as pd
 import pints
 from scipy import interpolate
@@ -532,103 +529,6 @@ class WajimaWarfarinINRResponseModel(chi.MechanisticModel):
                 rate_indices.append(idp)
 
         return subsampling_mask, n_states, tf_indices, rate_indices
-
-    def _shift_dosing_regimen(self, dosing_regimen, delta_t):
-        """
-        Returns the dosing regimen where the time is shifted
-        into the future by delta_t.
-        """
-        if dosing_regimen is None:
-            return None
-
-        new_regimen = myokit.Protocol()
-        for event in dosing_regimen.events():
-            if event.period() > 0:
-                raise ValueError(
-                    'Invalid dosing regimen for varying VK input rates. '
-                    'The implementation cannot handle recurring events when '
-                    'the vitamin K input rate is varied.')
-            start = event.start() - delta_t
-            if start < 0:
-                # This administration lies in the past and needs no longer
-                # be accounted for
-                continue
-            level = event.level()
-            duration = event.duration()
-            new_regimen.add(myokit.ProtocolEvent(
-                level=level, start=start, duration=duration))
-
-        self._network_model.set_dosing_regimen(new_regimen)
-
-        return new_regimen
-
-    # def _simulate_network_model_with_varying_vk(
-    #         self, parameters, times, vk_input):
-    #     """
-    #     Simulates the network model iteratively for each time point, updating
-    #     the vitamin K input rate between days.
-    #     """
-    #     # Get number of simulation days
-    #     start = (np.min(times) // 24) * 24
-    #     stop = ((np.max(times) // 24) + 1) * 24
-    #     n_days = int((stop - start) // 24)
-
-    #     # Check that there is a vk input for each day
-    #     if len(vk_input) != n_days:
-    #         raise ValueError(
-    #             'Invalid vk_input. One vitamin K input per simulation day '
-    #             'has to be provided.')
-    #     vk_input = np.array(vk_input)
-    #     if np.any(vk_input < 0):
-    #         raise ValueError(
-    #             'Invalid vk_input. The vitamin K input cannot be negative.')
-
-    #     # Simulate model to first evaluation day and update state
-    #     # NOTE this uses the average vitamin K input
-    #     n_states = self._masks[1]
-    #     parameters[:n_states] = self._network_model.simulate(
-    #         parameters=parameters, times=[start])[:, 0]
-
-    #     # Shift reference time point
-    #     times = np.array(times) - start
-    #     dosing_regimen = self._network_model.dosing_regimen()
-    #     shifted_dr = self._shift_dosing_regimen(dosing_regimen, start)
-
-    #     # Iteratively simulate model each day
-    #     idx_vk_input = np.where(
-    #         np.array(self._network_model.parameters())
-    #         == 'myokit.input_rate_vk')[0][0]
-    #     mean_vk_input = parameters[idx_vk_input]
-    #     n_times = len(times)
-    #     n_outputs = self._network_model.n_outputs()
-    #     blood_samples = np.empty(shape=(n_outputs, n_times))
-    #     idt = 0
-    #     for day in range(n_days):
-    #         # Update vitamin K input
-    #         parameters[idx_vk_input] = mean_vk_input * vk_input[day]
-
-    #         # Get simulation for time points on that day
-    #         ts = times[(times >= 0) & (times < 24)]
-    #         nts = len(ts)
-    #         if nts > 0:
-    #             blood_samples[:, idt:idt+nts] = self._network_model.simulate(
-    #                 parameters=parameters, times=ts)
-    #             idt += nts
-
-    #         # Update state to next day
-    #         state = self._network_model.simulate(
-    #             parameters=parameters, times=[24])[:, 0]
-    #         parameters[:n_states] = np.abs(np.round(state, 6))
-
-    #         # Shift time
-    #         times = times[nts:] - 24
-    #         shifted_dr = self._shift_dosing_regimen(shifted_dr, delta_t=24)
-
-    #     # Reset dosing regimen to original dosing regimen
-    #     if dosing_regimen is not None:
-    #         self._network_model.set_dosing_regimen(dosing_regimen)
-
-    #     return blood_samples
 
     def _simulate_network_model_with_varying_vk(
             self, parameters, times, vk_input):
