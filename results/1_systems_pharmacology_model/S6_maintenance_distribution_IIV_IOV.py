@@ -133,8 +133,10 @@ def generate_data(mechanistic_model, population_model, parameters, covariates):
     # NOTE: Initial simulation time ensures that the patient's coagulation
     # network is in steady state
     warmup = 100
+    days = 56
     times = np.array([1, 2, 3, 5, 7, 13, 20, 27, 34, 41, 48, 55]) * 24
     sim_times = times + warmup * 24
+    vk_intake_std = 0.1
 
     # Perform trial for each patient separately and adjust dosing regimen
     # if INR is outside therapeutic window
@@ -146,15 +148,19 @@ def generate_data(mechanistic_model, population_model, parameters, covariates):
         psi = population_model.sample(
             parameters, seed=seed+idc, covariates=cov)[0]
 
+        # Sample vitamin K intake
+        vk_input = np.random.normal(loc=1, scale=vk_intake_std, size=days)
+
         # Simulate treatment response
         regimen, dose_rates = get_initial_dosing_regimen(warmup)
         mechanistic_model.set_dosing_regimen(regimen)
         for idt, time in enumerate(sim_times):
             # Simulate QSP model
+            idx = int(time // 24 - warmup)
             t = [warmup * 24, time]
             inr = mechanistic_model.simulate(
                 parameters=psi[:-1], times=t,
-                vk_input=None)[0, 1]
+                vk_input=vk_input[:idx+1])[0, 1]
 
             if (idt < 2) or idt > 9:
                 # Dose remains unchanged
@@ -197,4 +203,4 @@ if __name__ == '__main__':
 
     # Save data to .csv
     directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    d.to_csv(directory + '/data/S4_maintenance_distribution_only_IIV.csv')
+    d.to_csv(directory + '/data/S6_maintenance_distribution_IIV_IOV.csv')
