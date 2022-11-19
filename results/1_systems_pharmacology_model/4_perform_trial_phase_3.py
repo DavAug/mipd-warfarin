@@ -27,7 +27,7 @@ def define_model():
         parameters_df[parameters_df.Parameter == p].Value.values[0]
         for p in model.get_parameter_names()])
 
-    return model, parameters
+    return mechanistic_model, error_model, population_model, parameters
 
 
 def define_demographics(n):
@@ -35,7 +35,7 @@ def define_demographics(n):
     The frequencies of the alleles as well as age ranges are modelled
     after Hamberg et al (2011).
     """
-    seed = 102
+    seed = 13
     n_cov = 5  # (1, 2, 5) all refer to the VKORC1 genotype
     covariates = np.zeros(shape=(n, n_cov))
 
@@ -51,10 +51,10 @@ def define_demographics(n):
     covariates[
         :n_cyp2p9_33+n_cyp2p9_23+n_cyp2p9_22+n_cyp2p9_13+n_cyp2p9_12, 2] += 1
 
-    typical_age = 50
+    typical_age = 65
     np.random.seed(seed)
     covariates[:, 3] = np.random.lognormal(
-        mean=np.log(typical_age), sigma=0.15, size=n)
+        mean=np.log(typical_age), sigma=0.1, size=n)
 
     n_vkorc1_AA = int(np.ceil(0.15 * n))
     covariates[:n_vkorc1_AA, [0, 1, 4]] += 1
@@ -68,161 +68,26 @@ def define_demographics(n):
     return covariates
 
 
-def get_initial_dosing_regimen(covariates, offset):
+def get_initial_dosing_regimen(offset, delta_t):
     """
-    Implements Hamberg et al's (2011) dosing table based on the VKORC1
-    genotype, the CYP2C9 genotype and age.
+    Defines a simple loading dose sequence of 10mg, 7.5mg, 5mg.
     """
-    v, _, c, a, _ = covariates
-
-    if c == 0:
-        if v == 0:
-            if a < 60:
-                dose = 8.5
-            elif a < 80:
-                dose = 7.6
-            else:
-                dose = 6.7
-        elif v == 1:
-            if a < 60:
-                dose = 6.2
-            elif a < 80:
-                dose = 5.6
-            else:
-                dose = 4.9
-        elif v == 2:
-            if a < 60:
-                dose = 4.0
-            elif a < 80:
-                dose = 3.6
-            else:
-                dose = 3.2
-    elif c == 1:
-        if v == 0:
-            if a < 60:
-                dose = 6.4
-            elif a < 80:
-                dose = 5.7
-            else:
-                dose = 5.1
-        elif v == 1:
-            if a < 60:
-                dose = 4.7
-            elif a < 80:
-                dose = 4.2
-            else:
-                dose = 3.7
-        elif v == 2:
-            if a < 60:
-                dose = 3.0
-            elif a < 80:
-                dose = 2.7
-            else:
-                dose = 2.4
-    elif c == 2:
-        if v == 0:
-            if a < 60:
-                dose = 5.3
-            elif a < 80:
-                dose = 4.7
-            else:
-                dose = 4.2
-        elif v == 1:
-            if a < 60:
-                dose = 3.9
-            elif a < 80:
-                dose = 3.5
-            else:
-                dose = 3.1
-        elif v == 2:
-            if a < 60:
-                dose = 2.5
-            elif a < 80:
-                dose = 2.2
-            else:
-                dose = 2.0
-    elif c == 3:
-        if v == 0:
-            if a < 60:
-                dose = 4.3
-            elif a < 80:
-                dose = 3.8
-            else:
-                dose = 3.4
-        elif v == 1:
-            if a < 60:
-                dose = 3.1
-            elif a < 80:
-                dose = 2.8
-            else:
-                dose = 2.5
-        elif v == 2:
-            if a < 60:
-                dose = 2.0
-            elif a < 80:
-                dose = 1.8
-            else:
-                dose = 1.6
-    elif c == 4:
-        if v == 0:
-            if a < 60:
-                dose = 3.2
-            elif a < 80:
-                dose = 2.8
-            else:
-                dose = 2.5
-        elif v == 1:
-            if a < 60:
-                dose = 2.3
-            elif a < 80:
-                dose = 2.1
-            else:
-                dose = 1.8
-        elif v == 2:
-            if a < 60:
-                dose = 1.5
-            elif a < 80:
-                dose = 1.3
-            else:
-                dose = 1.2
-    elif c == 5:
-        if v == 0:
-            if a < 60:
-                dose = 2.1
-            elif a < 80:
-                dose = 1.8
-            else:
-                dose = 1.6
-        elif v == 1:
-            if a < 60:
-                dose = 1.5
-            elif a < 80:
-                dose = 1.4
-            else:
-                dose = 1.2
-        elif v == 2:
-            if a < 60:
-                dose = 1.0
-            elif a < 80:
-                dose = 0.9
-            else:
-                dose = 0.8
-
     # Define regimen for the first 3 days
+    doses = np.array([10, 7.5, 5])
     duration = 0.01
-    dose_rate = dose / duration
+    dose_rate = doses / duration
     dose_rates = []
     regimen = myokit.Protocol()
     for day in range(3):
-        time = (offset+day) * 24
+        time = (offset+day) * 24 + delta_t[day]
         regimen.add(myokit.ProtocolEvent(
-            level=dose_rate, start=time, duration=duration, period=0))
-        dose_rates.append(dose_rate)
+            level=dose_rate[day], start=time, duration=duration, period=0))
+        dose_rates.append(dose_rate[day])
 
     return regimen, dose_rates
 
 
-def adjust_dosing_regimen(dose_rates, latest_inr, days, offset):
+def adjust_dosing_regimen(dose_rates, latest_inr, days, offset, delta_t):
     # Naively adjust dose by fraction to target INR, if INR is outside
     # therapeutic range
     duration = 0.01
@@ -233,86 +98,119 @@ def adjust_dosing_regimen(dose_rates, latest_inr, days, offset):
 
         # Make sure that dose can be taken with conventional tablets
         dose = dose_rate * duration
-        if dose < 1.5:
-            # Smallest pill
+        if dose < 0.5:
+            dose = 0
+        elif dose < 1.5:
             dose = 1
         elif dose < 2.25:
             dose = 2
         else:
-            # From now on, any dose can be delivered in 0.5 steps
-            dose = np.round(dose * 2) / 2
+            dose = np.round(2 * dose) / 2
+
+        if dose > 30:
+            dose = 30
         dose_rate = dose / duration
 
-    # Add a dose event until the next check
+    # Reconstruct already administered dose events and add dose events until
+    # the next measurement
     new_regimen = myokit.Protocol()
     for idx, dr in enumerate(dose_rates):
         new_regimen.add(myokit.ProtocolEvent(
-            level=dr, start=(offset+idx)*24, duration=duration, period=0))
+            level=dr, start=(offset+idx)*24+delta_t[idx], duration=duration,
+            period=0))
     n_doses = len(dose_rates)
     for day in range(days):
         new_regimen.add(myokit.ProtocolEvent(
-            level=dose_rate, start=(offset+n_doses+day)*24, duration=duration,
-            period=0))
+            level=dose_rate, duration=duration, period=0,
+            start=(offset+n_doses+day)*24+delta_t[n_doses+day]))
         dose_rates.append(dose_rate)
 
     return new_regimen, dose_rates
 
 
-def generate_data(model, parameters, covariates):
+def generate_data(
+        mechanistic_model, error_model, population_model, parameters,
+        covariates):
     # Define measurement times in h since dose
     # NOTE: Initial simulation time ensures that the patient's coagulation
     # network is in steady state
     warmup = 100
+    days = 56
     times = np.array([1, 2, 3, 5, 7, 13, 20, 27, 34, 41, 48, 55]) * 24
     sim_times = times + warmup * 24
+    mean_delay = 0.5
+    vk_intake_std = 0.1
 
     # Perform trial for each patient separately and adjust dosing regimen
     # if INR is outside therapeutic window
-    seed = 12345
+    seed = 1
     data = pd.DataFrame(columns=[
         'ID', 'Time', 'Observable', 'Value', 'Duration', 'Dose'])
     for idc, cov in enumerate(covariates):
-        regimen, dose_rates = get_initial_dosing_regimen(cov, warmup)
-        model.set_dosing_regimen(regimen)
-        for idt in range(2, len(times)-1):
-            latest_inr = model.sample(
-                parameters=parameters, times=sim_times[idt:idt+1],
-                covariates=cov, seed=seed, n_samples=1, return_df=False
-            )[0, 0, 0]
+        # Sample patient parameters
+        psi = population_model.sample(
+            parameters, seed=seed+idc, covariates=cov)[0]
 
-            # Adjust next dose based on INR response
-            days = (times[idt+1] - times[idt]) // 24
-            regimen, dose_rates = adjust_dosing_regimen(
-                dose_rates, latest_inr, days, warmup)
-            model.set_dosing_regimen(regimen)
+        # Sample delays
+        np.random.seed(idc+1)
+        delta_t = np.random.exponential(scale=mean_delay, size=days)
 
-        # Get final INR readouts and dosing regime
-        d = model.sample(
-            parameters=parameters, times=sim_times[-1:], covariates=cov,
-            seed=seed, n_samples=1, include_regimen=True)
-        d.ID = idc
-        d.Time -= warmup * 24
+        # Sample vitamin K intake
+        vk_input = np.random.normal(loc=1, scale=vk_intake_std, size=days)
 
-        # Remove duplicates of VKORC genotype
-        # (Duplicates are a bug of model.sample)
-        mask = d.Observable == 'VKORC1'
-        genotype = d[mask].Value.unique()
-        d = d[~mask]
-        d = pd.concat((d, pd.DataFrame({
-            'ID': [idc], 'Observable': 'VKORC1', 'Value': genotype
-            })), ignore_index=True)
+        # Simulate treatment response
+        regimen, dose_rates = get_initial_dosing_regimen(warmup, delta_t)
+        mechanistic_model.set_dosing_regimen(regimen)
+        for idt, time in enumerate(sim_times):
+            # Simulate QSP model
+            idx = int(time // 24 - warmup)
+            t = [warmup * 24, time + delta_t[idx]]
+            inr = mechanistic_model.simulate(
+                parameters=psi[:-1], times=t,
+                vk_input=vk_input[:idx+1])[0, 1]
 
-        data = pd.concat((data, d), ignore_index=True)
-        seed += 1
+            # Sample measurement
+            inr = error_model.sample(
+                psi[-1:], model_output=[inr], seed=1000+idc+1000*idt)[0, 0]
+
+            if (idt < 2) or idt > 9:
+                # Dose remains unchanged
+                continue
+            elif idt < 9:
+                # Adjust next dose based on INR response
+                days_to_next_meas = int(
+                    (sim_times[idt+1] - sim_times[idt]) // 24)
+                regimen, dose_rates = adjust_dosing_regimen(
+                    dose_rates, inr, days_to_next_meas, warmup, delta_t)
+                mechanistic_model.set_dosing_regimen(regimen)
+            else:
+                # Change dose for the last time
+                days_to_next_meas = int(
+                    (sim_times[-1] - sim_times[idt]) // 24)
+                regimen, dose_rates = adjust_dosing_regimen(
+                    dose_rates, inr, days_to_next_meas, warmup, delta_t)
+                mechanistic_model.set_dosing_regimen(regimen)
+
+        # Store results
+        df = pd.DataFrame({
+            'ID': [idc] * 5,
+            'Time': [times[-1]] + [np.nan] * 3 + [0],
+            'Observable': [
+                'INR'] + ['CYP2C9', 'Age', 'VKORC1'] + [np.nan],
+            'Value': [inr] + list(cov[2:]) + [np.nan],
+            'Dose': [np.nan] * 4 + [dose_rates[-1] * 0.01],
+            'Duration': [np.nan] * 4 + [0.01]
+        })
+        data = pd.concat((data, df), ignore_index=True)
 
     return data
 
 
 if __name__ == '__main__':
     n = 1000
-    m, p = define_model()
+    mm, em, pm, p = define_model()
     c = define_demographics(n)
-    d = generate_data(m, p, c)
+    d = generate_data(mm, em, pm, p, c)
 
     # Save data to .csv
     directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
