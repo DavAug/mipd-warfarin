@@ -20,18 +20,18 @@ def define_log_posterior():
     population_model = define_hamberg_population_model(
         centered=False, inr=True, conc=False)
     log_prior = pints.ComposedLogPrior(
-        pints.GaussianLogPrior(-3.634, 0.024),     # Mean log clearance
-        pints.GaussianLogPrior(0.109, 0.018),      # Sigma log clearance
-        pints.GaussianLogPrior(0.612, 0.056),      # Rel. shift clearance *2
-        pints.BetaLogPrior(28, 5),                 # Rel. shift clearance *3
-        pints.GaussianLogPrior(0.00173, 0.00274),  # Rel. shift clearance Age
+        pints.GaussianLogPrior(-3.682, 0.028),     # Mean log clearance
+        pints.GaussianLogPrior(0.119, 0.020),      # Sigma log clearance
+        pints.GaussianLogPrior(0.565, 0.063),      # Rel. shift clearance *2
+        pints.BetaLogPrior(30, 6),                 # Rel. shift clearance *3
+        pints.GaussianLogPrior(0.00546, 0.0031),   # Rel. shift clearance Age
         pints.GaussianLogPrior(1.41, 0.5),         # Mean log EC50
         pints.LogNormalLogPrior(-1, 0.5),          # Sigma log EC50
         pints.UniformLogPrior(0, 1),               # Rel. shift EC50 VKORC1 A
         pints.GaussianLogPrior(0.2, 0.05),         # Transition rate chain 1
         pints.GaussianLogPrior(0.02, 0.005),       # Transition rate chain 2
-        pints.GaussianLogPrior(2.625, 0.020),      # Mean log volume
-        pints.GaussianLogPrior(0.098, 0.015),      # Sigma log volume
+        pints.GaussianLogPrior(2.662, 0.020),      # Mean log volume
+        pints.LogNormalLogPrior(-2.31, 0.16),      # Sigma log volume
         pints.LogNormalLogPrior(-1, 0.3)           # Sigma log INR
     )
     problem = chi.ProblemModellingController(mechanistic_model, error_model)
