@@ -35,8 +35,19 @@ def load_model():
     return model
 
 def predict_maintenance_dose(data, model):
-    log_doses = model.predict(data)
-    return np.exp(log_doses)
+    doses = model.predict(data)
+
+    # Round maintenance dose to a combination of commercially available doses
+    mask = doses < 0.5
+    doses[mask] = 0
+    mask = (doses >= 0.5) & (doses < 1.5)
+    doses[mask] = 1
+    mask = (doses >= 1.5) & (doses < 2.25)
+    doses[mask] = 2
+    mask = doses >= 2.25
+    doses[mask] = np.round(2 * doses[mask]) / 2
+
+    return doses
 
 def save_results(ids, doses):
     df = pd.DataFrame({
