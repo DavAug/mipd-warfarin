@@ -5,12 +5,16 @@ import warnings
 from sklearn.exceptions import ConvergenceWarning
 warnings.filterwarnings("error")
 
+import matplotlib.gridspec as gridspec
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import Lasso
 from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.pipeline import make_pipeline
+import seaborn as sns
+sns.set_theme()
 
 
 def prepare_data():
@@ -21,7 +25,7 @@ def prepare_data():
 
     # Reshape data into [INR, CYP *1/*1, CYP *1/*2, CYP *1/*3, CYP *2/*2,
     # CYP *2/*3, CYP *3/*3, VKORC GG, VKORC GA, VKORC AA, Age,
-    # log(Maintenance dose)]
+    # Maintenance dose]
     # NOTE: CYP and VKORC are implemented using a 1-hot encoding
     ids = measurements_df.ID.dropna().unique()
     data = np.zeros(shape=(len(ids), 12))
@@ -33,7 +37,7 @@ def prepare_data():
         vkorc = temp[temp.Observable == 'VKORC1'].Value.values[0]
         data[idx, int(vkorc + 7)] = 1
         data[idx, 10] = temp[temp.Observable == 'Age'].Value.values[0]
-        data[idx, 11] = np.log(temp.Dose.dropna().values[-1])
+        data[idx, 11] = temp.Dose.dropna().values
 
     return data
 
@@ -56,7 +60,6 @@ def tune_hyperparameters(data):
 
     # Compute MSE for models
     mses = []
-    ls = []
     for l in lambdas:
         # Define regressors and basis expansion
         lasso = make_pipeline(
@@ -67,18 +70,19 @@ def tune_hyperparameters(data):
             lasso.fit(x_train, y_train)
         except ConvergenceWarning:
             # The lambda is chosen too small for LASSO to converge
+            mses.append(np.inf)
             continue
 
         # Evaluate model
         mse = mean_squared_error(lasso.predict(x_val), y_val)
         mses.append(mse)
-        ls.append(l)
 
         print('For lambda=%f: MSE=%f\n' % (l, mse))
 
-    # Pick lambda with smallest MSE
-    l = ls[np.argmin(mses)]
+    plot_cross_validation(lambdas, mses)
 
+    # Pick lambda with smallest MSE
+    l = lambdas[np.argmin(mses)]
     print('Chosen lambda: ', l)
 
     return l, degree
@@ -87,18 +91,75 @@ def tune_hyperparameters(data):
 def fit_model_to_data(data, l, d):
     lasso = make_pipeline(
         StandardScaler(), PolynomialFeatures(d), Lasso(alpha=l))
-
-    # Fit model
     x = data[:, :-1]
     y = data[:, -1]
     lasso.fit(x, y)
 
-    # Evaluate model
-    mse = mean_squared_error(lasso.predict(x), y)
-
-    print('Final MSE: ', mse)
+    # Plot results
+    ypred = lasso.predict(x)
+    plot_residuals(y, ypred)
 
     return lasso
+
+
+def plot_cross_validation(lambdas, mse):
+    # Create layout
+    my_dpi = 192
+    fig = plt.figure(figsize=(2250 // my_dpi, 700 // my_dpi), dpi=150)
+    outer = gridspec.GridSpec(1, 1)
+
+    # Create axes
+    axes = []
+    axes.append(plt.Subplot(fig, outer[0]))
+
+    # Add axes to figure
+    for ax in axes:
+        fig.add_subplot(ax)
+
+    # Plot data
+    axes[0].plot(lambdas, mse, marker='x', color='black')
+
+    # Labelling
+    axes[0].set_xlabel('Lambda')
+    axes[0].set_ylabel('MSE')
+    axes[0].set_xscale('log')
+
+    # Save figure
+    directory = os.path.dirname(os.path.abspath(__file__))
+    plt.savefig(directory + '/S1_cross_validation.pdf', bbox_inches='tight')
+    plt.savefig(directory + '/S1_cross_validation.tif', bbox_inches='tight')
+
+
+def plot_residuals(y, ypred):
+    # Create layout
+    my_dpi = 192
+    fig = plt.figure(figsize=(2250 // my_dpi, 700 // my_dpi), dpi=150)
+    outer = gridspec.GridSpec(1, 1)
+
+    # Create axes
+    axes = []
+    axes.append(plt.Subplot(fig, outer[0]))
+
+    # Add axes to figure
+    for ax in axes:
+        fig.add_subplot(ax)
+
+    axes[0].plot(
+    [0, 1], [0, 1], transform=axes[0].transAxes, color=sns.color_palette()[0])
+
+    # Plot data
+    axes[0].scatter(ypred, y, marker='o', color='black')
+
+    # Labelling
+    axes[0].set_xlabel('Individual predictions')
+    axes[0].set_ylabel('Maintenance dose in mg')
+    axes[0].set_ylim([-1, 25])
+    axes[0].set_xlim([-1, 25])
+
+    # Save figure
+    directory = os.path.dirname(os.path.abspath(__file__))
+    plt.savefig(directory + '/S2_residuals.pdf', bbox_inches='tight')
+    plt.savefig(directory + '/S2_residuals.tif', bbox_inches='tight')
 
 
 if __name__ == '__main__':
