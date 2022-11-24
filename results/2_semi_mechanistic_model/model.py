@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 
 
-def define_hamberg_model(pk_only=False):
+def define_hamberg_model(pk_only=False, baseline_inr=1):
     """
     Returns Hamberg's semi-mechanistic model of the INR response to warfarin
     treatment.
@@ -46,7 +46,7 @@ def define_hamberg_model(pk_only=False):
         'myokit.relative_change_cf2': 1,
         'myokit.gamma': 1.15,
         'myokit.absorption_rate': 2,
-        'myokit.baseline_inr': 1,
+        'myokit.baseline_inr': baseline_inr,
         'myokit.maximal_effect': 1,
         'myokit.maximal_inr_shift': 20
     })
@@ -83,6 +83,8 @@ def define_hamberg_model(pk_only=False):
     if pk_only:
         # Fix all PD related model parameters to typical values
         model.fix_parameters({
+            'myokit.baseline_inr':
+                baseline_inr if baseline_inr is not None else 1,
             'myokit.half_maximal_effect_concentration': 4.1,
             'myokit.transition_rate_chain_1': 0.105,
             'myokit.transition_rate_chain_2': 0.025
@@ -297,6 +299,7 @@ class HambergModel(chi.MechanisticModel):
         self._has_sensitivities = False
 
         # Define sensitivities of model
+        # NOTE: dy0 is treated separately, because they are constant in time.
         self._n_sens_per_output = 5
         dinr = 'myokit.dinr'
         dconc = 'myokit.dconcentration_central_compartment'
@@ -312,6 +315,7 @@ class HambergModel(chi.MechanisticModel):
             dinr + '_dtransition_rate_chain_2',
             dinr + '_dvolume']
         self._dparams = [0, 1, 2, 3, 4]
+        self._return_dy0 = False
 
     def _set_const(self, parameters):
         """
@@ -447,6 +451,12 @@ class HambergModel(chi.MechanisticModel):
                 dparams += [4]
         self._dparams = dparams
 
+        # Check whether sensitivities to y0 are needed.
+        self._return_dy0 = False
+        if (parameter_names is not None) and (
+                'myokit.baseline_inr' in parameter_names):
+            self._return_dy0 = True
+
     def has_sensitivities(self):
         """
         Returns a boolean indicating whether sensitivities have been enabled.
@@ -577,6 +587,18 @@ class HambergModel(chi.MechanisticModel):
             sensitivities, source=(0, 1, 2), destination=(1, 2, 0))
         sensitivities = sensitivities[:, self._sensitivity_index, :]
         sensitivities = sensitivities[:, :, self._dparams]
+
+        # Prepend sensitivites to dy0
+        if self._return_dy0:
+            nt, no, nk = sensitivities.shape
+            temp = np.zeros(shape=(nt, no, nk+1))
+            temp[:, :, 1:] = sensitivities
+            # dc_dy0 = 0, dy_dy0 = 1
+            for idx in self._sensitivity_index:
+                s = idx  # Index happens to coincide with the sensitivity
+                idx = idx if len(self._sensitivity_index) > 1 else 0
+                temp[:, idx, 0] = s
+            sensitivities = temp
 
         return output, sensitivities
 
