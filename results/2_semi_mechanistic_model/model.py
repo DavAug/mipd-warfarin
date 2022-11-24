@@ -100,7 +100,7 @@ def define_hamberg_model(pk_only=False, baseline_inr=1):
 
 
 def define_hamberg_population_model(
-        centered=True, conc=True, inr=True, pk_only=False):
+        centered=True, conc=True, inr=True, pk_only=False, fixed_y0=True):
     """
     Returns Hamberg's population model for the semi-mechanistic model of the
     INR response to warfarin treatment.
@@ -141,12 +141,19 @@ def define_hamberg_population_model(
 
         return population_model
 
-    # Define covariare model for the EC50
+    # Define covariate model for the EC50
     ec50_cov_model = chi.CovariatePopulationModel(
         population_model=chi.LogNormalModel(
             dim_names=['EC50'], centered=centered),
         covariate_model=HambergEC50CovariateModel()
     )
+
+    # Define population model for INR
+    y0_model = []
+    dim_name_y0 = []
+    if not fixed_y0:
+        y0_model = [chi.LogNormalModel(centered=centered)]
+        dim_name_y0 = ['myokit.baseline_inr']
 
     # Define noise population models
     noise_pop_models = []
@@ -164,7 +171,8 @@ def define_hamberg_population_model(
         pass
 
     # Define population model
-    population_model = chi.ComposedPopulationModel([
+    population_model = chi.ComposedPopulationModel(
+        y0_model + [
         elim_rate_cov_model,
         ec50_cov_model,
         chi.PooledModel(n_dim=2, dim_names=[
@@ -173,7 +181,8 @@ def define_hamberg_population_model(
         chi.LogNormalModel(
             dim_names=['Volume of distribution'], centered=centered)
     ] + noise_pop_models)
-    population_model.set_dim_names([
+    population_model.set_dim_names(
+        dim_name_y0 + [
         'Elimination rate',
         'EC50',
         'Transition rate chain 1',
