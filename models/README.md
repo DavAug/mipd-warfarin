@@ -81,7 +81,14 @@ Sensitivities:
 \frac{\mathrm{d}}{\mathrm{d}t}\frac{\mathrm{d}f_{1, i}}{\mathrm{d}k_e} = -k_i\frac{\kappa}{c + c_{50}}\frac{\mathrm{d}c}{\mathrm{d}k_e} + k_i\frac{\kappa c}{(c + c_{50})^2}\frac{\mathrm{d}c}{\mathrm{d}k_e} - k_i \frac{\mathrm{d}f_{1, i}}{\mathrm{d}k_e}
 ```
 
-3. with respect to $c_{50}$:
+3. with respect to $\bar{y}_{0}$:
+```math
+\frac{\mathrm{d}c}{\mathrm{d}\bar{y}_{0}} = 0
+\quad \text{and} \quad
+\frac{\mathrm{d}\bar{y}}{\mathrm{d}\bar{y}_{0}} = 1
+```
+
+4. with respect to $c_{50}$:
 ```math
 \frac{\mathrm{d}c}{\mathrm{d}c_{50}} = 0
 \quad \text{and} \quad
@@ -97,7 +104,7 @@ Sensitivities:
 \frac{\mathrm{d}}{\mathrm{d}t}\frac{\mathrm{d}f_{1, i}}{\mathrm{d}c_{50}} = k_i\frac{\kappa c}{(c + c_{50})^2} - k_i \frac{\mathrm{d}f_{1, i}}{\mathrm{d}c_{50}}
 ```
 
-4. with respect to $k_i$:
+5. with respect to $k_i$:
 ```math
 \frac{\mathrm{d}c}{\mathrm{d}k_i} = 0
 \quad \text{and} \quad
