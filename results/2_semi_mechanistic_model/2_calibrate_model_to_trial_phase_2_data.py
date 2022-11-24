@@ -13,13 +13,23 @@ def define_log_posterior():
     measurements_df = pd.read_csv(
         directory + '/data/trial_phase_II.csv')
 
+    # TODO:
+    ids = measurements_df.ID.dropna().unique()
+    mask = measurements_df.ID == ids[0]
+    for _id in ids[:10]:
+        mask = mask | (measurements_df.ID == _id)
+    measurements_df = measurements_df[mask]
+
+
     # Define hierarchical log-posterior
-    mechanistic_model,_ = define_hamberg_model()
+    mechanistic_model,_ = define_hamberg_model(baseline_inr=None)
     mechanistic_model.set_outputs(['myokit.inr'])
     error_model = chi.LogNormalErrorModel()
     population_model = define_hamberg_population_model(
-        centered=False, inr=True, conc=False)
+        centered=False, inr=True, conc=False, fixed_y0=False)
     log_prior = pints.ComposedLogPrior(
+        pints.GaussianLogPrior(0, 0.5),            # Mean basline INR
+        pints.LogNormalLogPrior(-1, 2),            # Std. basline INR
         pints.GaussianLogPrior(-3.682, 0.028),     # Mean log clearance
         pints.GaussianLogPrior(0.119, 0.020),      # Sigma log clearance
         pints.GaussianLogPrior(0.565, 0.063),      # Rel. shift clearance *2
@@ -50,7 +60,7 @@ def run_inference(log_posterior):
     controller.set_parallel_evaluation(True)
     controller.set_sampler(pints.NoUTurnMCMC)
     controller.set_transform(pints.ComposedTransformation(
-        pints.IdentityTransformation(n_parameters=100 * 3 + 3),
+        pints.IdentityTransformation(n_parameters=100 * 4 + 5),
         pints.LogitTransformation(n_parameters=1),
         pints.IdentityTransformation(n_parameters=3),
         pints.LogitTransformation(n_parameters=1),
