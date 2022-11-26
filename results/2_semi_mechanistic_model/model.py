@@ -217,7 +217,6 @@ def define_steady_state_hamberg_model():
     # Fix parameter that are not inferred
     model.fix_parameters({
         'myokit.gamma': 1.15,
-        'myokit.baseline_inr': 1,
         'myokit.maximal_effect': 1,
         'myokit.maximal_inr_shift': 20
     })
@@ -252,6 +251,7 @@ def define_steady_state_hamberg_population_model(centered=True):
 
     # Define population model
     population_model = chi.ComposedPopulationModel([
+        chi.LogNormalModel(dim_names=['Baseline INR'], centered=centered),
         elim_rate_cov_model,
         ec50_cov_model,
         chi.LogNormalModel(
@@ -259,6 +259,7 @@ def define_steady_state_hamberg_population_model(centered=True):
         chi.PooledModel()
     ])
     population_model.set_dim_names([
+        'Baseline INR',
         'Elimination rate',
         'EC50',
         'Volume of distribution',
@@ -1250,8 +1251,9 @@ class SteadyStateHambergModel(chi.MechanisticModel):
             delta_y * gamma / ke \
             * (c**gamma / (c50**gamma + c**gamma) - 1)
         dc50 = -delta_y * gamma * c50**(gamma - 1) / (c50**gamma + c**gamma)
+        dy0 = np.ones(shape=len(dv))
 
-        return (y, np.array([[[dke, dc50, dv]]]))
+        return (y, np.array([[[dy0, dke, dc50, dv]]]))
 
     def set_dosing_regimen(
             self, dose, start=0, duration=0.01, period=None, num=None):
