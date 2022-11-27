@@ -152,7 +152,12 @@ def define_hamberg_population_model(
     y0_model = []
     dim_name_y0 = []
     if not fixed_y0:
-        y0_model = [chi.LogNormalModel(centered=centered)]
+        y0_model = [chi.CovariatePopulationModel(
+            population_model=chi.LogNormalModel(
+                dim_names=['myokit.baseline_inr'], centered=centered),
+            covariate_model=chi.LinearCovariateModel(cov_names=['Shift A'])
+        )]
+        y0_model[0].set_population_parameters([(0, 0)])
         dim_name_y0 = ['myokit.baseline_inr']
 
     # Define noise population models
