@@ -22,17 +22,21 @@ def define_log_posterior():
     population_model = define_steady_state_hamberg_population_model(
         centered=False)
     log_prior = pints.ComposedLogPrior(
-        pints.GaussianLogPrior(-3.629, 0.024),     # Mean log clearance
-        pints.GaussianLogPrior(0.096, 0.018),      # Sigma log clearance
-        pints.GaussianLogPrior(0.524, 0.042),      # Rel. shift CYP29P *2
-        pints.GaussianLogPrior(0.709, 0.056),      # Rel. shift CYP29P *3
-        pints.GaussianLogPrior(0.00173, 0.00274),  # Rel. shift Age
-        pints.GaussianLogPrior(1.286, 0.051),      # Mean log EC50
-        pints.GaussianLogPrior(0.308, 0.028),      # Sigma log EC50
-        pints.GaussianLogPrior(0.821, 0.018),      # Rel. shift EC50 VKORC1 A
-        pints.GaussianLogPrior(2.625, 0.020),      # Mean log volume
-        pints.GaussianLogPrior(0.098, 0.015),      # Sigma log volume
-        pints.GaussianLogPrior(0.113, 0.004)       # Sigma log INR
+        pints.GaussianLogPrior(0.58, 0.031),       # Mean log baseline INR
+        pints.GaussianLogPrior(0.275, 0.023),      # Std. log baseline INR
+        pints.GaussianLogPrior(-3.673, 0.026),     # Mean log clearance
+        pints.GaussianLogPrior(0.105, 0.019),      # Sigma log clearance
+        pints.GaussianLogPrior(0.535, 0.052),      # Rel. shift clearance CYP29P *2
+        pints.GaussianLogPrior(0.74, 0.056),       # Rel. shift clearance CYP29P *3
+        pints.GaussianLogPrior(0.0063, 0.0028),    # Rel. shift clearance Age
+        pints.GaussianLogPrior(0.92, 0.14),        # Mean log EC50
+        pints.GaussianLogPrior(0.135, 0.04),       # Sigma log EC50
+        pints.BetaLogPrior(6, 10),                 # Rel. shift EC50 VKORC1 A
+        pints.GaussianLogPrior(0.00378, 0.00058),  # Transition rate chain 1
+        pints.GaussianLogPrior(0.0093, 0.0003),    # Transition rate chain 2
+        pints.GaussianLogPrior(2.663, 0.023),      # Mean log volume
+        pints.GaussianLogPrior(0.095, 0.016),      # Sigma log volume
+        pints.GaussianLogPrior(0.153, 0.005)       # Sigma log INR
     )
     problem = chi.ProblemModellingController(mechanistic_model, error_model)
     problem.set_population_model(population_model)
