@@ -1251,7 +1251,7 @@ class SteadyStateHambergModel(chi.MechanisticModel):
             delta_y * gamma / ke \
             * (c**gamma / (c50**gamma + c**gamma) - 1)
         dc50 = -delta_y * gamma * c50**(gamma - 1) / (c50**gamma + c**gamma)
-        dy0 = np.ones(shape=len(dv))
+        dy0 = 1
 
         return (y, np.array([[[dy0, dke, dc50, dv]]]))
 
