@@ -155,7 +155,7 @@ def define_hamberg_population_model(
         y0_model = [chi.CovariatePopulationModel(
             population_model=chi.LogNormalModel(
                 dim_names=['myokit.baseline_inr'], centered=centered),
-            covariate_model=chi.LinearCovariateModel(cov_names=['Shift A'])
+            covariate_model=chi.LinearCovariateModel(cov_names=['VKORC1'])
         )]
         y0_model[0].set_population_parameters([(0, 0)])
         dim_name_y0 = ['myokit.baseline_inr']
