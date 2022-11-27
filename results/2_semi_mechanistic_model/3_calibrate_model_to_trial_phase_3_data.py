@@ -32,8 +32,6 @@ def define_log_posterior():
         pints.GaussianLogPrior(0.92, 0.14),        # Mean log EC50
         pints.GaussianLogPrior(0.135, 0.04),       # Sigma log EC50
         pints.BetaLogPrior(6, 10),                 # Rel. shift EC50 VKORC1 A
-        pints.GaussianLogPrior(0.00378, 0.00058),  # Transition rate chain 1
-        pints.GaussianLogPrior(0.0093, 0.0003),    # Transition rate chain 2
         pints.GaussianLogPrior(2.663, 0.023),      # Mean log volume
         pints.GaussianLogPrior(0.095, 0.016),      # Sigma log volume
         pints.GaussianLogPrior(0.153, 0.005)       # Sigma log INR
