@@ -26,9 +26,9 @@ def define_log_posterior():
         pints.GaussianLogPrior(0.275, 0.023),      # Std. log baseline INR
         pints.GaussianLogPrior(-3.673, 0.026),     # Mean log clearance
         pints.GaussianLogPrior(0.105, 0.019),      # Sigma log clearance
-        pints.GaussianLogPrior(0.535, 0.052),      # Rel. shift clearance CYP29P *2
-        pints.GaussianLogPrior(0.74, 0.056),       # Rel. shift clearance CYP29P *3
-        pints.GaussianLogPrior(0.0063, 0.0028),    # Rel. shift clearance Age
+        pints.GaussianLogPrior(0.535, 0.052),      # Rel. shift cl CYP29P *2
+        pints.GaussianLogPrior(0.74, 0.056),       # Rel. shift cl CYP29P *3
+        pints.GaussianLogPrior(0.0063, 0.0028),    # Rel. shift cl Age
         pints.GaussianLogPrior(0.92, 0.14),        # Mean log EC50
         pints.GaussianLogPrior(0.135, 0.04),       # Sigma log EC50
         pints.BetaLogPrior(6, 10),                 # Rel. shift EC50 VKORC1 A
