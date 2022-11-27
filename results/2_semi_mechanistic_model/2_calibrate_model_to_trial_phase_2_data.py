@@ -20,8 +20,9 @@ def define_log_posterior():
     population_model = define_hamberg_population_model(
         centered=False, inr=True, conc=False, fixed_y0=False)
     log_prior = pints.ComposedLogPrior(
-        pints.GaussianLogPrior(0, 0.5),            # Mean basline INR
-        pints.LogNormalLogPrior(-1, 2),            # Std. basline INR
+        pints.GaussianLogPrior(0, 0.5),            # Mean log basline INR
+        pints.LogNormalLogPrior(-1, 2),            # Std. log basline INR
+        pints.LogNormalLogPrior(-1, 2),            # Mean log shift with A
         pints.GaussianLogPrior(-3.682, 0.028),     # Mean log clearance
         pints.GaussianLogPrior(0.119, 0.020),      # Sigma log clearance
         pints.GaussianLogPrior(0.565, 0.063),      # Rel. shift clearance *2
@@ -52,7 +53,7 @@ def run_inference(log_posterior):
     controller.set_parallel_evaluation(True)
     controller.set_sampler(pints.NoUTurnMCMC)
     controller.set_transform(pints.ComposedTransformation(
-        pints.IdentityTransformation(n_parameters=100 * 4 + 5),
+        pints.IdentityTransformation(n_parameters=100 * 4 + 6),
         pints.LogitTransformation(n_parameters=1),
         pints.IdentityTransformation(n_parameters=3),
         pints.LogitTransformation(n_parameters=1),
