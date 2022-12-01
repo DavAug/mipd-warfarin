@@ -22,7 +22,7 @@ def define_log_posterior():
     log_prior = pints.ComposedLogPrior(
         pints.GaussianLogPrior(0, 0.5),            # Mean log basline INR
         pints.LogNormalLogPrior(-1, 2),            # Std. log basline INR
-        pints.LogNormalLogPrior(-1, 2),            # Mean log shift with A
+        pints.GaussianLogPrior(0, 0.5),            # Mean log shift with A
         pints.GaussianLogPrior(-3.682, 0.028),     # Mean log clearance
         pints.GaussianLogPrior(0.119, 0.020),      # Sigma log clearance
         pints.GaussianLogPrior(0.565, 0.063),      # Rel. shift clearance *2
