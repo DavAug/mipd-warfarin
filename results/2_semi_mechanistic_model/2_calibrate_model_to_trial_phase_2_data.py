@@ -20,9 +20,9 @@ def define_log_posterior():
     population_model = define_hamberg_population_model(
         centered=False, inr=True, conc=False, fixed_y0=False)
     log_prior = pints.ComposedLogPrior(
-        pints.GaussianLogPrior(0, 0.5),            # Mean log basline INR
+        pints.GaussianLogPrior(0, 0.5),            # Mean log basline INR GG
         pints.LogNormalLogPrior(-1, 2),            # Std. log basline INR
-        pints.GaussianLogPrior(0, 0.5),            # Mean log shift with A
+        pints.LogNormalLogPrior(0, 1),             # Rel. contr. A allele
         pints.GaussianLogPrior(-3.682, 0.028),     # Mean log clearance
         pints.GaussianLogPrior(0.119, 0.020),      # Sigma log clearance
         pints.GaussianLogPrior(0.565, 0.063),      # Rel. shift clearance *2

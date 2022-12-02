@@ -155,9 +155,8 @@ def define_hamberg_population_model(
         y0_model = [chi.CovariatePopulationModel(
             population_model=chi.LogNormalModel(
                 dim_names=['myokit.baseline_inr'], centered=centered),
-            covariate_model=chi.LinearCovariateModel(cov_names=['VKORC1'])
+            covariate_model=BaselineINRCovariateModel()
         )]
-        y0_model[0].set_population_parameters([(0, 0)])
         dim_name_y0 = ['myokit.baseline_inr']
 
     # Define noise population models
@@ -1059,7 +1058,7 @@ class HambergEC50CovariateModel(chi.CovariateModel):
         mask = vkorc1 == 1
         dmu[mask, 0] -= 1 / (1 - relative_shift / 2) / 2
 
-        # VKORC1 variant G/A
+        # VKORC1 variant A/A
         mask = vkorc1 == 2
         dmu[mask, 0] -= 1 / (1 - relative_shift)
 
@@ -1073,6 +1072,182 @@ class HambergEC50CovariateModel(chi.CovariateModel):
         Returns the names of the model parameters.
         """
         return super(HambergEC50CovariateModel, self).get_parameter_names(
+            exclude_cov_names=True)
+
+    def set_parameter_names(self, names=None, mask_names=False):
+        """
+        Sets the names of the model parameters.
+
+        :param names: A list of parameter names. If ``None``, parameter names
+            are reset to defaults.
+        :type names: List
+        """
+        # This is just a dummy method. The names of the parameters are fixed
+        # for this class
+        pass
+
+    def set_population_parameters(self, indices):
+        """
+        This is a dummy method. The modified population parameter of this
+        model is always the first parameter.
+
+        :param indices: A list of parameter indices
+            [param index per dim, dim index].
+        :type indices: List[List[int]]
+        """
+        self._pidx = np.array([0])
+        self._didx = np.array([0])
+
+        # Update number of parameters and parameters names
+        self._n_selected = 1
+
+
+class BaselineINRCovariateModel(chi.CovariateModel):
+    r"""
+    Implements a covariate model for the baseline INR of Hamberg et al's model.
+
+    In this model the typical baseline INR is assumed to be a function of
+    the VKORC1 genotype
+
+    .. math::
+        \bar{y}_0 = \bar{y}_{0, a_1} + \bar{y}_{0, a_2},
+
+    where :math:`\bar{y}_0` denotes the baseline INR, and
+    :math:`\bar{y}_{0, a_1}` and :math:`\bar{y}_{0, a_2}` the baseline INR
+    contributions from the VKORC1 alleles.
+
+    The covariate encodes the VKORC1 genotype. In particular, the VKORC1
+    variants are encoded as follows:
+
+    0: 'VKORC1 variant GG'
+    1: 'VKORC1 variant GA'
+    2: 'VKORC1 variant AA'
+
+    The parameter of the model is the controibution of a A allele to
+    the baseline INR relative to a A allele, which assumes values between
+    greater equal to 0.
+
+    .. note::
+        This model is meant to be used together with a lognormal population
+        model where the location parameter is the logarithm of the typical
+        population value. The model is therefore implement under the assumption
+        that the logarithm of the typical population value is provided.
+
+    Extends :class:`CovariateModel`.
+    """
+    def __init__(self):
+        n_cov = 1
+        cov_names = ['VKORC1']
+        super(BaselineINRCovariateModel, self).__init__(n_cov, cov_names)
+
+        # Set number of parameters (contribution A)
+        # Note the baseline INR for G/G is implemented as the baseline
+        self._n_parameters = 1
+        self._parameter_names = ['Rel. baseline INR A']
+
+    def compute_population_parameters(
+            self, parameters, pop_parameters, covariates):
+        """
+        Returns the transformed population model parameters.
+
+        :param parameters: Model parameters.
+        :type parameters: np.ndarray of shape ``(n_parameters,)``
+        :param pop_parameters: Population model parameters.
+        :type pop_parameters: np.ndarray of shape
+            ``(n_pop_params_per_dim, n_dim)``
+        :param covariates: Covariates of individuals.
+        :type covariates: np.ndarray of shape ``(n_ids, n_cov)``
+        :rtype: np.ndarray of shape ``(n_ids, n_pop_params_per_dim, n_dim)``
+        """
+        parameters = np.asarray(parameters)
+        if parameters.ndim == 1:
+            parameters = parameters.reshape(1, self._n_parameters)
+        relative_shift = parameters[0, 0]
+
+        # Compute population parameters
+        n_pop, n_dim = pop_parameters.shape
+        if n_dim > 1:
+            raise ValueError(
+                'Invalid pop_parameters. The model is only defined for 1 '
+                'dimensional population models.')
+
+        n_ids = len(covariates)
+        vartheta = np.zeros((n_ids, n_pop, n_dim))
+        vartheta += pop_parameters[np.newaxis, ...]
+
+        # Compute individual parameters
+        vkorc1 = covariates[:, 0]
+
+        # VKORC1 variant G/G
+        # Implemented as baseline
+
+        # VKORC1 variant G/A
+        mask = vkorc1 == 1
+        vartheta[mask, 0] += np.log(1 + relative_shift) - np.log(2)
+
+        # VKORC1 variant A/A
+        mask = vkorc1 == 2
+        vartheta[mask, 0] += np.log(relative_shift)
+
+        return vartheta
+
+    def compute_sensitivities(
+            self, parameters, pop_parameters, covariates, dlogp_dvartheta):
+        """
+        Returns the sensitivities of the likelihood with respect to
+        the model parameters and the population model parameters.
+
+        :param parameters: Model parameters.
+        :type parameters: np.ndarray of shape ``(n_parameters,)`` or
+            ``(n_selected, n_cov)``
+        :param pop_parameters: Population model parameters.
+        :type pop_parameters: np.ndarray of shape
+            ``(n_pop_params_per_dim, n_dim)``
+        :param covariates: Covariates of individuals.
+        :type covariates: np.ndarray of shape ``(n_ids, n_cov)``
+        :param dlogp_dvartheta: Unflattened sensitivities of the population
+            model to the transformed parameters.
+        :type dlogp_dvartheta: np.ndarray of shape
+            ``(n_ids, n_param_per_dim, n_dim)``
+        :rtype: Tuple[np.ndarray of shape ``(n_pop_params,)``,
+            np.ndarray of shape ``(n_parameters,)``]
+        """
+        parameters = np.asarray(parameters)
+        if parameters.ndim == 1:
+            parameters = parameters.reshape(1, self._n_parameters)
+        relative_shift = parameters[0, 0]
+
+        # Compute sensitivities
+        n_pop, n_dim = pop_parameters.shape
+        n_pop = n_pop * n_dim
+        dpop = np.sum(dlogp_dvartheta, axis=0).flatten()
+
+        # Compute derivates of mu
+        n_ids = len(covariates)
+        vkorc1 = covariates[:, 0]
+        dmu = np.zeros(shape=(n_ids, self._n_parameters))
+
+        # VKORC1 variant G/G
+        # Implemented as baseline
+
+        # VKORC1 variant G/A
+        mask = vkorc1 == 1
+        dmu[mask, 0] += 1 / (1 + relative_shift)
+
+        # VKORC1 variant A/A
+        mask = vkorc1 == 2
+        dmu[mask, 0] += 1 / relative_shift
+
+        dparams = np.sum(
+            dlogp_dvartheta[:, 0, 0, np.newaxis] * dmu, axis=0)
+
+        return dpop, dparams
+
+    def get_parameter_names(self):
+        """
+        Returns the names of the model parameters.
+        """
+        return super(BaselineINRCovariateModel, self).get_parameter_names(
             exclude_cov_names=True)
 
     def set_parameter_names(self, names=None, mask_names=False):
