@@ -239,6 +239,13 @@ def define_steady_state_hamberg_population_model(centered=True):
     Returns Hamberg's population model for the steadt state model of the
     semi-mechanistic model of the INR response to warfarin treatment.
     """
+    # Define covariate model for the baseline INR
+    y0_cov_model = chi.CovariatePopulationModel(
+        population_model=chi.LogNormalModel(
+            dim_names=['Basline INR'], centered=centered),
+        covariate_model=BaselineINRCovariateModel()
+    )
+
     # Define covariate model for the elimination rate
     elim_rate_cov_model = chi.CovariatePopulationModel(
         population_model=chi.LogNormalModel(
@@ -255,7 +262,7 @@ def define_steady_state_hamberg_population_model(centered=True):
 
     # Define population model
     population_model = chi.ComposedPopulationModel([
-        chi.LogNormalModel(dim_names=['Baseline INR'], centered=centered),
+        y0_cov_model,
         elim_rate_cov_model,
         ec50_cov_model,
         chi.LogNormalModel(
