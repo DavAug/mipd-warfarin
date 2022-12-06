@@ -60,8 +60,6 @@ def run_inference(log_posterior):
     controller.set_parallel_evaluation(True)
     controller.set_sampler(pints.NoUTurnMCMC)
 
-    print(log_posterior.get_parameter_names(exclude_bottom_level=True))
-
     n_iterations = 1500
     posterior_samples = controller.run(
         n_iterations=n_iterations, log_to_screen=True)
