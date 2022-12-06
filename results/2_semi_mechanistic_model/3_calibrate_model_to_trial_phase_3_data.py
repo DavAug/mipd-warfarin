@@ -1,6 +1,7 @@
 import os
 
 import chi
+import numpy as np
 import pandas as pd
 import pints
 
@@ -17,14 +18,20 @@ def define_log_posterior():
         directory + '/data/trial_phase_III.csv')
 
     # Define hierarchical log-posterior
+    # NOTE: We reduce uncertainty in baseline INR parameters during inference
+    # by a factor sqrt(10) balance steady state versus dynamics. We only
+    # measure 160 individuals over time, but measure 1000 indviduals at steady
+    # state.
+    # This leads to overfitting the steady state, at the cost of fitting the
+    # early dynamics.
     mechanistic_model,_ = define_steady_state_hamberg_model()
     error_model = chi.LogNormalErrorModel()
     population_model = define_steady_state_hamberg_population_model(
         centered=False)
     log_prior = pints.ComposedLogPrior(
-        pints.GaussianLogPrior(0.348, 0.0033),     # Mean log baseline INR G
-        pints.GaussianLogPrior(0.187, 0.0015),     # Std. log baseline INR
-        pints.GaussianLogPrior(1.772, 0.011),      # Mean log baseline INR A
+        pints.GaussianLogPrior(0.348, 0.033 / np.sqrt(10)),   # Mean log y0 G
+        pints.GaussianLogPrior(0.187, 0.015 / np.sqrt(10)),   # Std. log y0
+        pints.GaussianLogPrior(1.772, 0.11 / np.sqrt(10)),    # y0 A / y0 G
         pints.GaussianLogPrior(-3.670, 0.029),     # Mean log ke
         pints.GaussianLogPrior(0.105, 0.02),       # Sigma log ke
         pints.GaussianLogPrior(0.535, 0.052),      # Rel. shift ke CYP29P *2
@@ -52,6 +59,8 @@ def run_inference(log_posterior):
     controller.set_n_runs(1)
     controller.set_parallel_evaluation(True)
     controller.set_sampler(pints.NoUTurnMCMC)
+
+    print(log_posterior.get_parameter_names(exclude_bottom_level=True))
 
     n_iterations = 1500
     posterior_samples = controller.run(
