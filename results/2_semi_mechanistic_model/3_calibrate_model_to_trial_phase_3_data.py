@@ -29,9 +29,9 @@ def define_log_posterior():
     population_model = define_steady_state_hamberg_population_model(
         centered=False)
     log_prior = pints.ComposedLogPrior(
-        pints.GaussianLogPrior(0.348, 0.033 / np.sqrt(10)),   # Mean log y0 G
-        pints.GaussianLogPrior(0.187, 0.015 / np.sqrt(10)),   # Std. log y0
-        pints.GaussianLogPrior(1.772, 0.11 / np.sqrt(10)),    # y0 A / y0 G
+        pints.GaussianLogPrior(0.348, 0.033),      # Mean log y0 G
+        pints.GaussianLogPrior(0.187, 0.00015),    # Std. log y0
+        pints.GaussianLogPrior(1.772, 0.11),       # y0 A / y0 G
         pints.GaussianLogPrior(-3.670, 0.029),     # Mean log ke
         pints.GaussianLogPrior(0.105, 0.02),       # Sigma log ke
         pints.GaussianLogPrior(0.535, 0.052),      # Rel. shift ke CYP29P *2
