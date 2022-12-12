@@ -1,7 +1,6 @@
 import os
 
 import chi
-import numpy as np
 import pandas as pd
 import pints
 
@@ -29,9 +28,6 @@ def define_log_posterior():
     population_model = define_steady_state_hamberg_population_model(
         centered=False)
     log_prior = pints.ComposedLogPrior(
-        pints.GaussianLogPrior(0.348, 0.033),      # Mean log y0 G
-        pints.GaussianLogPrior(0.187, 0.00015),    # Std. log y0
-        pints.GaussianLogPrior(1.772, 0.11),       # y0 A / y0 G
         pints.GaussianLogPrior(-3.670, 0.029),     # Mean log ke
         pints.GaussianLogPrior(0.105, 0.02),       # Sigma log ke
         pints.GaussianLogPrior(0.535, 0.052),      # Rel. shift ke CYP29P *2
@@ -48,6 +44,11 @@ def define_log_posterior():
     problem.set_population_model(population_model)
     problem.set_data(measurements_df, output_observable_dict={
         'myokit.inr': 'INR'})
+    problem.fix_parameters({
+        'Log mean myokit.baseline_inr': 0.348,
+        'Log std. myokit.baseline_inr': 0.187,
+        'Rel. baseline INR A': 1.772,
+    })
     problem.set_log_prior(log_prior)
 
     return problem.get_log_posterior()
