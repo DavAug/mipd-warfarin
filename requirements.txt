@@ -1,5 +1,5 @@
 arviz>=0.11
-chi-drm>=0.2
+chi-drm>=0.2.2
 matplotlib>=1.5
 nbformat>=4.2.0
 numpy>=1.17
