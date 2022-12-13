@@ -211,7 +211,7 @@ class SquaredINRDistance(pints.ErrorMeasure):
 
 if __name__ == '__main__':
     data = load_priors()
-    m, _ = define_hamberg_model()
+    m, _ = define_hamberg_model(baseline_inr=None)
     ids = data.ID.dropna().unique()
     for _id in ids:
         o = define_objective_function(_id, data, m)

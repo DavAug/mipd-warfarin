@@ -12,14 +12,15 @@ def load_cohort():
     directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     data = pd.read_csv(directory + '/data/mipd_trial_cohort.csv')
 
-    # Reshape into covariate matrix [CYP, Age, VKORC]
+    # Reshape into covariate matrix [VKORC, CYP, Age, VKORC]
     ids = data.ID.dropna().unique()
-    covariates = np.empty(shape=(len(ids), 3))
+    covariates = np.empty(shape=(len(ids), 4))
     for idx, _id in enumerate(ids):
         temp = data[data.ID == _id]
-        covariates[idx, 0] = temp['CYP2C9'].values
-        covariates[idx, 1] = temp['Age'].values
-        covariates[idx, 2] = temp['VKORC1'].values
+        covariates[idx, 0] = temp['VKORC1'].values
+        covariates[idx, 1] = temp['CYP2C9'].values
+        covariates[idx, 2] = temp['Age'].values
+        covariates[idx, 3] = temp['VKORC1'].values
 
     return ids, covariates
 
@@ -33,9 +34,12 @@ def load_posteriors():
         directory + '/posteriors/posterior_trial_phase_III.nc')
 
     # Reshape posteriors into matrix (n_samples, n_parameters)
-    # NOTE: Transition rates of chains were not informed by trial III, so
-    # we have to get those from trial phase II
+    # NOTE: Baseline INR and transition rates of chains were not informed by
+    # trial III, so we have to get those from trial phase II
     parameter_names = [
+        'Log mean myokit.baseline_inr',
+        'Log std. myokit.baseline_inr',
+        'Rel. baseline INR A',
         'Log mean myokit.elimination_rate',
         'Log std. myokit.elimination_rate',
         'Rel. elimination rate shift *2*2',
@@ -51,19 +55,22 @@ def load_posteriors():
         'Pooled Sigma log'
     ]
     parameters = np.vstack([
-        posterior3[parameter_names[0]].values.flatten(),
-        posterior3[parameter_names[1]].values.flatten(),
-        posterior3[parameter_names[2]].values.flatten(),
+        posterior2[parameter_names[0]].values.flatten(),
+        posterior2[parameter_names[1]].values.flatten(),
+        posterior2[parameter_names[2]].values.flatten(),
         posterior3[parameter_names[3]].values.flatten(),
         posterior3[parameter_names[4]].values.flatten(),
         posterior3[parameter_names[5]].values.flatten(),
         posterior3[parameter_names[6]].values.flatten(),
         posterior3[parameter_names[7]].values.flatten(),
-        posterior2[parameter_names[8]].values.flatten(),
-        posterior2[parameter_names[9]].values.flatten(),
+        posterior3[parameter_names[8]].values.flatten(),
+        posterior3[parameter_names[9]].values.flatten(),
         posterior3[parameter_names[10]].values.flatten(),
-        posterior3[parameter_names[11]].values.flatten(),
-        posterior3[parameter_names[12]].values.flatten()]).T
+        posterior2[parameter_names[11]].values.flatten(),
+        posterior2[parameter_names[12]].values.flatten(),
+        posterior3[parameter_names[13]].values.flatten(),
+        posterior3[parameter_names[14]].values.flatten(),
+        posterior3[parameter_names[15]].values.flatten()]).T
 
     return parameters
 
@@ -102,7 +109,7 @@ def save_prior_to_file(ids, pr):
 
     # Reshape prior means and std to dataframe
     means, stds = pr
-    m, _ = define_hamberg_model()
+    m, _ = define_hamberg_model(baseline_inr=None)
     parameter_names = list(m.parameters()) + ['Sigma log']
     if 0 in df['Number of observations'].unique():
         for idp, name in enumerate(parameter_names):
@@ -129,7 +136,8 @@ def save_prior_to_file(ids, pr):
 
 
 if __name__ == '__main__':
-    m = define_hamberg_population_model(centered=True, conc=False)
+    m = define_hamberg_population_model(
+        centered=True, conc=False, fixed_y0=False)
     ids, c = load_cohort()
     p = load_posteriors()
     pr = derive_priors(m, c, p)
