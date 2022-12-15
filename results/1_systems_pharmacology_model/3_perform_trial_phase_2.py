@@ -136,7 +136,7 @@ def generate_data(
     # network is in steady state
     warmup = 100
     days = 21
-    times = np.array([1, 2, 3, 5, 7, 13, 20]) * 24
+    times = np.array([0, 1, 2, 3, 5, 7, 13, 20]) * 24
     sim_times = times + warmup * 24
     mean_delay = 0.5
     vk_intake_std = 0.1
@@ -175,10 +175,10 @@ def generate_data(
                 psi[-1:], model_output=[inr], seed=1000+idc+1000*idt)[0, 0]
             inrs.append(inr)
 
-            if (idt < 2) or idt > 6:
+            if (idt < 3) or idt > 7:
                 # Dose remains unchanged
                 continue
-            elif idt < 6:
+            elif idt < 7:
                 # Adjust next dose based on INR response
                 days_to_next_meas = int(
                     (sim_times[idt+1] - sim_times[idt]) // 24)
@@ -195,13 +195,13 @@ def generate_data(
 
         # Store results
         df = pd.DataFrame({
-            'ID': [idc] * 30,
+            'ID': [idc] * 31,
             'Time': list(times) + [np.nan] * 3 + list(range(days-1)),
             'Observable': [
-                'INR'] * 7 + ['CYP2C9', 'Age', 'VKORC1'] + [np.nan] * 20,
+                'INR'] * 8 + ['CYP2C9', 'Age', 'VKORC1'] + [np.nan] * 20,
             'Value': inrs + list(cov[2:]) + [np.nan] * 20,
-            'Dose': [np.nan] * 10 + list(np.array(dose_rates) * 0.01),
-            'Duration': [np.nan] * 10 + [0.01] * 20
+            'Dose': [np.nan] * 11 + list(np.array(dose_rates) * 0.01),
+            'Duration': [np.nan] * 11 + [0.01] * 20
         })
         data = pd.concat((data, df), ignore_index=True)
 
