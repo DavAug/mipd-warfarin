@@ -50,7 +50,7 @@ def run_inference(log_posterior):
     controller.set_parallel_evaluation(True)
     controller.set_sampler(pints.NoUTurnMCMC)
     controller.set_transform(pints.ComposedTransformation(
-        pints.IdentityTransformation(n_parameters=100 * 4 + 6),
+        pints.IdentityTransformation(n_parameters=100 * 3 + 3),
         pints.LogitTransformation(n_parameters=1),
         pints.IdentityTransformation(n_parameters=3),
         pints.LogitTransformation(n_parameters=1),
