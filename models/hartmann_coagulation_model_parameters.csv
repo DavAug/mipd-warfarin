@@ -278,11 +278,11 @@
 66,Pooled myokit.complex_formation_rate_vii_tf,2.0,nM/h
 67,Log mean myokit.conversion_rate_vk_vkh2,-3.781,dimensionless
 67,Log std. myokit.conversion_rate_vk_vkh2,0.240,dimensionless
-67,Rel. Conv. rate VK to VKH2 shift AA,0.532,dimensionless
+67,Rel. Conv. rate VK to VKH2 shift AA,0.2,dimensionless
 68,Pooled myokit.conversion_rate_vkh2_vko,0.22799999999999998,1/h
 69,Log mean myokit.conversion_rate_vko_vk,-1.478,dimensionless
 69,Log std. myokit.conversion_rate_vko_vk,0.240,dimensionless
-69,Rel. Conv. rate VKO to VK shift AA,0.532,dimensionless
+69,Rel. Conv. rate VKO to VK shift AA,0.2,dimensionless
 70,Pooled myokit.degradation_rate_aii_tmod_complex,20.0,1/h
 71,Pooled myokit.degradation_rate_aix_aviii_complex,20.0,1/h
 72,Pooled myokit.degradation_rate_apc_ps_complex,20.0,1/h
