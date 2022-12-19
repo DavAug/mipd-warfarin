@@ -28,6 +28,9 @@ def define_log_posterior():
     population_model = define_steady_state_hamberg_population_model(
         centered=False)
     log_prior = pints.ComposedLogPrior(
+        pints.GaussianLogPrior(0.265, 0.032),      # Mean log baseline INR G
+        pints.GaussianLogPrior(0.172, 0.016),      # Std. log baseline INR
+        pints.GaussianLogPrior(1.251, 0.07),       # Mean log baseline INR A
         pints.GaussianLogPrior(-3.658, 0.029),     # Mean log k_e
         pints.GaussianLogPrior(0.096, 0.02),       # Sigma log k_e
         pints.GaussianLogPrior(0.479, 0.05),       # Rel. shift k_e CYP29P *2
@@ -38,17 +41,12 @@ def define_log_posterior():
         pints.GaussianLogPrior(0.563, 0.066),      # Rel. shift EC50 VKORC1 A
         pints.GaussianLogPrior(2.66, 0.021),       # Mean log volume
         pints.GaussianLogPrior(0.0949, 0.015),     # Sigma log volume
+        pints.GaussianLogPrior(0.185, 0.0052)      # Sigma log INR
     )
     problem = chi.ProblemModellingController(mechanistic_model, error_model)
     problem.set_population_model(population_model)
     problem.set_data(measurements_df, output_observable_dict={
         'myokit.inr': 'INR'})
-    problem.fix_parameters({
-        'Log mean myokit.baseline_inr': 0.265,
-        'Log std. myokit.baseline_inr': 0.172,
-        'Rel. baseline INR A': 1.251,
-        'Pooled Sigma log': 0.185
-    })
     problem.set_log_prior(log_prior)
 
     return problem.get_log_posterior()
@@ -73,7 +71,7 @@ def run_inference(log_posterior):
         draw=slice(warmup, n_iterations, thinning)
     ).to_netcdf(
         directory +
-        '/posteriors/posterior_trial_phase_III.nc'
+        '/posteriors/posterior_trial_phase_III_unfixed.nc'
     )
 
 
