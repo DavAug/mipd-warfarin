@@ -35,7 +35,7 @@ def define_objective_function(patient_id, data, model):
         data[data.Parameter == n].Mean.values[0] for n in model.parameters()]
     model.set_outputs(['myokit.inr'])
     objective_function = SquaredINRDistance(
-        model, parameters, target=2.5, days=19, res=0.1)
+        model, parameters, target=2.5, days=35, res=0.1)
 
     return objective_function
 
@@ -119,7 +119,7 @@ class SquaredINRDistance(pints.ErrorMeasure):
     :param res: Time steps in which the INR is evaluated against the target
         in days.
     """
-    def __init__(self, model, parameters, target=2.5, days=19, res=0.1):
+    def __init__(self, model, parameters, target=2.5, days=50, res=0.1):
         super(SquaredINRDistance, self).__init__()
         if model.n_parameters() != len(parameters):
             raise ValueError('Invalid model or parameters.')
