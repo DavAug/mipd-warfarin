@@ -70,7 +70,7 @@ def load_posteriors():
         posterior2[parameter_names[12]].values.flatten(),
         posterior3[parameter_names[13]].values.flatten(),
         posterior3[parameter_names[14]].values.flatten(),
-        posterior3[parameter_names[15]].values.flatten()]).T
+        posterior2[parameter_names[15]].values.flatten()]).T
 
     return parameters
 
