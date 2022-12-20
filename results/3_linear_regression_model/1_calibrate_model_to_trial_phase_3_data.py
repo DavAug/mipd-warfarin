@@ -13,8 +13,6 @@ from sklearn.linear_model import Lasso
 from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.pipeline import make_pipeline
-import seaborn as sns
-sns.set_theme()
 
 
 def prepare_data():
@@ -145,7 +143,7 @@ def plot_residuals(y, ypred):
         fig.add_subplot(ax)
 
     axes[0].plot(
-    [0, 1], [0, 1], transform=axes[0].transAxes, color=sns.color_palette()[0])
+        [0, 1], [0, 1], transform=axes[0].transAxes, color='blue')
 
     # Plot data
     axes[0].scatter(ypred, y, marker='o', color='black')
