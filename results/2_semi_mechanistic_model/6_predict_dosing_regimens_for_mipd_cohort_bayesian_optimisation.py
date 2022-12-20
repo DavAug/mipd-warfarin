@@ -177,8 +177,7 @@ def define_objective_function(model, posterior, init_doses):
     means, _, _, _ = posterior
     model.set_outputs(['myokit.inr'])
     objective_function = SquaredINRDistance(
-        model, means[:-1], target=2.5, days=19, res=0.1,
-        init_doses=init_doses)
+        model, means[:-1], init_doses=init_doses)
 
     return objective_function
 
@@ -299,7 +298,7 @@ class SquaredINRDistance(pints.ErrorMeasure):
         in days.
     """
     def __init__(
-            self, model, parameters, target=2.5, days=19, res=0.1,
+            self, model, parameters, target=2.5, days=50, res=0.1,
             init_doses=None):
         super(SquaredINRDistance, self).__init__()
         if model.n_parameters() != len(parameters):
