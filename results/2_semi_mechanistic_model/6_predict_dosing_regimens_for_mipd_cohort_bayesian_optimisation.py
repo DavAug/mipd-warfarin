@@ -400,7 +400,7 @@ class SquaredINRDistance(pints.ErrorMeasure):
 
 if __name__ == '__main__':
     days = 7
-    m, _ = define_hamberg_model()
+    m, _ = define_hamberg_model(baseline_inr=None)
     em = chi.LogNormalErrorModel()
     df_pr = get_priors()
     ids = df_pr.ID.unique()
