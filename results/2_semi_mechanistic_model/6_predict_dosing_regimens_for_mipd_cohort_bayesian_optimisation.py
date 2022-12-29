@@ -410,13 +410,9 @@ if __name__ == '__main__':
     df_pr = get_priors(f_post)
     ids = df_pr.ID.unique()
     for day in range(days):
-        if day < 1:
-            continue
         generate_measurements(day, f_meas)
         meas, times = get_tdm_data(day, ids, f_meas)
         for idx, _id in enumerate(ids):
-            if idx > 0:
-                continue
             r, d = get_regimen(day, _id, f_meas)
             m.set_dosing_regimen(r)
             post = get_posterior(_id, m, em, meas[idx], times, df_pr)
