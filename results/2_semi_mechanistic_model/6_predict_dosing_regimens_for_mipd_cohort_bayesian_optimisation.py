@@ -200,7 +200,7 @@ def find_dosing_regimen(objective_function, day, window):
     # NOTE: Doses are increased by a factor 30, enabling the logit-transform,
     # which needs to be reversed here.
     doses = list(p * 30)
-    doses = doses[:-1] + [doses[-1]] * (19 - day - window - 1)
+    doses = doses[:-1] + [doses[-1]] * (19 - day - window + 1)
     doses = [objective_function._convert_to_tablets(d) for d in doses]
 
     return doses
