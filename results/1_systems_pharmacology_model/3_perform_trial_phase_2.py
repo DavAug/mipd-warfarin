@@ -194,14 +194,16 @@ def generate_data(
                 mechanistic_model.set_dosing_regimen(regimen)
 
         # Store results
+        n_doses = len(dose_rates)
+        dose_times = np.arange(n_doses) * 24
         df = pd.DataFrame({
             'ID': [idc] * 31,
-            'Time': list(times) + [np.nan] * 3 + list(range(days-1)),
+            'Time': list(times) + [np.nan] * 3 + list(dose_times),
             'Observable': [
-                'INR'] * 8 + ['CYP2C9', 'Age', 'VKORC1'] + [np.nan] * 20,
-            'Value': inrs + list(cov[2:]) + [np.nan] * 20,
+                'INR'] * 8 + ['CYP2C9', 'Age', 'VKORC1'] + [np.nan] * n_doses,
+            'Value': inrs + list(cov[2:]) + [np.nan] * n_doses,
             'Dose': [np.nan] * 11 + list(np.array(dose_rates) * 0.01),
-            'Duration': [np.nan] * 11 + [0.01] * 20
+            'Duration': [np.nan] * 11 + [0.01] * n_doses
         })
         data = pd.concat((data, df), ignore_index=True)
 
