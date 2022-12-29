@@ -21,6 +21,12 @@ def prepare_data():
     measurements_df = pd.read_csv(
         directory + '/data/trial_phase_III.csv')
 
+    # Keep only steady state measurement
+    mask = \
+        (measurements_df.Observable != 'INR') | (
+        (measurements_df.Observable == 'INR') & (measurements_df.Time == 1320))
+    measurements_df = measurements_df[mask]
+
     # Reshape data into [INR, CYP *1/*1, CYP *1/*2, CYP *1/*3, CYP *2/*2,
     # CYP *2/*3, CYP *3/*3, VKORC GG, VKORC GA, VKORC AA, Age,
     # Maintenance dose]
@@ -35,7 +41,7 @@ def prepare_data():
         vkorc = temp[temp.Observable == 'VKORC1'].Value.values[0]
         data[idx, int(vkorc + 7)] = 1
         data[idx, 10] = temp[temp.Observable == 'Age'].Value.values[0]
-        data[idx, 11] = temp.Dose.dropna().values
+        data[idx, 11] = temp.Dose.dropna().values[-1]
 
     return data
 

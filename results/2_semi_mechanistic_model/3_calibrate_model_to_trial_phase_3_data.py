@@ -16,13 +16,13 @@ def define_log_posterior():
     measurements_df = pd.read_csv(
         directory + '/data/trial_phase_III.csv')
 
+    # Keep only steady state measurement
+    mask = \
+        (measurements_df.Observable != 'INR') | (
+        (measurements_df.Observable == 'INR') & (measurements_df.Time == 1320))
+    measurements_df = measurements_df[mask]
+
     # Define hierarchical log-posterior
-    # NOTE: We reduce uncertainty in baseline INR parameters during inference
-    # by a factor sqrt(10) balance steady state versus dynamics. We only
-    # measure 160 individuals over time, but measure 1000 indviduals at steady
-    # state.
-    # This leads to overfitting the steady state, at the cost of fitting the
-    # early dynamics.
     mechanistic_model,_ = define_steady_state_hamberg_model()
     error_model = chi.LogNormalErrorModel()
     population_model = define_steady_state_hamberg_population_model(
