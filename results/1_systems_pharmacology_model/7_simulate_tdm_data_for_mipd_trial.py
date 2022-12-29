@@ -93,15 +93,12 @@ def get_vk_consumption(days, nids, seed):
     return vk_input
 
 
-def save_results(ids, measurements, n):
+def save_results(ids, measurements, n, filename):
     """
     Saves measurements to a csv file.
     """
     # Import existing file
     directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    filename = \
-        '/2_semi_mechanistic_model' \
-        + '/mipd_trial_predicted_dosing_regimens.csv'
     try:
         data = pd.read_csv(directory + filename)
     except FileNotFoundError:
@@ -143,11 +140,15 @@ if __name__ == '__main__':
     # Set up day parsing
     parser = argparse.ArgumentParser()
     parser.add_argument('--number', type=int)
+    parser.add_argument('--filename', type=str)
     args = parser.parse_args()
 
     if not args.number:
         raise ValueError('Invalid number.')
     n = args.number
+    if not args.filename:
+        raise ValueError('Invalid filename.')
+    filename = args.filename
 
     # Define number of days for simulation
     days = 19
@@ -179,4 +180,4 @@ if __name__ == '__main__':
         model.set_dosing_regimen(r)
         measurements[idp] = generate_measurement(model, patient, n, d, vk, rng)
 
-    save_results(ids, measurements, n)
+    save_results(ids, measurements, n, filename)

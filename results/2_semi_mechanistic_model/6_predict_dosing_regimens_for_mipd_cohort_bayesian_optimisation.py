@@ -12,13 +12,14 @@ import pints
 from model import define_hamberg_model
 
 
-def get_priors():
+def get_priors(filename):
     """
     Returns a dataframe with the means and standard deviations of the priors.
     """
     # Load priors
-    directory = os.path.dirname(os.path.abspath(__file__))
-    data = pd.read_csv(directory + '/mipd_trial_prior_distributions.csv')
+    directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    data = pd.read_csv(
+        directory + filename)
 
     # Only keep prior (i.e. distributions after 0 observations)
     n_obs = 0
@@ -27,7 +28,7 @@ def get_priors():
     return data
 
 
-def generate_measurements(day):
+def generate_measurements(day, filename):
     """
     Runs the Wajima-Hartmann's QSP model to generate TDM data for the MIPD
     cohort for that day.
@@ -41,19 +42,19 @@ def generate_measurements(day):
         directory +
         '/1_systems_pharmacology_model/7_simulate_tdm_data_for_mipd_trial.py',
         '--number',
-        str(n_obs)
+        str(n_obs),
+        '--filename',
+        filename
     ]).wait()
     print('TDM data generated')
 
 
-def get_tdm_data(day, ids):
+def get_tdm_data(day, ids, filename):
     """
     Loads TDM data up to the day from file for all individuals in MIPD cohort.
     """
     # Import file with dosing regimens
-    directory = os.path.dirname(os.path.abspath(__file__))
-    filename = \
-        '/mipd_trial_predicted_dosing_regimens.csv'
+    directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     try:
         df = pd.read_csv(directory + filename)
     except FileNotFoundError:
@@ -77,7 +78,7 @@ def get_tdm_data(day, ids):
     return measurements, times
 
 
-def get_regimen(day, patient_id):
+def get_regimen(day, patient_id, filename):
     """
     Returns the latest regimen, before measuring the next INR value.
 
@@ -90,10 +91,8 @@ def get_regimen(day, patient_id):
         return myokit.Protocol(), []
 
     # Get regimen from dataframe
-    directory = os.path.dirname(os.path.abspath(__file__))
-    df = pd.read_csv(
-        directory +
-        '/mipd_trial_predicted_dosing_regimens.csv')
+    directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    df = pd.read_csv(directory + filename)
 
     # Filter dataframe for individual
     df = df[df.ID == patient_id]
@@ -168,7 +167,7 @@ def get_posterior(patient_id, model, error_model, meas, times, df_prior):
     return means, stds, rhats, parameters
 
 
-def define_objective_function(model, posterior, init_doses):
+def define_objective_function(model, posterior, init_doses, window):
     """
     Defines a function that returns the squared distance of the patient's INR
     from 2.5 within the first 19 days of warfarin treatment for a given
@@ -177,12 +176,12 @@ def define_objective_function(model, posterior, init_doses):
     means, _, _, _ = posterior
     model.set_outputs(['myokit.inr'])
     objective_function = SquaredINRDistance(
-        model, means[:-1], init_doses=init_doses)
+        model, means[:-1], init_doses=init_doses, window=window)
 
     return objective_function
 
 
-def find_dosing_regimen(objective_function):
+def find_dosing_regimen(objective_function, day, window):
     """
     Finds the dosing regimen that minimises the squared distance to the target
     INR.
@@ -201,19 +200,18 @@ def find_dosing_regimen(objective_function):
     # NOTE: Doses are increased by a factor 30, enabling the logit-transform,
     # which needs to be reversed here.
     doses = list(p * 30)
-    doses = doses[:-1] + [doses[-1]] * 13
+    doses = doses[:-1] + [doses[-1]] * (19 - day - window - 1)
     doses = [objective_function._convert_to_tablets(d) for d in doses]
 
     return doses
 
 
-def save_posterior(posterior, patient_id, day):
+def save_posterior(posterior, patient_id, day, filename):
     """
     Saves posterior to a csv file.
     """
     # Import existing file
-    directory = os.path.dirname(os.path.abspath(__file__))
-    filename = '/mipd_trial_prior_distributions.csv'
+    directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     data = pd.read_csv(directory + filename)
 
     # Split data into n_obs = n and rest
@@ -249,14 +247,12 @@ def save_posterior(posterior, patient_id, day):
     data.to_csv(directory + filename, index=False)
 
 
-def save_regimen(doses, patient_id, day):
+def save_regimen(doses, patient_id, day, filename):
     """
     Saves dosing regimen to a csv file.
     """
     # Import existing file
-    directory = os.path.dirname(os.path.abspath(__file__))
-    filename = \
-        '/mipd_trial_predicted_dosing_regimens.csv'
+    directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     data = pd.read_csv(directory + filename)
 
     # Split data into n_obs = n and rest
@@ -299,7 +295,7 @@ class SquaredINRDistance(pints.ErrorMeasure):
     """
     def __init__(
             self, model, parameters, target=2.5, days=50, res=0.1,
-            init_doses=None):
+            init_doses=None, window=7):
         super(SquaredINRDistance, self).__init__()
         if model.n_parameters() != len(parameters):
             raise ValueError('Invalid model or parameters.')
@@ -307,8 +303,8 @@ class SquaredINRDistance(pints.ErrorMeasure):
             init_doses = [float(d) for d in init_doses]
         else:
             init_doses = []
-        if len(init_doses) >= 7:
-            # We only optimise the initial 7 doses
+        if len(init_doses) >= 19:
+            # We only optimise 19 trial days
             raise ValueError('Invalid init_doses.')
         self._model = model
         self._parameters = parameters
@@ -317,7 +313,8 @@ class SquaredINRDistance(pints.ErrorMeasure):
         self._doses = np.array(
             init_doses + [0] * (days - self._n_init_doses))
         self._duration = 0.01
-        self._n_doses = 7 - self._n_init_doses
+        free_doses = 19 - self._n_init_doses
+        self._n_doses = window if free_doses > window else free_doses
 
         # Construct simulation times in hours
         self._times = np.arange(0, days, res) * 24
@@ -379,8 +376,9 @@ class SquaredINRDistance(pints.ErrorMeasure):
         if len(doses) != self._n_doses:
             raise ValueError('Invalid parameters.')
         doses = [self._convert_to_tablets(d) for d in doses]
-        self._doses[self._n_init_doses:6] = np.array(doses[:-1])
-        self._doses[6:] = doses[-1]
+        split = self._n_init_doses + self._n_doses - 1
+        self._doses[self._n_init_doses:split] = np.array(doses[:-1])
+        self._doses[split:] = doses[-1]
         dose_rates = self._doses / self._duration
 
         regimen = myokit.Protocol()
@@ -399,19 +397,30 @@ class SquaredINRDistance(pints.ErrorMeasure):
 
 
 if __name__ == '__main__':
-    days = 7
+    days = 19
+    window = 7
+    f_meas = \
+        '/2_semi_mechanistic_model' \
+        + '/mipd_trial_predicted_dosing_regimens.csv'
+    f_post = '/2_semi_mechanistic_model' \
+        + '/mipd_trial_prior_distributions.csv'
+
     m, _ = define_hamberg_model(baseline_inr=None)
     em = chi.LogNormalErrorModel()
-    df_pr = get_priors()
+    df_pr = get_priors(f_post)
     ids = df_pr.ID.unique()
     for day in range(days):
-        generate_measurements(day)
-        meas, times = get_tdm_data(day, ids)
+        if day < 1:
+            continue
+        generate_measurements(day, f_meas)
+        meas, times = get_tdm_data(day, ids, f_meas)
         for idx, _id in enumerate(ids):
-            r, d = get_regimen(day, _id)
+            if idx > 0:
+                continue
+            r, d = get_regimen(day, _id, f_meas)
             m.set_dosing_regimen(r)
             post = get_posterior(_id, m, em, meas[idx], times, df_pr)
-            o = define_objective_function(m, post, d)
-            d += find_dosing_regimen(o)
-            save_posterior(post, _id, day)
-            save_regimen(d, _id, day)
+            o = define_objective_function(m, post, d, window)
+            d += find_dosing_regimen(o, day, window)
+            save_posterior(post, _id, day, f_post)
+            save_regimen(d, _id, day, f_meas)
