@@ -59,17 +59,17 @@ def load_posteriors():
         posterior2[parameter_names[1]].values.flatten(),
         posterior2[parameter_names[2]].values.flatten(),
         posterior3[parameter_names[3]].values.flatten(),
-        posterior3[parameter_names[4]].values.flatten(),
+        posterior2[parameter_names[4]].values.flatten(),
         posterior3[parameter_names[5]].values.flatten(),
         posterior3[parameter_names[6]].values.flatten(),
         posterior3[parameter_names[7]].values.flatten(),
         posterior3[parameter_names[8]].values.flatten(),
-        posterior3[parameter_names[9]].values.flatten(),
+        posterior2[parameter_names[9]].values.flatten(),
         posterior3[parameter_names[10]].values.flatten(),
         posterior2[parameter_names[11]].values.flatten(),
         posterior2[parameter_names[12]].values.flatten(),
         posterior3[parameter_names[13]].values.flatten(),
-        posterior3[parameter_names[14]].values.flatten(),
+        posterior2[parameter_names[14]].values.flatten(),
         posterior2[parameter_names[15]].values.flatten()]).T
 
     return parameters
