@@ -38,15 +38,12 @@ def define_log_posterior():
         centered=False)
     log_prior = pints.ComposedLogPrior(
         pints.GaussianLogPrior(-3.738, 0.027),     # Mean log ke
-        pints.GaussianLogPrior(0.116, 0.02),       # Sigma log ke
         pints.GaussianLogPrior(0.571, 0.04),       # Rel. shift ke CYP29P *2
         pints.GaussianLogPrior(0.823, 0.04),       # Rel. shift ke CYP29P *3
         pints.GaussianLogPrior(0.00157, 0.0027),   # Rel. shift ke Age
         pints.GaussianLogPrior(1.471, 0.055),      # Mean log EC50
-        pints.GaussianLogPrior(0.208, 0.028),      # Sigma log EC50
         pints.GaussianLogPrior(0.532, 0.041),      # Rel. shift EC50 VKORC1 A
         pints.GaussianLogPrior(2.662, 0.020),      # Mean log volume
-        pints.LogNormalLogPrior(-2.31, 0.16),      # Sigma log volume
     )
     problem = chi.ProblemModellingController(mechanistic_model, error_model)
     problem.set_population_model(population_model)
@@ -56,6 +53,9 @@ def define_log_posterior():
         'Log mean myokit.baseline_inr': 0.073,
         'Log std. myokit.baseline_inr': 0.170,
         'Rel. baseline INR A': 1.043,
+        'Log std. myokit.elimination_rate': 0.116,
+        'Log std. myokit.half_maximal_effect_concentration': 0.208,
+        'Log std. myokit.volume': 0.101,
         'Pooled Sigma log': 0.105
     })
     problem.set_log_prior(log_prior)
