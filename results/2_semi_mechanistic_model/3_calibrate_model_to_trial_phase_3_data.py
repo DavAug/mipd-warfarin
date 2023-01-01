@@ -22,6 +22,15 @@ def define_log_posterior():
         (measurements_df.Observable == 'INR') & (measurements_df.Time == 1320))
     measurements_df = measurements_df[mask]
 
+    # Keep only maintenance dose
+    mask = \
+        (measurements_df.Observable == 'INR') | \
+        (measurements_df.Observable == 'CYP2C9') | \
+        (measurements_df.Observable == 'VKORC1') | \
+        (measurements_df.Observable == 'Age') | \
+        (measurements_df.Time == 1296)
+    measurements_df = measurements_df[mask]
+
     # Define hierarchical log-posterior
     mechanistic_model,_ = define_steady_state_hamberg_model()
     error_model = chi.LogNormalErrorModel()
