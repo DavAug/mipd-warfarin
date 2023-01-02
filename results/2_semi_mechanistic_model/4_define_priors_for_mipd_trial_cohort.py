@@ -119,7 +119,7 @@ def save_prior_to_file(ids, pr):
                 mask2 = df.ID == _id
                 mask = mask1 & mask2
                 df.loc[mask, 'Mean'] = means[idx, idp]
-                df.loc[mask, 'Std.'] = means[idx, idp]
+                df.loc[mask, 'Std.'] = stds[idx, idp]
     else:
         for idp, name in enumerate(parameter_names):
             df = pd.concat(
