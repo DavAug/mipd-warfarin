@@ -9,7 +9,7 @@ import pandas as pd
 from model import define_wajima_model
 
 
-def get_regimen(patient, n, delays):
+def get_regimen(patient, n, delays, filename):
     """
     Imports the patient's dosing regimen.
     """
@@ -21,9 +21,6 @@ def get_regimen(patient, n, delays):
 
     # Import file with dosing regimens
     directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    filename = \
-        '/2_semi_mechanistic_model' \
-        + '/mipd_trial_predicted_dosing_regimens.csv'
     try:
         df = pd.read_csv(directory + filename)
     except FileNotFoundError:
@@ -70,7 +67,7 @@ def generate_measurement(model, patient, n, delays, vk_input, rng):
     # NOTE nth measurement occurs on (n-1)th day. And we let the system
     # equilibrate for 100 days.
     cal_time = 100
-    times = np.array([0 ,(n - 1) * 24 + delays[n]]) + cal_time * 24
+    times = np.array([0 ,(n - 1) * 24 + delays[n-1]]) + cal_time * 24
     inr = model.simulate(
         parameters=parameters, times=times, vk_input=vk_input[:n])[:, -1]
 
@@ -176,7 +173,7 @@ if __name__ == '__main__':
     for idp, patient in data.iterrows():
         d = delays[:, idp]
         vk = vk_input[:, idp]
-        r = get_regimen(patient, n, d)
+        r = get_regimen(patient, n, d, filename)
         model.set_dosing_regimen(r)
         measurements[idp] = generate_measurement(model, patient, n, d, vk, rng)
 
