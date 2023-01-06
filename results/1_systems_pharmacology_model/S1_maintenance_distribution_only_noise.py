@@ -240,6 +240,7 @@ def generate_data(
         psi = list(parameters) + [0.1]
 
         # Simulate treatment response
+        inrs = []
         cov = [0, 0, 0, 71, 0]
         regimen, dose_rates = get_initial_dosing_regimen(cov, warmup)
         mechanistic_model.set_dosing_regimen(regimen)
@@ -253,6 +254,7 @@ def generate_data(
             # Sample measurement
             inr = error_model.sample(
                 psi[-1:], model_output=[inr], seed=1000+idc+1000*idt)[0, 0]
+            inrs.append(inr)
 
             if (idt < 2) or idt > 9:
                 # Dose remains unchanged
@@ -273,14 +275,21 @@ def generate_data(
                 mechanistic_model.set_dosing_regimen(regimen)
 
         # Store results
+        n_doses = len(dose_rates)
+        doses = np.array(dose_rates) * 0.01
+        n_times = len(times)
+        dose_times = list(np.arange(n_doses) * 24)
         df = pd.DataFrame({
-            'ID': [idc] * 5,
-            'Time': [times[-1]] + [np.nan] * 3 + [0],
+            'ID': [idc] * (n_times + 3 + n_doses),
+            'Time': list(times) + [np.nan] * 3 + dose_times,
             'Observable': [
-                'INR'] + ['CYP2C9', 'Age', 'VKORC1'] + [np.nan],
-            'Value': [inr] + list(cov[2:]) + [np.nan],
-            'Dose': [np.nan] * 4 + [dose_rates[-1] * 0.01],
-            'Duration': [np.nan] * 4 + [0.01]
+                'INR'] * n_times + ['CYP2C9', 'Age', 'VKORC1'] \
+                + [np.nan] * n_doses,
+            'Value': inrs + list(cov[2:]) + [np.nan] * n_doses,
+            'Dose': [
+                np.nan] * n_times + [np.nan] * 3 + list(doses),
+            'Duration': [
+                np.nan] * n_times + [np.nan] * 3 + [0.01] * n_doses
         })
         data = pd.concat((data, df), ignore_index=True)
 
