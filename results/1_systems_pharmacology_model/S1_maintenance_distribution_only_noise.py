@@ -297,7 +297,7 @@ def generate_data(
 
 
 if __name__ == '__main__':
-    n = 100
+    n = 1000
     mm, em, p = define_model()
     d = generate_data(mm, em, p, n)
 
