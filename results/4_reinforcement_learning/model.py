@@ -87,11 +87,12 @@ class DQN(nn.Module):
             raise ValueError('INR scaling has not been set.')
 
         # Scale state
-        state[:, 0] = (state[:, 0] - self._mean_inr) / self._std_inr
-        state[:, -1] = (state[:, -1] - self._mean_age) / self._std_age
+        input = torch.clone(state)
+        input[:, 0] = (input[:, 0] - self._mean_inr) / self._std_inr
+        input[:, -1] = (input[:, -1] - self._mean_age) / self._std_age
 
         with torch.no_grad():
-            q = self.forward(state)
+            q = self.forward(input)
             dose = self._doses[q.max(1)[1]]
 
         return dose
