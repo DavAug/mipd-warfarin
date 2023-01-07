@@ -8,7 +8,7 @@ class DQN(nn.Module):
     """
     Defines deep Q Learning network.
     """
-    def __init__(self):
+    def __init__(self, width=128):
         super(DQN, self).__init__()
         # Define action bins
         self._doses = np.array([
@@ -23,9 +23,9 @@ class DQN(nn.Module):
         # CYP2C9 *1 alleles, CYP2C9 *2 alleles, CYP2C9 *3 alleles, Age
         n_states = 7
         n_actions = len(self._doses)
-        self.layer1 = nn.Linear(n_states, 128)
-        self.layer2 = nn.Linear(128, 128)
-        self.layer3 = nn.Linear(128, n_actions)
+        self.layer1 = nn.Linear(n_states, width)
+        self.layer2 = nn.Linear(width, width)
+        self.layer3 = nn.Linear(width, n_actions)
 
         # Define dummies to reverse standardisation of INR values
         self._mean_inr = None

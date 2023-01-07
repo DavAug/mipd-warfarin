@@ -389,8 +389,8 @@ if __name__ == '__main__':
     # can then be trained by minimising the temporal difference error
     # R(s') + Q(a | s') - Q(a | s). Predicting Q(a | s') with a more slowly
     # updated network stabilises the training.
-    policy_net = DQN().to(device)
-    target_net = DQN().to(device)
+    policy_net = DQN(1024).to(device)
+    target_net = DQN(1024).to(device)
     target_net.load_state_dict(policy_net.state_dict())
 
     # Define optimiser
