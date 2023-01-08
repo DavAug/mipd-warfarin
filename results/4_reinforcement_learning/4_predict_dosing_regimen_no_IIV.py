@@ -15,7 +15,7 @@ def load_model():
     directory = os.path.dirname(os.path.abspath(__file__))
     filename = '/models/dqn_model_no_IIV.pickle'
 
-    model = DQN()
+    model = DQN(1024)
     model.load_state_dict(torch.load(directory + filename))
     model.eval()
 

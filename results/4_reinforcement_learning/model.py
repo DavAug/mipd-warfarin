@@ -25,7 +25,8 @@ class DQN(nn.Module):
         n_actions = len(self._doses)
         self.layer1 = nn.Linear(n_states, width)
         self.layer2 = nn.Linear(width, width)
-        self.layer3 = nn.Linear(width, n_actions)
+        self.layer3 = nn.Linear(width, width)
+        self.layer4 = nn.Linear(width, n_actions)
 
         # Define dummies to reverse standardisation of INR values
         self._mean_inr = None
@@ -44,7 +45,8 @@ class DQN(nn.Module):
         """
         x = F.relu(self.layer1(state))
         x = F.relu(self.layer2(x))
-        q = self.layer3(x)
+        x = F.relu(self.layer3(x))
+        q = self.layer4(x)
 
         return q
 
