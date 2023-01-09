@@ -124,8 +124,6 @@ def format_covariates(covariates):
 
     covs[3] = age
 
-    covs[3] = 51
-
     return covs
 
 
