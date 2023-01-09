@@ -19,9 +19,9 @@ class DQN(nn.Module):
             29.5, 30
         ])
 
-        # States are: INR, VKORC1 G alleles, VKORC1 A alleles,
-        # CYP2C9 *1 alleles, CYP2C9 *2 alleles, CYP2C9 *3 alleles, Age
-        n_states = 7
+        # States are: INR, VKORC1 G alleles,
+        # CYP2C9 *1 alleles, CYP2C9 *2 alleles, Age
+        n_states = 5
         n_actions = len(self._doses)
         self.layer1 = nn.Linear(n_states, width)
         self.layer2 = nn.Linear(width, width)
