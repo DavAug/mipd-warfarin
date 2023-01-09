@@ -51,7 +51,7 @@ def reshape_data(df, target):
     ids = df.ID.dropna().unique()
     n_states = len(df[
         (df.ID == ids[0]) & (df.Observable == 'INR')].Value.dropna())
-    data = np.zeros(shape=(len(ids), n_states, 11))
+    data = np.zeros(shape=(len(ids), n_states, 9))
     for idx, _id in enumerate(ids):
         # Get info from dataframe
         temp = df[df.ID == _id]
@@ -89,31 +89,24 @@ def reshape_data(df, target):
             data[idx, :, 5] = 1
         elif vkorc1 == 1:
             data[idx, :, 5] = 0.5
-            data[idx, :, 6] = 0.5
-        else:
-            data[idx, :, 6] = 1
         if cyp == 0:
-            data[idx, :, 7] = 1
+            data[idx, :, 6] = 1
         elif cyp == 1:
+            data[idx, :, 6] = 0.5
             data[idx, :, 7] = 0.5
-            data[idx, :, 8] = 0.5
         elif cyp == 2:
-            data[idx, :, 7] = 0.5
-            data[idx, :, 9] = 0.5
+            data[idx, :, 6] = 0.5
         elif cyp == 3:
-            data[idx, :, 8] = 1
+            data[idx, :, 7] = 1
         elif cyp == 4:
-            data[idx, :, 8] = 0.5
-            data[idx, :, 9] = 0.5
-        else:
-            data[idx, :, 9] = 1
+            data[idx, :, 7] = 0.5
 
         # Add age
-        data[idx, :, 10] = age
+        data[idx, :, 8] = age
 
     # Remove last column of dataset, because the next state / reward is unknown
     data = data[:, :-1]
-    data = data.reshape((len(ids) * (n_states - 1), 11))
+    data = data.reshape((len(ids) * (n_states - 1), 9))
 
     return data
 
@@ -230,9 +223,9 @@ def train_epoch(
 
 
 def train_batch(batch, policy_net, target_net, optimiser, gamma, device):
-    state_batch = batch[:, [0, 5, 6, 7, 8, 9, 10]]
+    state_batch = batch[:, [0, 5, 6, 7, 8]]
     action_batch = batch[:, 1:2].type(torch.int64)
-    next_state_batch = batch[:, [2, 5, 6, 7, 8, 9, 10]]
+    next_state_batch = batch[:, [2, 5, 6, 7, 8]]
     reward_batch = batch[:, 3:4]
     steps = batch[:, 4:5]
 
@@ -295,9 +288,9 @@ def evaluate_test_set(data, policy_net, target_net, batch_size, gamma, device):
     avg_loss = 0
     for idb in range(n_data // batch_size):
         batch = data[idb * batch_size: (idb + 1) * batch_size]
-        state_batch = batch[:, [0, 5, 6, 7, 8, 9, 10]]
+        state_batch = batch[:, [0, 5, 6, 7, 8]]
         action_batch = batch[:, 1:2].type(torch.int64)
-        next_state_batch = batch[:, [2, 5, 6, 7, 8, 9, 10]]
+        next_state_batch = batch[:, [2, 5, 6, 7, 8]]
         reward_batch = batch[:, 3:4]
         steps = batch[:, 4:5]
 
@@ -386,6 +379,7 @@ if __name__ == '__main__':
     # can then be trained by minimising the temporal difference error
     # R(s') + Q(a | s') - Q(a | s). Predicting Q(a | s') with a more slowly
     # updated network stabilises the training.
+    torch.manual_seed(1)
     policy_net = DQN(1024).to(device)
     target_net = DQN(1024).to(device)
     target_net.load_state_dict(policy_net.state_dict())
@@ -409,6 +403,3 @@ if __name__ == '__main__':
     torch.save(best, directory + filename)
     filename = '/models/dqn_model_latest.pickle'
     torch.save(latest, directory + filename)
-
-    # TODO: Use G alleses and 1 and 2 alleles as genetic features. A and 3 are
-    # not necessary.
