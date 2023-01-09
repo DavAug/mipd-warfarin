@@ -89,7 +89,7 @@ def get_states(day, ids, covs, filename):
     # Get data
     n_obs = day + 1
     df = df[df['Number of observations'] == n_obs]
-    states = np.zeros(shape=(len(ids), 7))
+    states = np.zeros(shape=(len(ids), 5))
     for idx, _id in enumerate(ids):
         temp = df[df.ID == _id]
         states[idx, 0] = temp['INR'].values[0]
@@ -108,32 +108,25 @@ def format_covariates(covariates):
     Output is VKORC1 G alleles, VKORC1 A alleles, CYP *1 alleles, CYP *2
     alleles, CYP *3 alleles, Age.
     """
-    covs = np.zeros(6)
+    covs = np.zeros(4)
     vkorc1, cyp, age = covariates
     if vkorc1 == 0:
         covs[0] = 1
     elif vkorc1 == 1:
         covs[0] = 0.5
-        covs[1] = 0.5
-    else:
-        covs[1] = 1
     if cyp == 0:
-        covs[2] = 1
+        covs[1] = 1
     elif cyp == 1:
+        covs[1] = 0.5
         covs[2] = 0.5
-        covs[3] = 0.5
     elif cyp == 2:
-        covs[2] = 0.5
-        covs[4] = 0.5
+        covs[1] = 0.5
     elif cyp == 3:
-        covs[3] = 1
+        covs[2] = 1
     elif cyp == 4:
-        covs[3] = 0.5
-        covs[4] = 0.5
-    else:
-        covs[4] = 1
+        covs[2] = 0.5
 
-    covs[5] = age
+    covs[3] = age
 
     return covs
 

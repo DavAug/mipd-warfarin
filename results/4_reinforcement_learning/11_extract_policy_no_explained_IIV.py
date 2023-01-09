@@ -1,5 +1,4 @@
 import os
-import subprocess
 
 import numpy as np
 import pandas as pd
@@ -32,14 +31,12 @@ def get_policy(model, n, device):
     Returns the doses predicted by the DQN model based on the current states.
     """
     # Create states
-    states = np.empty((n, 7))
+    states = np.empty((n, 5))
     states[:, 0] = np.linspace(0.5, 5, n)
     states[:, 1] = 1  # VKORC1 GG
-    states[:, 2] = 0
-    states[:, 3] = 1  # CYP *1*1
-    states[:, 4] = 0
-    states[:, 5] = 0
-    states[:, 6] = 71
+    states[:, 2] = 1  # CYP *1*1
+    states[:, 3] = 0
+    states[:, 4] = 71
 
     # Predict dose
     states = torch.tensor(
@@ -58,11 +55,9 @@ def save_policy(states, doses, filename):
     data = pd.DataFrame({
         'INR': list(states[:, 0]),
         'VKORC1 G alleles': list(states[:, 1]),
-        'VKORC1 A alleles': list(states[:, 2]),
-        'CYP2C9 1 alleles': list(states[:, 3]),
-        'CYP2C9 2 alleles': list(states[:, 4]),
-        'CYP2C9 3 alleles': list(states[:, 5]),
-        'Age': list(states[:, 6]),
+        'CYP2C9 1 alleles': list(states[:, 2]),
+        'CYP2C9 2 alleles': list(states[:, 3]),
+        'Age': list(states[:, 4]),
         'Dose': list(doses),
     })
 
