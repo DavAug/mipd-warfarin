@@ -12,7 +12,7 @@ def load_model():
     Loads and returns the pretrained DQN model.
     """
     directory = os.path.dirname(os.path.abspath(__file__))
-    filename = '/models/dqn_model_latest_no_unexplained_IIV.pickle'
+    filename = '/models/dqn_model_best_no_unexplained_IIV.pickle'
 
     model = DQN(width=1024)
     model.load_state_dict(torch.load(directory + filename))
@@ -34,23 +34,18 @@ def get_policy(model, n, device):
     d = []
     for vkorc in [0, 1, 2]:
         g = 1
-        a = 0
         if vkorc == 1:
             g = 0.5
-            a = 0.5
         elif vkorc == 2:
             g = 0
-            a = 1
 
         # Create states
-        states = np.empty((n, 7))
+        states = np.empty((n, 5))
         states[:, 0] = np.linspace(0.5, 5, n)
         states[:, 1] = g
-        states[:, 2] = a
-        states[:, 3] = 1  # CYP *1*1
-        states[:, 4] = 0
-        states[:, 5] = 0
-        states[:, 6] = 71
+        states[:, 2] = 1  # CYP *1*1
+        states[:, 3] = 0
+        states[:, 4] = 71
 
         # Predict dose
         states = torch.tensor(
@@ -77,11 +72,9 @@ def save_policy(states, doses, filename):
         data = pd.concat((data, pd.DataFrame({
             'INR': list(s[:, 0]),
             'VKORC1 G alleles': list(s[:, 1]),
-            'VKORC1 A alleles': list(s[:, 2]),
-            'CYP2C9 1 alleles': list(s[:, 3]),
-            'CYP2C9 2 alleles': list(s[:, 4]),
-            'CYP2C9 3 alleles': list(s[:, 5]),
-            'Age': list(s[:, 6]),
+            'CYP2C9 1 alleles': list(s[:, 2]),
+            'CYP2C9 2 alleles': list(s[:, 3]),
+            'Age': list(s[:,4]),
             'Dose': list(doses[idx]),
         })))
 
