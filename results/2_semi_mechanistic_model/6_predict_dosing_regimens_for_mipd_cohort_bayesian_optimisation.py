@@ -200,7 +200,11 @@ def find_dosing_regimen(objective_function, day, window):
     # NOTE: Doses are increased by a factor 30, enabling the logit-transform,
     # which needs to be reversed here.
     doses = list(p * 30)
-    doses = doses[:-1] + [doses[-1]] * (19 - day - window + 1)
+    if (19 - day - window) > 0:
+        # We administer 19 doses. The day + window doses are fixed.
+        # the 19 - day - window doses are the maintenance dose, which is
+        # the last dose in doses.
+        doses = doses + [doses[-1]] * (19 - day - window)
     doses = [objective_function._convert_to_tablets(d) for d in doses]
 
     return doses
