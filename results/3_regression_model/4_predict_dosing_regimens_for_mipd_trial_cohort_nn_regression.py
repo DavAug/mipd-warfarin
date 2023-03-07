@@ -59,6 +59,7 @@ def reshape_data(df, target):
 
     return ids, data
 
+
 def load_model():
     directory = os.path.dirname(os.path.abspath(__file__))
     filename = '/model/deep_regression_best.pickle'
@@ -73,10 +74,12 @@ def load_model():
 
     return model
 
+
 def predict_maintenance_dose(data, model):
     doses = model.predict_dose(data)[:, 0]
 
     return np.array(doses)
+
 
 def save_results(ids, doses):
     df = pd.DataFrame({

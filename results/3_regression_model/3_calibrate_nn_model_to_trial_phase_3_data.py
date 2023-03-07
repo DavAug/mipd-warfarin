@@ -259,8 +259,6 @@ def plot_progress(performance, best_epoch):
 
 if __name__ == '__main__':
     batch_size = 128
-    gamma = 0.5
-    tau = 0.005
     lr = 1e-4
 
     rng = np.random.default_rng(35)

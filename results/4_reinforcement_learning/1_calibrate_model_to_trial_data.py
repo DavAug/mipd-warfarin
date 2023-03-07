@@ -146,8 +146,8 @@ def format_data(train, test, policy_net, target_net, target, device):
     test[:, 1] = np.array(indices)
 
     # Normalise rewards
-    mean = np.mean(train[:,3])
-    std = np.std(train[:,3], ddof=1)
+    mean = np.mean(train[:, 3])
+    std = np.std(train[:, 3], ddof=1)
     train[:, 3] = (train[:, 3] - mean) / (3 * std)
     test[:, 3] = (test[:, 3] - mean) / (3 * std)
 
@@ -282,6 +282,7 @@ def evaluate(
         best[2] = policy_net.state_dict()
 
     return loss, best
+
 
 def evaluate_test_set(data, policy_net, target_net, batch_size, gamma, device):
     n_data = len(data)
