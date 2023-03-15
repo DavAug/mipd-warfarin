@@ -13,16 +13,16 @@ def load_model():
     Loads and returns the pretrained DQN model.
     """
     directory = os.path.dirname(os.path.abspath(__file__))
-    filename = '/models/dqn_model_latest.pickle'
+    filename = '/models/dqn_model.pickle'
 
-    model = DQN(1024)
+    model = DQN(256)
     model.load_state_dict(torch.load(directory + filename))
     model.eval()
 
     # Set scale of state
     target = 2.5
-    model.set_inr_scale(mean=target, std=3*target)
-    model.set_age_scale(mean=51, std=3 * 15)
+    model.set_inr_scale(mean=target, std=target)
+    model.set_age_scale(mean=51, std=15)
 
     return model
 
@@ -38,7 +38,7 @@ def get_cohort():
 
     # Format data
     ids = data.ID.values
-    covariates = data[['VKORC1', 'CYP2C9' ,'Age']].values
+    covariates = data[['VKORC1', 'CYP2C9', 'Age']].values
 
     return ids, covariates
 

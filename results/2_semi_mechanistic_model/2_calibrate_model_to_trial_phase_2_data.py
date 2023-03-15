@@ -14,7 +14,7 @@ def define_log_posterior():
         directory + '/data/trial_phase_II.csv')
 
     # Define hierarchical log-posterior
-    mechanistic_model,_ = define_hamberg_model(baseline_inr=None)
+    mechanistic_model, _ = define_hamberg_model(baseline_inr=None)
     mechanistic_model.set_outputs(['myokit.inr'])
     error_model = chi.LogNormalErrorModel()
     population_model = define_hamberg_population_model(

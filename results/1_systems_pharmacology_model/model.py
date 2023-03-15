@@ -586,7 +586,7 @@ class WajimaWarfarinINRResponseModel(chi.MechanisticModel):
                 output = self._network_model._simulator.run(
                     duration=24, log=self._network_model._output_names,
                     log_times=ts)
-                output =  np.array([output[name]
+                output = np.array([output[name]
                     for name in self._network_model._output_names])
                 blood_samples[:, idt:idt+nts] = output
                 idt += nts
