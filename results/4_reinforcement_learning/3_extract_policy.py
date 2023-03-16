@@ -33,9 +33,8 @@ def get_policy(model, n, device):
     s = []
     d = []
     covariates = [
-        [1, 0.5, 0.5, 50],    # GG, *1*2, 71
-        [0.5, 0, 0.5, 46],    # GA, *2*3, 46
-        [0, 0.5, 0, 51],      # AA, *1*3, 51
+        [0.5, 0.5, 0.5, 50],  # GA, *1*2, 50
+        [1, 1, 0, 50],        # GG, *1*1, 50
     ]
     for cov in covariates:
         # Create states
