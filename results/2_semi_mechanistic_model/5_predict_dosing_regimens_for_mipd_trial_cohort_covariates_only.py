@@ -38,6 +38,7 @@ def define_objective_function(patient_id, data, model):
 
     return objective_function
 
+
 def find_dosing_regimen(objective_function):
     """
     Finds the dosing regimen that minimises the squared distance to the target
@@ -61,6 +62,7 @@ def find_dosing_regimen(objective_function):
     doses = [objective_function._convert_to_tablets(d) for d in doses]
 
     return doses
+
 
 def save_results(patient_id, regimen):
     """
