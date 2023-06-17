@@ -39,7 +39,7 @@ def get_policy(model, n, device):
     for cov in covariates:
         # Create states
         states = np.empty((n, 5))
-        states[:, 0] = np.linspace(1, 4, n)
+        states[:, 0] = np.linspace(0.5, 7, n)
         states[:, 1] = cov[0]
         states[:, 2] = cov[1]
         states[:, 3] = cov[2]
