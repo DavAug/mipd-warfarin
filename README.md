@@ -29,14 +29,16 @@ Simulated measurements:
 2. [Deep RL model](https://github.com/DavAug/mipd-warfarin/blob/main/results/4_reinforcement_learning/model.py) [[Training script](https://github.com/DavAug/mipd-warfarin/blob/main/results/4_reinforcement_learning/1_calibrate_model.py)] [[Model weights](https://github.com/DavAug/mipd-warfarin/blob/main/results/4_reinforcement_learning/models/dqn_model.pickle)]
 3. [PKPD model](https://github.com/DavAug/mipd-warfarin/blob/main/results/2_semi_mechanistic_model/model.py) [[SBML file](https://github.com/DavAug/mipd-warfarin/blob/main/models/hamberg_warfarin_inr_model_with_sensitivities.xml)] [[Inference script (CTI)](https://github.com/DavAug/mipd-warfarin/blob/main/results/2_semi_mechanistic_model/1_calibrate_model_to_trial_phase_1_data.py)] [[Inference script (CTII)](https://github.com/DavAug/mipd-warfarin/blob/main/results/2_semi_mechanistic_model/2_calibrate_model_to_trial_phase_2_data.py)] [[Inference script (CTIII)](https://github.com/DavAug/mipd-warfarin/blob/main/results/2_semi_mechanistic_model/3_calibrate_model_to_trial_phase_3_data.py)] [[Posterior](https://github.com/DavAug/mipd-warfarin/blob/main/results/2_semi_mechanistic_model/posteriors/posterior_trial_phase_III.nc)]
 
-### Data-generating scripts
+### MIPD trial simulation
 
-Clinical trial phase I:
-1. [TODO](https://github.com/DavAug/filter-inference/blob/main/results/1_cancer_growth/1_generate_data.py)
+Scripts used in all MIPD trial simulations:
+1. [Simulation of cohort](https://github.com/DavAug/mipd-warfarin/blob/main/results/1_systems_pharmacology_model/5_simulate_cohort_for_mipd_trial.py)
+2. [Monitoring data simulation](https://github.com/DavAug/mipd-warfarin/blob/main/results/1_systems_pharmacology_model/7_simulate_tdm_data_for_mipd_trial.py)
 
-### MIPD trial
-Early cancer growth:
-1. [TODO](https://github.com/DavAug/filter-inference/blob/main/results/1_cancer_growth/2_run_nlme_inference.py)
+Scripts specific to the different MIPD models:
+1. [Regression model](https://github.com/DavAug/mipd-warfarin/blob/main/results/3_regression_model/4_predict_dosing_regimens_for_mipd_trial_cohort_nn_regression.py)
+2. [Deep RL model](https://github.com/DavAug/mipd-warfarin/blob/main/results/4_reinforcement_learning/2_predict_dosing_regimen_for_mipd_trial_cohort.py)
+3. [PKPD model](https://github.com/DavAug/mipd-warfarin/blob/main/results/2_semi_mechanistic_model/6_predict_dosing_regimens_for_mipd_cohort_bayesian_optimisation.py)
 
 ## Reproducing the results
 
