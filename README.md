@@ -12,7 +12,7 @@ To inspect the scripts used to generate data, implement models and to estimate m
 
 ### Datasets
 Clinical dataset published by Warfarin Consortium (March 2008):
-1. [INR measurements under maintenance warfarin treatment](https://github.com/DavAug/mipd-warfarin/blob/main/results/data/clinical_warfarin_inr_steady_state.csv) [[Raw dataset]](https://github.com/DavAug/mipd-warfarin/blob/main/results/data/raw_data/clinical_steady_state_INR_data_original_data.xls) [[Preprocessing script]](https://github.com/DavAug/mipd-warfarin/blob/main/results/data/prepare_clinical_data.ipynb)
+1. [INR measurements under maintenance warfarin treatment](https://github.com/DavAug/mipd-warfarin/blob/main/results/data/clinical_warfarin_inr_steady_state.csv) [[Raw dataset](https://github.com/DavAug/mipd-warfarin/blob/main/results/data/raw_data/clinical_steady_state_INR_data_original_data.xls)] [[Preprocessing script](https://github.com/DavAug/mipd-warfarin/blob/main/results/data/prepare_clinical_data.ipynb)]
 
 Simulated measurements:
 1. [Clinical trial phase I](https://github.com/DavAug/mipd-warfarin/blob/main/results/data/trial_phase_I.csv)
