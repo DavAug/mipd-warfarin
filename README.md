@@ -15,9 +15,9 @@ Clinical dataset published by Warfarin Consortium (March 2008):
 1. [INR measurements under maintenance warfarin treatment](https://github.com/DavAug/mipd-warfarin/blob/main/results/data/clinical_warfarin_inr_steady_state.csv) [[Raw dataset](https://github.com/DavAug/mipd-warfarin/blob/main/results/data/raw_data/clinical_steady_state_INR_data_original_data.xls)] [[Preprocessing script](https://github.com/DavAug/mipd-warfarin/blob/main/results/data/prepare_clinical_data.ipynb)]
 
 Simulated measurements:
-1. [Clinical trial phase I](https://github.com/DavAug/mipd-warfarin/blob/main/results/data/trial_phase_I.csv)
-2. [Clinical trial phase II](https://github.com/DavAug/mipd-warfarin/blob/main/results/data/trial_phase_II.csv)
-3. [Clinical trial phase III](https://github.com/DavAug/mipd-warfarin/blob/main/results/data/trial_phase_III.csv)
+1. [Clinical trial phase I](https://github.com/DavAug/mipd-warfarin/blob/main/results/data/trial_phase_I.csv) [[Data-generating script](https://github.com/DavAug/mipd-warfarin/blob/main/results/1_systems_pharmacology_model/2_perform_trial_phase_1.py)]
+2. [Clinical trial phase II](https://github.com/DavAug/mipd-warfarin/blob/main/results/data/trial_phase_II.csv) [[Data-generating script](https://github.com/DavAug/mipd-warfarin/blob/main/results/1_systems_pharmacology_model/2_perform_trial_phase_1.py)]
+3. [Clinical trial phase III](https://github.com/DavAug/mipd-warfarin/blob/main/results/data/trial_phase_III.csv) [[Data-generating script](https://github.com/DavAug/mipd-warfarin/blob/main/results/1_systems_pharmacology_model/2_perform_trial_phase_1.py)]
 4. [MIPD trial cohort](https://github.com/DavAug/mipd-warfarin/blob/main/results/data/mipd_trial_cohort.csv)
 5. [MIPD trial results: Regression model](https://github.com/DavAug/mipd-warfarin/blob/main/results/3_regression_model/mipd_trial_predicted_dosing_regimens_deep_regression.csv)
 6. [MIPD trial results: Deep RL model](https://github.com/DavAug/mipd-warfarin/blob/main/results/4_reinforcement_learning/mipd_trial_predicted_dosing_regimens.csv)
