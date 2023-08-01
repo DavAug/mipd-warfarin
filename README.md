@@ -18,10 +18,10 @@ Simulated measurements:
 1. [Clinical trial phase I](https://github.com/DavAug/mipd-warfarin/blob/main/results/data/trial_phase_I.csv) [[Data-generating script](https://github.com/DavAug/mipd-warfarin/blob/main/results/1_systems_pharmacology_model/2_perform_trial_phase_1.py)]
 2. [Clinical trial phase II](https://github.com/DavAug/mipd-warfarin/blob/main/results/data/trial_phase_II.csv) [[Data-generating script](https://github.com/DavAug/mipd-warfarin/blob/main/results/1_systems_pharmacology_model/3_perform_trial_phase_2.py)]
 3. [Clinical trial phase III](https://github.com/DavAug/mipd-warfarin/blob/main/results/data/trial_phase_III.csv) [[Data-generating script](https://github.com/DavAug/mipd-warfarin/blob/main/results/1_systems_pharmacology_model/4_perform_trial_phase_3.py)]
-4. [MIPD trial cohort](https://github.com/DavAug/mipd-warfarin/blob/main/results/data/mipd_trial_cohort.csv)
-5. [MIPD trial results: Regression model](https://github.com/DavAug/mipd-warfarin/blob/main/results/3_regression_model/mipd_trial_predicted_dosing_regimens_deep_regression.csv)
-6. [MIPD trial results: Deep RL model](https://github.com/DavAug/mipd-warfarin/blob/main/results/4_reinforcement_learning/mipd_trial_predicted_dosing_regimens.csv)
-7. [MIPD trial results: PKPD model](https://github.com/DavAug/mipd-warfarin/blob/main/results/2_semi_mechanistic_model/mipd_trial_predicted_dosing_regimens.csv)
+4. [MIPD trial cohort](https://github.com/DavAug/mipd-warfarin/blob/main/results/data/mipd_trial_cohort.csv) [[Data-generating script](https://github.com/DavAug/mipd-warfarin/blob/main/results/1_systems_pharmacology_model/5_simulate_cohort_for_mipd_trial.py)]
+5. [MIPD trial results: Regression model](https://github.com/DavAug/mipd-warfarin/blob/main/results/3_regression_model/mipd_trial_predicted_dosing_regimens_deep_regression.csv) [[Data-generating script](#mipd-trial-simulation)]
+6. [MIPD trial results: Deep RL model](https://github.com/DavAug/mipd-warfarin/blob/main/results/4_reinforcement_learning/mipd_trial_predicted_dosing_regimens.csv) [[Data-generating script](#mipd-trial-simulation)]
+7. [MIPD trial results: PKPD model](https://github.com/DavAug/mipd-warfarin/blob/main/results/2_semi_mechanistic_model/mipd_trial_predicted_dosing_regimens.csv) [[Data-generating script](#mipd-trial-simulation)]
 
 ### Model implementations
 
@@ -32,8 +32,7 @@ Simulated measurements:
 ### MIPD trial simulation
 
 Scripts used in all MIPD trial simulations:
-1. [Simulation of cohort](https://github.com/DavAug/mipd-warfarin/blob/main/results/1_systems_pharmacology_model/5_simulate_cohort_for_mipd_trial.py)
-2. [Monitoring data simulation](https://github.com/DavAug/mipd-warfarin/blob/main/results/1_systems_pharmacology_model/7_simulate_tdm_data_for_mipd_trial.py)
+1. [Monitoring data simulation](https://github.com/DavAug/mipd-warfarin/blob/main/results/1_systems_pharmacology_model/7_simulate_tdm_data_for_mipd_trial.py)
 
 Scripts specific to the different MIPD models:
 1. [Regression model](https://github.com/DavAug/mipd-warfarin/blob/main/results/3_regression_model/4_predict_dosing_regimens_for_mipd_trial_cohort_nn_regression.py)
