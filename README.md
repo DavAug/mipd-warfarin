@@ -71,14 +71,21 @@ pip install -r requirements.txt
 
 #### 2. Reproduce results
 
-You can now reproduce the results by running
+You can now reproduce the results using the Makefile. First install ``nbconvert`` which helps to execute the notebooks from the terminal
 
+```bash
+pip install nbconvert
+```
+
+You can now reproduce all data and figures in the article using
 ```bash
 make all
 ```
 
 This may take a while (hours to days), because you are re-running all scripts
-sequentially. To reproduce only the plots from the existing data you can run
+sequentially.
+
+To reproduce only the plots from the existing data you can run
 
 ```bash
 make plot_results
