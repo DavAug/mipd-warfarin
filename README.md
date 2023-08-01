@@ -19,6 +19,9 @@ Simulated measurements:
 2. [Warfarin trial phase II](https://github.com/DavAug/mipd-warfarin/blob/main/results/data/trial_phase_II.csv)
 3. [Warfarin trial phase III](https://github.com/DavAug/mipd-warfarin/blob/main/results/data/trial_phase_III.csv)
 4. [MIPD trial cohort](https://github.com/DavAug/mipd-warfarin/blob/main/results/data/mipd_trial_cohort.csv)
+5. [MIPD trial results: Regression model](https://github.com/DavAug/mipd-warfarin/blob/main/results/3_regression_model/mipd_trial_predicted_dosing_regimens_deep_regression.csv)
+6. [MIPD trial results: Deep RL model](https://github.com/DavAug/mipd-warfarin/blob/main/results/4_reinforcement_learning/mipd_trial_predicted_dosing_regimens.csv)
+7. [MIPD trial results: PKPD model](https://github.com/DavAug/mipd-warfarin/blob/main/results/2_semi_mechanistic_model/mipd_trial_predicted_dosing_regimens.csv)
 
 ### Model implementations
 
