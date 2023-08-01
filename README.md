@@ -11,8 +11,8 @@ The results are documented by multiple notebooks. To open the notebooks, please 
 To inspect the scripts used to generate data, implement models and to estimate model parameters, please follow the links below:
 
 ### Datasets
-Clinical measurements:
-1. [TODO](https://github.com/DavAug/filter-inference/blob/main/results/1_cancer_growth/data/1_cancer_growth_data_15.csv)
+Clinical measurements from Warfarin Consortium Combined Data Set, March 2008:
+1. [Dataset](https://github.com/DavAug/mipd-warfarin/blob/main/results/data/clinical_warfarin_inr_steady_state.csv) [[Raw dataset]](https://github.com/DavAug/mipd-warfarin/blob/main/results/data/raw_data/clinical_steady_state_INR_data_original_data.xls) [[Preprocessing script]](https://github.com/DavAug/mipd-warfarin/blob/main/results/data/prepare_clinical_data.ipynb)
 
 Simulated measurements:
 1. [TODO](https://github.com/DavAug/filter-inference/blob/main/results/1_cancer_growth/data/2_bimodal_cancer_growth_data_20.csv)
