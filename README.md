@@ -6,7 +6,7 @@ This GitHub repository serves as documentation and reproduction source for the r
 
 The results are documented by multiple notebooks. To open the notebooks, please follow the links below:
 
-1. [MIPD trial results & dosing strategies of models]([https://github.com/DavAug/filter-inference/blob/main/results/1_cancer_growth/results.ipynb](https://github.com/DavAug/mipd-warfarin/blob/main/results/1_systems_pharmacology_model/results.ipynb))
+1. [MIPD trial results & dosing strategies of models](https://github.com/DavAug/mipd-warfarin/blob/main/results/1_systems_pharmacology_model/results.ipynb)
 
 To inspect the scripts used to generate data, implement models and to estimate model parameters, please follow the links below:
 
