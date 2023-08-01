@@ -26,6 +26,7 @@ Simulated measurements:
 ### Model implementations
 
 1. [Regression model](https://github.com/DavAug/mipd-warfarin/blob/main/results/3_regression_model/model.py) [[Training script](https://github.com/DavAug/mipd-warfarin/blob/main/results/3_regression_model/3_calibrate_nn_model_to_trial_phase_3_data.py)] [[Model weights](https://github.com/DavAug/mipd-warfarin/blob/main/results/3_regression_model/model/deep_regression_best.pickle)]
+2. [Deep RL model](https://github.com/DavAug/mipd-warfarin/blob/main/results/4_reinforcement_learning/model.py) [[Training script](https://github.com/DavAug/mipd-warfarin/blob/main/results/4_reinforcement_learning/1_calibrate_model.py)] [[Model weights](https://github.com/DavAug/mipd-warfarin/blob/main/results/4_reinforcement_learning/models/dqn_model.pickle)]
 
 ### Data-generating scripts
 
