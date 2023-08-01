@@ -25,7 +25,7 @@ Simulated measurements:
 
 ### Model implementations
 
-1. [TODO](https://github.com/DavAug/filter-inference/blob/main/results/1_cancer_growth/exponential_growth_model.py)
+1. [Regression model](https://github.com/DavAug/mipd-warfarin/blob/main/results/3_regression_model/model.py) [[Model weights](https://github.com/DavAug/mipd-warfarin/blob/main/results/3_regression_model/model/deep_regression_best.pickle)]
 
 ### Data-generating scripts
 
