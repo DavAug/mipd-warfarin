@@ -71,7 +71,7 @@ pip install -r requirements.txt
 
 #### 2. Reproduce results
 
-You can now reproduce the results using the Makefile. First install ``nbconvert`` which helps to execute the notebooks from the terminal
+You can reproduce the results using the Makefile. First install ``nbconvert`` which helps to execute the notebooks from the terminal
 
 ```bash
 pip install nbconvert
