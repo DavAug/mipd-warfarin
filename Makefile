@@ -1,0 +1,34 @@
+# Makefile for paper (figures and data)
+
+.PHONY: plot_results
+
+plot_results: results/1_systems_pharmacology_model/results.ipynb
+	jupyter nbconvert --to notebook --inplace --execute $<
+
+reproduce_results: reproduce_regression_model_results reproduce_deep_rl_model_results reproduce_pkpd_model_results
+
+reproduce_regression_model_results: train_regression_model run_mipd_trial_regression_model
+train_regression_model:
+	python results/3_regression_model/3_calibrate_nn_model_to_trial_phase_3_data.py
+run_mipd_trial_regression_model:
+	python results/3_regression_model/4_predict_dosing_regimens_for_mipd_trial_cohort_nn_regression.py
+
+reproduce_deep_rl_model_results: train_deep_rl_model run_mipd_trial_deep_rl_model extract_policy
+train_deep_rl_model:
+	python results/4_reinforcement_learning/1_calibrate_model.py
+run_mipd_trial_deep_rl_model:
+	python results/4_reinforcement_learning/2_predict_dosing_regimen_for_mipd_trial_cohort.py
+extract_policy:
+	python results/4_reinforcement_learning/3_extract_policy.py
+
+reproduce_pkpd_model_results: inference_from_trial_phase_I_data inference_from_trial_phase_II_data inference_from_trial_phase_III_data get_priors_for_mipd_trial run_mipd_trial_pkpd_model
+inference_from_trial_phase_I_data:
+	python results/2_semi_mechanistic_model/1_calibrate_model_to_trial_phase_1_data.py
+inference_from_trial_phase_II_data:
+	python results/2_semi_mechanistic_model/2_calibrate_model_to_trial_phase_2_data.py
+inference_from_trial_phase_III_data:
+	python results/2_semi_mechanistic_model/3_calibrate_model_to_trial_phase_3_data.py
+get_priors_for_mipd_trial:
+	python results/2_semi_mechanistic_model/4_define_priors_for_mipd_trial_cohort.py
+run_mipd_trial_pkpd_model:
+	python results/2_semi_mechanistic_model/6_predict_dosing_regimens_for_mipd_cohort_bayesian_optimisation.py
