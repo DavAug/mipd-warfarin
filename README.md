@@ -88,7 +88,7 @@ sequentially.
 To reproduce only the plots from the existing data you can run
 
 ```bash
-make plot_results
+make run_mipd_trial_deep_rl_model
 ```
 
 You can also run each script individually, but be aware that some scripts are
