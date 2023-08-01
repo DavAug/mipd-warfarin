@@ -2,6 +2,8 @@
 
 .PHONY: plot_results
 
+all: plot_results reproduce_results
+
 plot_results: results/1_systems_pharmacology_model/results.ipynb
 	jupyter nbconvert --to notebook --inplace --execute $<
 
