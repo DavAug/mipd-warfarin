@@ -33,22 +33,22 @@ def define_hamberg_model(pk_only=False, baseline_inr=1):
     # Fixing initial amounts to small values avoids infinities of lognormal
     # error and does not significantly influence model predictions
     model.fix_parameters({
-        'myokit.amount_dose_compartment': 0.001,
-        'myokit.amount_central_compartment': 0.001})
+        'global.amount_dose_compartment': 0.001,
+        'global.amount_central_compartment': 0.001})
 
     # Fix parameters that are not inferred to Hamberg et al's values
     model.fix_parameters({
-        'myokit.delay_compartment_1_chain_1': 1,
-        'myokit.delay_compartment_2_chain_1': 1,
-        'myokit.delay_compartment_1_chain_2': 1,
-        'myokit.delay_compartment_2_chain_2': 1,
-        'myokit.relative_change_cf1': 1,
-        'myokit.relative_change_cf2': 1,
-        'myokit.gamma': 1.15,
-        'myokit.absorption_rate': 2,
-        'myokit.baseline_inr': baseline_inr,
-        'myokit.maximal_effect': 1,
-        'myokit.maximal_inr_shift': 20
+        'global.delay_compartment_1_chain_1': 1,
+        'global.delay_compartment_2_chain_1': 1,
+        'global.delay_compartment_1_chain_2': 1,
+        'global.delay_compartment_2_chain_2': 1,
+        'global.relative_change_cf1': 1,
+        'global.relative_change_cf2': 1,
+        'global.gamma': 1.15,
+        'global.absorption_rate': 2,
+        'global.baseline_inr': baseline_inr,
+        'global.maximal_effect': 1,
+        'global.maximal_inr_shift': 20
     })
 
     # Fix initial conditions of sensitivities
@@ -78,16 +78,16 @@ def define_hamberg_model(pk_only=False, baseline_inr=1):
         'drelative_change_cf2_dhalf_maximal_effect_concentration',
         'drelative_change_cf2_dtransition_rate_chain_2',
         'drelative_change_cf2_dvolume']
-    model.fix_parameters({'myokit.' + p: 0 for p in sens_0})
+    model.fix_parameters({'global.' + p: 0 for p in sens_0})
 
     if pk_only:
         # Fix all PD related model parameters to typical values
         model.fix_parameters({
-            'myokit.baseline_inr':
+            'global.baseline_inr':
                 baseline_inr if baseline_inr is not None else 1,
-            'myokit.half_maximal_effect_concentration': 4.1,
-            'myokit.transition_rate_chain_1': 0.105,
-            'myokit.transition_rate_chain_2': 0.025
+            'global.half_maximal_effect_concentration': 4.1,
+            'global.transition_rate_chain_1': 0.105,
+            'global.transition_rate_chain_2': 0.025
         })
 
     # Import model parameters
@@ -154,10 +154,10 @@ def define_hamberg_population_model(
     if not fixed_y0:
         y0_model = [chi.CovariatePopulationModel(
             population_model=chi.LogNormalModel(
-                dim_names=['myokit.baseline_inr'], centered=centered),
+                dim_names=['global.baseline_inr'], centered=centered),
             covariate_model=BaselineINRCovariateModel()
         )]
-        dim_name_y0 = ['myokit.baseline_inr']
+        dim_name_y0 = ['global.baseline_inr']
 
     # Define noise population models
     noise_pop_models = []
@@ -220,9 +220,9 @@ def define_steady_state_hamberg_model():
 
     # Fix parameter that are not inferred
     model.fix_parameters({
-        'myokit.gamma': 1.15,
-        'myokit.maximal_effect': 1,
-        'myokit.maximal_inr_shift': 20
+        'global.gamma': 1.15,
+        'global.maximal_effect': 1,
+        'global.maximal_inr_shift': 20
     })
 
     # Import model parameters
@@ -308,7 +308,7 @@ class HambergModel(chi.MechanisticModel):
         self._model = sbml.SBMLImporter().model(directory + model_file)
 
         # Bind dose rate to pacing protocol
-        dose_rate = self._model.get('myokit.dose_rate')
+        dose_rate = self._model.get('global.dose_rate')
         dose_rate.set_binding('pace')
         self._dosing_regimen = None
 
@@ -322,8 +322,8 @@ class HambergModel(chi.MechanisticModel):
         # Define sensitivities of model
         # NOTE: dy0 is treated separately, because they are constant in time.
         self._n_sens_per_output = 5
-        dinr = 'myokit.dinr'
-        dconc = 'myokit.dconcentration_central_compartment'
+        dinr = 'global.dinr'
+        dconc = 'global.dconcentration_central_compartment'
         self._sensitivities = [
             dconc + '_delimination_rate',
             dconc + '_dhalf_maximal_effect_concentration',
@@ -385,9 +385,9 @@ class HambergModel(chi.MechanisticModel):
 
         # Set default outputs
         self._allowed_outputs = [
-            'myokit.concentration_central_compartment', 'myokit.inr']
+            'global.concentration_central_compartment', 'global.inr']
         self._output_names = [
-            'myokit.concentration_central_compartment', 'myokit.inr']
+            'global.concentration_central_compartment', 'global.inr']
         self._n_outputs = 2
         self._sensitivity_index = [0, 1]
 
@@ -460,22 +460,22 @@ class HambergModel(chi.MechanisticModel):
         dparams = [0, 1, 2, 3, 4]
         if parameter_names is not None:
             dparams = []
-            if 'myokit.elimination_rate' in parameter_names:
+            if 'global.elimination_rate' in parameter_names:
                 dparams += [0]
-            if 'myokit.half_maximal_effect_concentration' in parameter_names:
+            if 'global.half_maximal_effect_concentration' in parameter_names:
                 dparams += [1]
-            if 'myokit.transition_rate_chain_1' in parameter_names:
+            if 'global.transition_rate_chain_1' in parameter_names:
                 dparams += [2]
-            if 'myokit.transition_rate_chain_2' in parameter_names:
+            if 'global.transition_rate_chain_2' in parameter_names:
                 dparams += [3]
-            if 'myokit.volume' in parameter_names:
+            if 'global.volume' in parameter_names:
                 dparams += [4]
         self._dparams = dparams
 
         # Check whether sensitivities to y0 are needed.
         self._return_dy0 = False
         if (parameter_names is not None) and (
-                'myokit.baseline_inr' in parameter_names):
+                'global.baseline_inr' in parameter_names):
             self._return_dy0 = True
 
     def has_sensitivities(self):
@@ -1305,16 +1305,16 @@ class SteadyStateHambergModel(chi.MechanisticModel):
         self._has_sensitivities = False
         self._n_parameters = 7
         self._parameter_names = [
-            'myokit.baseline_inr',
-            'myokit.maximal_inr_shift',
-            'myokit.maximal_effect',
-            'myokit.gamma',
-            'myokit.elimination_rate',
-            'myokit.half_maximal_effect_concentration',
-            'myokit.volume'
+            'global.baseline_inr',
+            'global.maximal_inr_shift',
+            'global.maximal_effect',
+            'global.gamma',
+            'global.elimination_rate',
+            'global.half_maximal_effect_concentration',
+            'global.volume'
         ]
         self._n_outputs = 1
-        self._output_names = ['myokit.inr']
+        self._output_names = ['global.inr']
 
     def copy(self):
         """

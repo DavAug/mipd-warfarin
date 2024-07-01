@@ -1,23 +1,23 @@
 Parameter,Value,Unit
-myokit.amount_central_compartment,0.001,mg
-myokit.amount_dose_compartment,0.001,mg
-myokit.delay_compartment_1_chain_1,1.0,dimensionless
-myokit.delay_compartment_2_chain_1,1.0,dimensionless
-myokit.delay_compartment_1_chain_2,1.0,dimensionless
-myokit.delay_compartment_2_chain_2,1.0,dimensionless
-myokit.relative_change_cf1,1.0,dimensionless
-myokit.relative_change_cf2,1.0,dimensionless
+global.amount_central_compartment,0.001,mg
+global.amount_dose_compartment,0.001,mg
+global.delay_compartment_1_chain_1,1.0,dimensionless
+global.delay_compartment_2_chain_1,1.0,dimensionless
+global.delay_compartment_1_chain_2,1.0,dimensionless
+global.delay_compartment_2_chain_2,1.0,dimensionless
+global.relative_change_cf1,1.0,dimensionless
+global.relative_change_cf2,1.0,dimensionless
 dose.absorption_rate,2.0,1/h
-myokit.baseline_inr,1.0,dimensionless
-myokit.maximal_effect,1.0,1
-myokit.maximal_inr_shift,20.0,dimensionless
+global.baseline_inr,1.0,dimensionless
+global.maximal_effect,1.0,1
+global.maximal_inr_shift,20.0,dimensionless
 central.size,14.3,L
-myokit.volume,14.3,L
-myokit.elimination_rate,0.0243,1/h
-myokit.gamma,1.15,dimensionless
-myokit.half_maximal_effect_concentration,4.1,mg/L
-myokit.transition_rate_chain_1, 0.105, 1/h
-myokit.transition_rate_chain_2, 0.025, 1/h
+global.volume,14.3,L
+global.elimination_rate,0.0243,1/h
+global.gamma,1.15,dimensionless
+global.half_maximal_effect_concentration,4.1,mg/L
+global.transition_rate_chain_1, 0.105, 1/h
+global.transition_rate_chain_2, 0.025, 1/h
 Pooled Transition rate chain 1,0.1048951048951049,1/h
 Pooled Transition rate chain 2,0.0253592561284869,1/h
 Log std. Elimination rate,0.071,dimensionless

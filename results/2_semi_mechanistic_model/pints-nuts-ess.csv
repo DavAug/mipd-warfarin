@@ -1,0 +1,65 @@
+,Iteration,Parameter,ESS
+0,0,Log mean myokit.volume,0.0
+1,100,Log mean myokit.volume,0.0
+2,200,Log mean myokit.volume,0.0
+3,300,Log mean myokit.volume,0.0
+4,400,Log mean myokit.volume,0.0
+5,500,Log mean myokit.volume,0.0
+6,600,Log mean myokit.volume,193.43295127915533
+7,700,Log mean myokit.volume,345.0397292631873
+8,800,Log mean myokit.volume,693.6834532863535
+9,900,Log mean myokit.volume,1040.823996531185
+10,1000,Log mean myokit.volume,1067.1241146228165
+11,1100,Log mean myokit.volume,1517.6516448939167
+12,1200,Log mean myokit.volume,1762.6767347526945
+13,1300,Log mean myokit.volume,1746.1090278632466
+14,1400,Log mean myokit.volume,2079.795624344717
+15,1500,Log mean myokit.volume,2267.974341645415
+0,0,Log std. myokit.volume,0.0
+1,100,Log std. myokit.volume,0.0
+2,200,Log std. myokit.volume,0.0
+3,300,Log std. myokit.volume,0.0
+4,400,Log std. myokit.volume,0.0
+5,500,Log std. myokit.volume,0.0
+6,600,Log std. myokit.volume,93.93179708022899
+7,700,Log std. myokit.volume,192.1848558676442
+8,800,Log std. myokit.volume,330.1923587687567
+9,900,Log std. myokit.volume,400.629334854895
+10,1000,Log std. myokit.volume,407.15434628402363
+11,1100,Log std. myokit.volume,453.3193021372184
+12,1200,Log std. myokit.volume,502.7964008176339
+13,1300,Log std. myokit.volume,592.2384627797896
+14,1400,Log std. myokit.volume,668.2899837689597
+15,1500,Log std. myokit.volume,788.0413306316968
+0,0,myokit.volumeID 1,0.0
+1,100,myokit.volumeID 1,0.0
+2,200,myokit.volumeID 1,0.0
+3,300,myokit.volumeID 1,0.0
+4,400,myokit.volumeID 1,0.0
+5,500,myokit.volumeID 1,0.0
+6,600,myokit.volumeID 1,200.0
+7,700,myokit.volumeID 1,460.2059991327962
+8,800,myokit.volumeID 1,735.0048344225548
+9,900,myokit.volumeID 1,803.9437382740382
+10,1000,myokit.volumeID 1,934.3420677188358
+11,1100,myokit.volumeID 1,1104.240738417099
+12,1200,myokit.volumeID 1,1255.2827102679216
+13,1300,myokit.volumeID 1,1529.7666261902361
+14,1400,myokit.volumeID 1,1610.032493584364
+15,1500,myokit.volumeID 1,1668.3358465327797
+0,0,myokit.volumeID 2,0.0
+1,100,myokit.volumeID 2,0.0
+2,200,myokit.volumeID 2,0.0
+3,300,myokit.volumeID 2,0.0
+4,400,myokit.volumeID 2,0.0
+5,500,myokit.volumeID 2,0.0
+6,600,myokit.volumeID 2,111.50279676405735
+7,700,myokit.volumeID 2,270.17475224701633
+8,800,myokit.volumeID 2,404.5011809720884
+9,900,myokit.volumeID 2,572.135984424254
+10,1000,myokit.volumeID 2,670.3857792482858
+11,1100,myokit.volumeID 2,804.4788569398095
+12,1200,myokit.volumeID 2,969.294191937097
+13,1300,myokit.volumeID 2,1191.7325819667058
+14,1400,myokit.volumeID 2,1297.8436315922297
+15,1500,myokit.volumeID 2,1475.1091431391824
