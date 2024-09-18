@@ -50,14 +50,14 @@ def define_log_posterior():
     problem = chi.ProblemModellingController(mechanistic_model, error_model)
     problem.set_population_model(population_model)
     problem.set_data(measurements_df, output_observable_dict={
-        'myokit.inr': 'INR'})
+        'global.inr': 'INR'})
     problem.fix_parameters({
-        'Log mean myokit.baseline_inr': 0.073,
-        'Log std. myokit.baseline_inr': 0.170,
+        'Log mean global.baseline_inr': 0.073,
+        'Log std. global.baseline_inr': 0.170,
         'Rel. baseline INR A': 1.043,
-        'Log std. myokit.elimination_rate': 0.116,
-        'Log std. myokit.half_maximal_effect_concentration': 0.208,
-        'Log std. myokit.volume': 0.101,
+        'Log std. global.elimination_rate': 0.116,
+        'Log std. global.half_maximal_effect_concentration': 0.208,
+        'Log std. global.volume': 0.101,
         'Pooled Sigma log': 0.105
     })
     problem.set_log_prior(log_prior)

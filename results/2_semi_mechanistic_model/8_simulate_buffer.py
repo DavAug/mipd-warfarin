@@ -100,7 +100,7 @@ if __name__ == '__main__':
 
     # Define model
     model, _ = define_hamberg_model(baseline_inr=None)
-    model.set_outputs(['myokit.inr'])
+    model.set_outputs(['global.inr'])
     model = chi.PredictiveModel(model, chi.LogNormalErrorModel())
     pop_model = define_hamberg_population_model(
         centered=True, inr=True, conc=False, fixed_y0=False)
@@ -111,25 +111,25 @@ if __name__ == '__main__':
         directory
         + '/2_semi_mechanistic_model/posteriors/posterior_trial_phase_III.nc')
     pop_parameters = np.vstack([
-        posterior2['Log mean myokit.baseline_inr'].values.flatten(),
-        posterior2['Log std. myokit.baseline_inr'].values.flatten(),
+        posterior2['Log mean global.baseline_inr'].values.flatten(),
+        posterior2['Log std. global.baseline_inr'].values.flatten(),
         posterior2['Rel. baseline INR A'].values.flatten(),
-        posterior3['Log mean myokit.elimination_rate'].values.flatten(),
-        posterior2['Log std. myokit.elimination_rate'].values.flatten(),
+        posterior3['Log mean global.elimination_rate'].values.flatten(),
+        posterior2['Log std. global.elimination_rate'].values.flatten(),
         posterior3['Rel. elimination rate shift *2*2'].values.flatten(),
         posterior3['Rel. elimination rate shift *3*3'].values.flatten(),
         posterior3['Rel. elimination rate shift with age'].values.flatten(),
         posterior3[
-            'Log mean myokit.half_maximal_effect_concentration'
+            'Log mean global.half_maximal_effect_concentration'
         ].values.flatten(),
         posterior2[
-            'Log std. myokit.half_maximal_effect_concentration'
+            'Log std. global.half_maximal_effect_concentration'
         ].values.flatten(),
         posterior3['Rel. EC50 shift AA'].values.flatten(),
-        posterior2['Pooled myokit.transition_rate_chain_1'].values.flatten(),
-        posterior2['Pooled myokit.transition_rate_chain_2'].values.flatten(),
-        posterior3['Log mean myokit.volume'].values.flatten(),
-        posterior2['Log std. myokit.volume'].values.flatten(),
+        posterior2['Pooled global.transition_rate_chain_1'].values.flatten(),
+        posterior2['Pooled global.transition_rate_chain_2'].values.flatten(),
+        posterior3['Log mean global.volume'].values.flatten(),
+        posterior2['Log std. global.volume'].values.flatten(),
         posterior2['Pooled Sigma log'].values.flatten()]).T
     n_samples = len(pop_parameters)
 

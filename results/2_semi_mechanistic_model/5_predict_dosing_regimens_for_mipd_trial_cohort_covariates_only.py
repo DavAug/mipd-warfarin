@@ -33,7 +33,7 @@ def define_objective_function(patient_id, data, model):
     data = data[data.ID == patient_id]
     parameters = [
         data[data.Parameter == n].Mean.values[0] for n in model.parameters()]
-    model.set_outputs(['myokit.inr'])
+    model.set_outputs(['global.inr'])
     objective_function = SquaredINRDistance(model, parameters)
 
     return objective_function

@@ -68,7 +68,7 @@ def define_objective_function(parameters, model):
     from 2.5 within the first 19 days of warfarin treatment for a given
     schedule of daily warfarin doses.
     """
-    model.set_outputs(['myokit.inr'])
+    model.set_outputs(['global.inr'])
     objective_function = SquaredINRDistance(
         model, parameters, target=2.5, days=19, res=0.1)
 

@@ -19,7 +19,7 @@ def define_model():
     """
     # Define model
     model, df = define_hamberg_model()
-    model.set_outputs(['myokit.inr'])
+    model.set_outputs(['global.inr'])
 
     # Import existing file
     directory = os.path.dirname(os.path.abspath(__file__))
@@ -36,7 +36,7 @@ def define_model():
     # Fix all parameters but the EC50
     model = chi.ReducedMechanisticModel(model)
     for idn, name in enumerate(model.parameters()):
-        if name == 'myokit.half_maximal_effect_concentration':
+        if name == 'global.half_maximal_effect_concentration':
             continue
         model.fix_parameters({name: parameters[idn]})
 
@@ -161,13 +161,13 @@ def get_posterior(model, error_model, meas, times, pr):
     posterior_samples = posterior_samples.sel(
         draw=slice(warmup, n_iterations, thinning))
     rhat = az.rhat(posterior_samples)[
-        'myokit.half_maximal_effect_concentration'].values
+        'global.half_maximal_effect_concentration'].values
 
     # Compute mean and std of posterior
-    mean = posterior_samples['myokit.half_maximal_effect_concentration'].sel(
+    mean = posterior_samples['global.half_maximal_effect_concentration'].sel(
         draw=slice(warmup, n_iterations)).mean().values
     std = posterior_samples[
-        'myokit.half_maximal_effect_concentration'].sel(
+        'global.half_maximal_effect_concentration'].sel(
         draw=slice(warmup, n_iterations)).std().values
 
     return mean, std, rhat

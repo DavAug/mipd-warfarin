@@ -37,21 +37,21 @@ def load_posteriors():
     # NOTE: Baseline INR and transition rates of chains were not informed by
     # trial III, so we have to get those from trial phase II
     parameter_names = [
-        'Log mean myokit.baseline_inr',
-        'Log std. myokit.baseline_inr',
+        'Log mean global.baseline_inr',
+        'Log std. global.baseline_inr',
         'Rel. baseline INR A',
-        'Log mean myokit.elimination_rate',
-        'Log std. myokit.elimination_rate',
+        'Log mean global.elimination_rate',
+        'Log std. global.elimination_rate',
         'Rel. elimination rate shift *2*2',
         'Rel. elimination rate shift *3*3',
         'Rel. elimination rate shift with age',
-        'Log mean myokit.half_maximal_effect_concentration',
-        'Log std. myokit.half_maximal_effect_concentration',
+        'Log mean global.half_maximal_effect_concentration',
+        'Log std. global.half_maximal_effect_concentration',
         'Rel. EC50 shift AA',
-        'Pooled myokit.transition_rate_chain_1',
-        'Pooled myokit.transition_rate_chain_2',
-        'Log mean myokit.volume',
-        'Log std. myokit.volume',
+        'Pooled global.transition_rate_chain_1',
+        'Pooled global.transition_rate_chain_2',
+        'Log mean global.volume',
+        'Log std. global.volume',
         'Pooled Sigma log'
     ]
     parameters = np.vstack([

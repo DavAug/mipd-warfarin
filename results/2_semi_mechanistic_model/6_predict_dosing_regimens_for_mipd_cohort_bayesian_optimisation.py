@@ -137,7 +137,7 @@ def get_posterior(patient_id, model, error_model, meas, times, df_prior):
         for idp, m in enumerate(means)])
 
     # Define log-posterior
-    model.set_outputs(['myokit.inr'])
+    model.set_outputs(['global.inr'])
     log_likelihood = chi.LogLikelihood(model, error_model, meas, times)
     log_posterior = chi.LogPosterior(log_likelihood, log_prior)
 
@@ -174,7 +174,7 @@ def define_objective_function(model, posterior, init_doses, window):
     schedule of daily warfarin doses.
     """
     means, _, _, _ = posterior
-    model.set_outputs(['myokit.inr'])
+    model.set_outputs(['global.inr'])
     objective_function = SquaredINRDistance(
         model, means[:-1], init_doses=init_doses, window=window)
 

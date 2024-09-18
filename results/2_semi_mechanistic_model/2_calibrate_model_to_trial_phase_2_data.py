@@ -15,7 +15,7 @@ def define_log_posterior():
 
     # Define hierarchical log-posterior
     mechanistic_model, _ = define_hamberg_model(baseline_inr=None)
-    mechanistic_model.set_outputs(['myokit.inr'])
+    mechanistic_model.set_outputs(['global.inr'])
     error_model = chi.LogNormalErrorModel()
     population_model = define_hamberg_population_model(
         centered=False, inr=True, conc=False, fixed_y0=False)
@@ -40,7 +40,7 @@ def define_log_posterior():
     problem = chi.ProblemModellingController(mechanistic_model, error_model)
     problem.set_population_model(population_model)
     problem.set_data(measurements_df, output_observable_dict={
-        'myokit.inr': 'INR'})
+        'global.inr': 'INR'})
     problem.set_log_prior(log_prior)
 
     return problem.get_log_posterior()
