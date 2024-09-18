@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">
+  <model id="tmdd_model" timeUnits="h">
+
+    <listOfUnitDefinitions>
+      <unitDefinition id="h">
+        <listOfUnits>
+          <unit kind="second" exponent="1" scale="0" multiplier="3600"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="per_h">
+        <listOfUnits>
+          <unit kind="second" exponent="-1" scale="0" multiplier="3600"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="l_per_h">
+        <listOfUnits>
+          <unit kind="liter" exponent="1" scale="0" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="0" multiplier="3600"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="mg">
+        <listOfUnits>
+          <unit kind="gram" exponent="1" scale="-3" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="mg_per_l">
+        <listOfUnits>
+          <unit kind="gram" exponent="1" scale="-3" multiplier="1"/>
+          <unit kind="liter" exponent="-1" scale="0" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="mg_per_h">
+        <listOfUnits>
+          <unit kind="gram" exponent="1" scale="-3" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="0" multiplier="3600"/>
+        </listOfUnits>
+      </unitDefinition>
+    </listOfUnitDefinitions>
+
+    <listOfCompartments>
+      <compartment id="central" name="central" size="1" units="liter"/>
+    </listOfCompartments>
+
+    <listOfSpecies>
+      <species id="drug" name="drug" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="mg"/>
+      <species id="target" name="target" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="mg"/>
+      <species id="drug_target_complex" name="drug_target_complex" compartment="central" initialAmount="0" hasSubstanceUnits="false" substanceUnits="mg"/>
+    </listOfSpecies>
+
+    <listOfParameters>
+      <!-- Target-related parameters -->
+      <parameter id="synthesisation_rate" value="1" constant="true" units="mg_per_h"/>
+      <parameter id="degradation_rate" value="1" constant="true" units="per_h"/>
+
+      <!-- Target-drug-complex-related parameters -->
+      <parameter id="binding_rate" value="1" constant="true" units="per_h"/>
+      <parameter id="dissociation_rate" value="1" constant="true" units="per_h"/>
+
+      <!-- Warfarin PK-related parameters -->
+      <parameter id="elimination_rate" value="1" constant="true" units="per_h"/>
+
+    </listOfParameters>
+
+    <listOfReactions>
+      <!-- Drug elimination -->
+      <reaction id="drug_elimination" name="drug_elimination" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="drug"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> elimination_rate </ci>
+              <ci> drug </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Drug target binding -->
+      <reaction id="drug_target_complex_formation" name="drug_target_complex_formation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="drug"/>
+          <speciesReference species="target"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="drug_target_complex"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> binding_rate </ci>
+              <ci> drug </ci>
+              <ci> target </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Drug target complex dissociation -->
+      <reaction id="drug_target_complex_dissocation" name="drug_target_complex_dissocation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="drug_target_complex"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="drug"/>
+          <speciesReference species="target"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> dissociation_rate </ci>
+              <ci> drug_target_complex </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Target synthesis -->
+      <reaction id="target_synthesis" name="target_synthesis" reversible="false" fast="false">
+        <listOfProducts>
+          <speciesReference species="target"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> synthesisation_rate </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Target degradation -->
+      <reaction id="target_degradation" name="target_degradation" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="target"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> central </ci>
+              <ci> degradation_rate </ci>
+              <ci> target </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+    </listOfReactions>
+  </model>
+</sbml>
