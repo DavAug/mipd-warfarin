@@ -1,6 +1,6 @@
 # Simulating clinical trials for model-informed precision dosing: Using warfarin treatment as a use case
 
-This GitHub repository serves as documentation and reproduction source for the results published in XX. It contains the raw data, the data derived during the analysis, the model specifications (SBML format) and executable scripts (Python scripts as well as Jupyter notebooks).
+This GitHub repository serves as documentation and reproduction source for the results published in Frontiers in Pharmacology, 14, 1270443. It contains the raw data, the data derived during the analysis, the model specifications (SBML format) and executable scripts (Python scripts as well as Jupyter notebooks).
 
 ## Looking at the results
 
